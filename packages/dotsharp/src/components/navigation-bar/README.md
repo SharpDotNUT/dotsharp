@@ -19,6 +19,11 @@ const index = ref(0);
 - 选中项有一个浅色胶囊：`compact` 只包住图标，`medium` 包住图标与文字。
 - `NavigationItem` 的标识默认为自身索引，也可以用 `value` 指定。
 
+## 子项约定
+
+`NavigationBar` / `NavigationItem` 遵循[子项组件统一范式](/guide/patterns)：选中值由 `v-model:value`
+持有，`NavigationItem` 用 `label`、`icon` 或默认插槽描述内容，标识取 `value` 或父组件注入的索引。
+
 ## compact 标签栏
 
 默认排版：图标在上、文字在下，选中项高亮图标（胶囊 + 主色），文字保持中性色，适合移动端底栏。
@@ -113,7 +118,7 @@ const index = ref(0);
 </template>
 ```
 
-索引由 `NavigationBar` 按声明顺序注入，只统计 `NavigationItem` 子项本身；`v-if` 增删、`v-for` 循环都按最终渲染顺序重新编号。需要跨版本稳定的标识时显式传 `value`。
+索引由 `NavigationBar` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 内容：label、icon 与插槽
 

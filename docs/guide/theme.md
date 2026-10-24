@@ -15,22 +15,11 @@ onMounted(() => {
 `@sharpdotnut/dotsharp` 通过 `useTheme()` 管理主题：模式可以是 `system`（默认，跟随系统）、`light` 或 `dark`。
 组合式函数会把解析后的结果写到 `<html data-theme="light|dark">` 上，组件样式据此切换设计变量。
 
-## 安装
+## 样式与变量
 
-```bash
-pnpm add @sharpdotnut/dotsharp
-```
-
-## 引入样式
-
-主题变量与组件样式都在同一个样式表里，应用入口引入一次即可：
-
-```ts
-import "@sharpdotnut/dotsharp/style.css";
-```
-
-这个样式表由 Tailwind CSS 4 编译（`@theme inline` 把 `--ds-*` 变量映射成 `bg-ds-primary`、`text-ds-fg`
-这类工具类），只包含组件用到的那部分工具类：
+安装与样式引入见[快速开始](/guide/getting-started)。与主题相关的是：`style.css` 里定义 `--ds-*` 变量，
+再由 Tailwind 的 `@theme inline` 映射成 `bg-ds-primary`、`text-ds-fg` 这类工具类——工具类引用的是变量本身，
+所以切换 `data-theme` 只改变量值，组件类名保持不变。
 
 - 使用方无需安装 Tailwind，也无需配置 `@source` 扫描 `node_modules`。
 - 样式表不含 Tailwind preflight，不会重置应用自身的页面样式。

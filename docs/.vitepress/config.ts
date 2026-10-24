@@ -63,14 +63,19 @@ export default defineConfig({
 
   themeConfig: {
     nav: [
-      { text: "指南", link: "/guide/theme" },
+      { text: "指南", link: "/guide/intro" },
       { text: "组件", link: "/components/button" },
     ],
 
     sidebar: [
       {
         text: "指南",
-        items: [{ text: "主题", link: "/guide/theme" }],
+        items: [
+          { text: "简介", link: "/guide/intro" },
+          { text: "快速开始", link: "/guide/getting-started" },
+          { text: "统一范式", link: "/guide/patterns" },
+          { text: "主题", link: "/guide/theme" },
+        ],
       },
       {
         text: "组件",
@@ -79,10 +84,15 @@ export default defineConfig({
           { text: "Dialog 对话框", link: "/components/dialog" },
           { text: "Icon 图标", link: "/components/icon" },
           { text: "Input 输入框", link: "/components/input" },
+          { text: "Tabs 标签页", link: "/components/tabs" },
+        ],
+      },
+      {
+        text: "导航组件",
+        items: [
           { text: "NavigationBar 导航栏", link: "/components/navigation-bar" },
           { text: "NavigationDrawer 导航抽屉", link: "/components/navigation-drawer" },
           { text: "NavigationRail 侧边导航栏", link: "/components/navigation-rail" },
-          { text: "Tabs 标签页", link: "/components/tabs" },
         ],
       },
     ],

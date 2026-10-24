@@ -21,13 +21,19 @@ const index = ref(0);
 
 # NavigationDrawer 导航抽屉
 
-Material Design 3 的 navigation drawer：`NavigationDrawer` 持有选中值（`v-model:value`），
+侧边导航抽屉：`NavigationDrawer` 持有选中值（`v-model:value`），
 `NavigationDrawerItem` 描述每一项，`NavigationDrawerHeading` / `NavigationDrawerDivider` 负责分组。
 
 - `variant="standard"`：嵌在应用布局里、始终可见，常用于平板 / 桌面。
 - `variant="modal"`：在最近的定位容器内覆盖内容，带遮罩与焦点陷阱，由 `v-model:open` 控制；不脱离容器、不锁定页面滚动。
-- 两种变体宽度都是 M3 规定的 360px，窄屏时收缩到可用宽度。
-- 选中项是整行胶囊（`secondary-container` 语义，取主色 10% 底色），行尾可放 `badge`。
+- 两种变体宽度都是 360px，窄屏时收缩到可用宽度。
+- 选中项是整行胶囊（主色 10% 底色），行尾可放 `badge`。
+
+## 子项约定
+
+`NavigationDrawer` / `NavigationDrawerItem` 遵循[子项组件统一范式](/guide/patterns)：选中值由
+`v-model:value` 持有，`NavigationDrawerItem` 用 `label`、`icon`、`badge` 或默认插槽描述内容，标识取
+`value` 或父组件注入的索引。`NavigationDrawerHeading` / `NavigationDrawerDivider` 只做视觉分组，不参与编号。
 
 ## Standard：嵌在应用内
 
@@ -84,7 +90,7 @@ const current = ref("inbox");
 </template>
 ```
 
-宽度固定为 360px 是 M3 的建议值；需要更窄时用 `class="!w-…"` 覆写，或在外层容器里裁切。
+宽度由组件固定为 360px；需要更窄时用 `class="!w-…"` 覆写，或在外层容器里裁切。
 
 ## Modal：容器内遮罩
 
@@ -156,7 +162,8 @@ standard 下则落在 `<nav>` 上。
 ## 选中值与索引
 
 `NavigationDrawerItem` 省略 `value` 时用自己的数字索引（从 `0` 开始）作为标识；索引只统计 item 本身，
-`NavigationDrawerHeading`、`NavigationDrawerDivider` 不参与编号。`v-model:value` 默认是 `0`，首项默认选中。
+`NavigationDrawerHeading`、`NavigationDrawerDivider` 不参与编号。`v-model:value` 默认是 `0`，首项默认
+选中。完整规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
 
 <div class="demo-row">
   <div class="flex h-[22rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">

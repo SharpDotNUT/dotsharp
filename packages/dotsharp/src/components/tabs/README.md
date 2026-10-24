@@ -19,6 +19,11 @@ const variantTab = ref("overview");
 - `Tab` 的标识默认为自身索引，也可以用 `value` 指定。
 - `Tab` 的文字用 `label`，图标用 `icon`（直接传图标数据），其它自定义内容用默认插槽。
 
+## 子项约定
+
+`Tabs` / `Tab` 遵循[子项组件统一范式](/guide/patterns)：选中值由 `v-model:value` 持有，`Tab` 用
+`label`、`icon` 或默认插槽描述内容，标识取 `value` 或父组件注入的索引。下文只说明 `Tabs` 自己的排版与交互。
+
 ## 基础用法
 
 <div class="demo-row">
@@ -77,7 +82,7 @@ const index = ref(0);
 </template>
 ```
 
-索引由 `Tabs` 按声明顺序注入，只统计 `Tab` 子项本身；`v-if` 增删、`v-for` 循环都按最终渲染顺序重新编号。需要跨版本稳定的标识时显式传 `value`。
+索引由 `Tabs` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 内容：label、icon 与插槽
 
@@ -152,15 +157,6 @@ const content = ref("flights");
 - `variant`：贴合 `Tab` 宽度的整条下划线。
 
 切换时指示条水平平移、宽度一并补间（200ms，纯 CSS `transition`），不会瞬间跳变；首次渲染不播放动画，也不会在挂载时滑入。
-
-## 统一范式
-
-`Tabs` / `Tab` 确立了本库「子项组件」的统一写法，后续同类组件（`Select` / `Option`、`Steps` / `Step` 等）沿用同一套约定：
-
-- 父组件用 `defineModel` 暴露选中值，消费方写 `v-model:value`；未绑定模型时首个子项默认选中。
-- 子组件用 `label` 承载纯文本，用 `icon` 直接承载图标（与 `Icon` 的 `icon` 同源），用默认插槽承载其它自定义内容；**插槽优先，`label` 兜底**。
-- 子组件用 **`value`** 声明标识；省略时按声明顺序取 **数字索引**（`0` 起），索引由父组件注入，使用方无需关心。
-- 选中值类型为 `string | number`。需要稳定的跨版本标识时显式传 `value`，纯展示顺序的场合用索引即可。
 
 ## API
 

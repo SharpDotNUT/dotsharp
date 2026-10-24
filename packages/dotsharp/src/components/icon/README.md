@@ -65,7 +65,7 @@ import search from "@iconify-icons/material-symbols/search";
 
 ## 图标来源（最佳实践）
 
-本库以 **Material Symbols**（Google Material Symbols 的 Iconify 版本）作为默认图标风格。安装并按单个图标 import，打包产物只包含真正用到的图标，运行时无网络请求：
+图标数据来自 Iconify 图标集，按单个图标 import 即可：打包产物只包含真正用到的图标，运行时无网络请求。下面以 `@iconify-icons/material-symbols` 为例：
 
 ```bash
 pnpm add @iconify-icons/material-symbols
@@ -77,7 +77,7 @@ import homeOutline from "@iconify-icons/material-symbols/home-outline";
 import search from "@iconify-icons/material-symbols/search";
 ```
 
-- 图标名与 Material Symbols 官网一致，可用后缀选风格：`home`（filled）、`home-outline`、`home-rounded`、`home-sharp` 等。
+- 图标名与该图标集的命名一致，可用后缀选风格：`home`（filled）、`home-outline`、`home-rounded`、`home-sharp` 等。
 - 其他 Iconify 图标集同理：`@iconify-icons/mdi/home`、`@iconify-icons/tabler/home`、`@iconify-icons/lucide/home`……
 - 同一页面大量图标时可以先 `addIcon` / `addCollection` 注册，再按名字传入，行为与 `@iconify/vue` 一致。
 

@@ -37,7 +37,10 @@ docs/
   .vitepress/config.ts         # site config: appearance off, pre-paint theme script, dotsharp aliases, sidebar
   .vitepress/theme/            # default theme extension: .dark sync, theme switcher, demo-row styling
   components/<name>.md         # only @includes the README.md from the component directory
-  guide/theme.md, index.md
+  guide/intro.md               # overview and conventions
+  guide/getting-started.md     # install, stylesheet, first component, theme
+  guide/patterns.md            # the item-component paradigm (canonical explanation)
+  guide/theme.md               # useTheme API and pre-paint theme setup
 types/assets.d.ts              # module declarations for *.css and *.vue
 ```
 
@@ -102,8 +105,9 @@ inventing a second convention.
 - **Read the slot inside a render-evaluated `computed`.** Never call `slots.default()` in `setup()` or a module-scope
   helper: it warns and drops slot dependency tracking. A `computed` that only the template reads is evaluated during
   render, which is correct.
-- **Document the paradigm in the component README** (`label`-only, slot override, index fallback, plus the variant
-  boolean if there is one), and keep the `TabsValue`-style value type exported from `src/index.ts`.
+- **Document the paradigm briefly in the component README** (`label`-only, slot override, index fallback, plus the
+  variant boolean if there is one) and link to `/guide/patterns`; the canonical explanation lives in
+  `docs/guide/patterns.md`. Keep the `TabsValue`-style value type exported from `src/index.ts`.
 
 ### Icons
 

@@ -22,9 +22,9 @@ const toggleOpen = ref(false);
 const indexValue = ref(0);
 </script>
 
-# NavigationRail 导航栏
+# NavigationRail 侧边导航栏
 
-Material Design 3 的 navigation rail：竖向导航。`NavigationRail` 持有选中值（`v-model:value`），
+竖向导航。`NavigationRail` 持有选中值（`v-model:value`），
 `NavigationRailItem` 描述每一项。同一应用里导航栏应当是唯一的导航元素，不要再叠加
 `NavigationBar` / `NavigationDrawer`。
 
@@ -32,6 +32,12 @@ Material Design 3 的 navigation rail：竖向导航。`NavigationRail` 持有�
 | -------------------------- | ------------ | -------------------------------- | -------------------------- |
 | `variant="static"`（默认） | 固定 80px    | 常显在图标下方                   | 不可展开                   |
 | `variant="expandable"`     | 80px ↔ 256px | 折叠时隐藏，展开时出现在图标右侧 | 可由菜单按钮或外部状态控制 |
+
+## 子项约定
+
+`NavigationRail` / `NavigationRailItem` 遵循[子项组件统一范式](/guide/patterns)：选中值由
+`v-model:value` 持有，`NavigationRailItem` 用 `label`、`icon` 或默认插槽描述内容，标识取 `value` 或
+父组件注入的索引。
 
 ## 静态导航栏
 
@@ -312,8 +318,7 @@ const index = ref(0);
 </template>
 ```
 
-索引由 `NavigationRail` 按声明顺序注入，只统计 `NavigationRailItem`；`v-for`、`v-if` 都按最终渲染顺序
-重新编号。需要跨版本稳定的标识时显式传 `value`。
+索引由 `NavigationRail` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 单项内容
 

@@ -8,7 +8,7 @@ hero:
   actions:
     - theme: brand
       text: 开始使用
-      link: /guide/theme
+      link: /guide/getting-started
     - theme: alt
       text: 组件
       link: /components/button

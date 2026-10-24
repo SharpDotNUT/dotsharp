@@ -18,7 +18,7 @@ const toTime = ref("");
 
 # Dialog 对话框
 
-Material Design 3 的对话框：打断当前操作、展示需要确认的信息。`Dialog` 有两种变体：
+用于打断当前操作、展示需要确认的信息。`Dialog` 有两种变体：
 
 - `basic`（默认）：视口居中的模态卡片，用于确认、提示和简短表单。
 - `fullscreen`：铺满视口的全屏对话框，用于移动端的多步骤表单等需要完整空间的任务。
@@ -29,7 +29,7 @@ Material Design 3 的对话框：打断当前操作、展示需要确认的信�
 ## 基础对话框
 
 标题用 `title`，正文用默认插槽，操作按钮放到 `actions` 插槽。操作按钮用 `variant="text"` 的
-`Button`，与 Material Design 的对话框操作一致。
+`Button`，与正文形成层级。
 
 <div class="demo-row">
   <Button @click="basic = true">打开基础对话框</Button>
@@ -203,8 +203,7 @@ const eventName = ref("");
 </template>
 ```
 
-全屏变体的 `actions` 渲染在顶部栏行尾；`icon` 与 `icon` 插槽只对 `basic` 生效。关闭按钮的图标固定为
-Material Symbols 的 `close`，无障碍名称由 `close-label` 提供（默认 `Close`）。
+全屏变体的 `actions` 渲染在顶部栏行尾；`icon` 与 `icon` 插槽只对 `basic` 生效。关闭按钮的图标固定为 `close`，无障碍名称由 `close-label` 提供（默认 `Close`）。
 
 ## 关闭行为
 
