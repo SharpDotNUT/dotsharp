@@ -1,9 +1,12 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false });
 
+type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonSize = "sm" | "md" | "lg";
+
 interface ButtonProps {
-  variant?: "primary" | "secondary" | "ghost";
-  size?: "sm" | "md" | "lg";
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
 }
@@ -14,12 +17,24 @@ withDefaults(defineProps<ButtonProps>(), {
   disabled: false,
   type: "button",
 });
+
+const variantClasses: Record<ButtonVariant, string> = {
+  primary: "bg-ds-primary text-ds-on-primary enabled:hover:bg-ds-primary-hover",
+  secondary: "border-ds-line bg-ds-surface text-ds-fg enabled:hover:bg-ds-surface-hover",
+  ghost: "bg-transparent text-ds-fg enabled:hover:bg-ds-surface",
+};
+
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: "h-[30px] px-[10px]",
+  md: "h-9 px-3.5",
+  lg: "h-11 px-5",
+};
 </script>
 
 <template>
   <button
-    class="ds-button"
-    :class="[`ds-button--${variant}`, `ds-button--${size}`]"
+    class="ds-button inline-flex cursor-pointer items-center justify-center gap-2 rounded-ds border border-transparent font-ds text-sm leading-none font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ds-focus disabled:cursor-not-allowed disabled:opacity-50"
+    :class="[variantClasses[variant], sizeClasses[size]]"
     :type="type"
     :disabled="disabled"
     v-bind="$attrs"
@@ -27,76 +42,3 @@ withDefaults(defineProps<ButtonProps>(), {
     <slot />
   </button>
 </template>
-
-<style scoped>
-.ds-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid transparent;
-  border-radius: var(--ds-radius);
-  font-family: var(--ds-font);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1;
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
-}
-
-.ds-button:focus-visible {
-  outline: 2px solid var(--ds-focus-ring);
-  outline-offset: 2px;
-}
-
-.ds-button--primary {
-  background-color: var(--ds-primary);
-  color: var(--ds-on-primary);
-}
-
-.ds-button--primary:not(:disabled):hover {
-  background-color: var(--ds-primary-hover);
-}
-
-.ds-button--secondary {
-  background-color: var(--ds-surface);
-  border-color: var(--ds-border);
-  color: var(--ds-text);
-}
-
-.ds-button--secondary:not(:disabled):hover {
-  background-color: var(--ds-surface-hover);
-}
-
-.ds-button--ghost {
-  background-color: transparent;
-  color: var(--ds-text);
-}
-
-.ds-button--ghost:not(:disabled):hover {
-  background-color: var(--ds-surface);
-}
-
-.ds-button--sm {
-  height: 30px;
-  padding: 0 10px;
-}
-
-.ds-button--md {
-  height: 36px;
-  padding: 0 14px;
-}
-
-.ds-button--lg {
-  height: 44px;
-  padding: 0 20px;
-}
-
-.ds-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-</style>

@@ -1,4 +1,5 @@
 import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vitepress";
 
 const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
@@ -27,6 +28,7 @@ export default defineConfig({
   ],
 
   vite: {
+    plugins: [tailwindcss()],
     resolve: {
       alias: [
         {

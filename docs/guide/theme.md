@@ -29,6 +29,13 @@ pnpm add @sharpdotnut/dotsharp
 import "@sharpdotnut/dotsharp/style.css";
 ```
 
+这个样式表由 Tailwind CSS 4 编译（`@theme inline` 把 `--ds-*` 变量映射成 `bg-ds-primary`、`text-ds-fg`
+这类工具类），只包含组件用到的那部分工具类：
+
+- 使用方无需安装 Tailwind，也无需配置 `@source` 扫描 `node_modules`。
+- 样式表不含 Tailwind preflight，不会重置应用自身的页面样式。
+- 单文件约 7 KB（压缩后），与组件颜色、圆角、字体一起发布。
+
 ## 使用
 
 ```ts

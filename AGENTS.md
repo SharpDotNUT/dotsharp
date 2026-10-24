@@ -27,7 +27,7 @@ Per package: `pnpm --filter @sharpdotnut/dotsharp <script>`, `pnpm --filter @dot
 ```
 packages/dotsharp/
   src/index.ts                 # the single public entry: components + useTheme
-  src/styles/index.css         # theme tokens (derived from HSL anchors)
+  src/styles/index.css         # Tailwind entry: HSL token anchors + @theme mapping
   src/components/<name>/
     <Name>.vue                 # component implementation
     README.md                  # the component's whole docs page (docs + live demo + snippets)
@@ -56,6 +56,27 @@ types/assets.d.ts              # module declarations for *.css and *.vue
   the persistence key is `dotsharp-theme`.
 - Components consume `--ds-*` tokens only. Never hardcode colors, radii, or fonts.
 
+### Styling with Tailwind
+
+- Components are styled with Tailwind utilities in the SFC template. No `<style scoped>` blocks, no hand-written
+  component CSS.
+- `src/styles/index.css` is the Tailwind entry. It imports **only** `tailwindcss/theme.css` and
+  `tailwindcss/utilities.css` — preflight is deliberately excluded, because a component library must not reset the
+  consumer's page.
+- `@theme inline` maps the `--ds-*` tokens onto Tailwind keys (`--color-ds-*`, `--radius-ds`, `--font-ds`); `inline`
+  keeps dark mode working because utilities then reference `var(--ds-…)` directly. Token names used by classes:
+  `bg-ds-bg`, `bg-ds-surface`, `bg-ds-surface-hover`, `bg-ds-primary`, `bg-ds-primary-hover`, `text-ds-fg`,
+  `text-ds-muted`, `text-ds-on-primary`, `border-ds-line`, `outline-ds-focus`, `rounded-ds`, `font-ds`.
+- Class names must stay statically greppable: keep them as literal strings (object maps are fine), never build them
+  by concatenation, or the utilities are not generated.
+- `@source '../components'` plus Tailwind's automatic detection generates the utilities; component `README.md`
+  demo markup is scanned too, so utilities used only in demos still ship.
+- The docs site loads the same source CSS through `@tailwindcss/vite` (registered in `docs/.vitepress/config.ts`), so
+  demos and the published stylesheet cannot drift. Docs chrome stays on VitePress variables and the hand-written
+  `docs/.vitepress/theme/style.css`.
+- The published `dist/style.css` is compiled by the Tailwind CLI (`pnpm build:css`), so consumers need no Tailwind
+  install and no `@source` configuration.
+
 ### Component docs
 
 - Each component's docs page is `src/components/<name>/README.md`: a `<script setup>` block, live demos wrapped in
@@ -71,7 +92,7 @@ types/assets.d.ts              # module declarations for *.css and *.vue
 ### Adding a component
 
 1. `src/components/<name>/<Name>.vue`: `defineOptions({ inheritAttrs: false })` +
-   `withDefaults(defineProps<…>(), …)`; `scoped` styles using `--ds-*` tokens only.
+   `withDefaults(defineProps<…>(), …)`; style with Tailwind utilities bound to `--ds-*` tokens.
 2. `src/components/<name>/README.md`: follow the docs conventions above.
 3. `src/index.ts`: add the named export (`export { default as <Name> } from …`).
 4. `docs/components/<name>.md`: the `@include` wrapper.
@@ -81,6 +102,9 @@ types/assets.d.ts              # module declarations for *.css and *.vue
 
 - The library ships ESM only: `vp pack` (configured in `packages/dotsharp/vite.config.ts`, `unplugin-vue/rolldown`
   with `platform: 'neutral'`); `vue` is a peer dependency.
+- `pnpm build` in the package = `vp pack && pnpm run build:css`. `vp pack` emits JS and types; the Tailwind CLI
+  compiles `src/styles/index.css` into `dist/style.css` afterwards. Keep that order: `vp pack` cleans `dist`.
+- `src/index.ts` must not import the stylesheet; the stylesheet is opt-in via the `style.css` export.
 - Output is fixed at `dist/index.js`, `dist/index.d.ts`, `dist/style.css`. `package.json` `exports` must match the
   real filenames: `. → dist/index.js`, `./style.css → dist/style.css`. Renaming output requires updating both.
 - Do not add a CJS build.
@@ -94,6 +118,9 @@ types/assets.d.ts              # module declarations for *.css and *.vue
   a type source).
 - VitePress is pinned to `2.0.0-alpha.20` (for Vite 8) and `vite-plus` to `1.4.0`. Never add pnpm `overrides` for
   `vite`; VitePress and Vite+ keep their own Vite instances.
+- Tailwind CSS is `4.3.3`: `tailwindcss` + `@tailwindcss/cli` in the library, `@tailwindcss/vite` in docs. The CLI's
+  `@parcel/watcher` build script is approved in `pnpm-workspace.yaml` (`allowBuilds`); without it `pnpm install`
+  fails with `ERR_PNPM_IGNORED_BUILDS`.
 - `pnpm-lock.yaml` must be committed.
 
 ### Verification

@@ -1,3 +1,11 @@
+/* A component library must not ship preflight: it would reset the consumer's page. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* Utilities are generated from the component sources (SFCs and their README demos). */
+@source '../components';
+
 :root {
   color-scheme: light;
 
@@ -40,6 +48,26 @@
   --ds-focus-ring: hsl(
     var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary) / var(--ds-focus-alpha)
   );
+}
+
+/*
+ * `inline` keeps the generated utilities pointing at the `--ds-*` token vars, so
+ * dark mode only has to override the HSL anchors above.
+ */
+@theme inline {
+  --color-ds-bg: var(--ds-bg);
+  --color-ds-surface: var(--ds-surface);
+  --color-ds-surface-hover: var(--ds-surface-hover);
+  --color-ds-line: var(--ds-border);
+  --color-ds-fg: var(--ds-text);
+  --color-ds-muted: var(--ds-text-muted);
+  --color-ds-primary: var(--ds-primary);
+  --color-ds-primary-hover: var(--ds-primary-hover);
+  --color-ds-on-primary: var(--ds-on-primary);
+  --color-ds-focus: var(--ds-focus-ring);
+
+  --radius-ds: var(--ds-radius);
+  --font-ds: var(--ds-font);
 }
 
 @media (prefers-color-scheme: dark) {
