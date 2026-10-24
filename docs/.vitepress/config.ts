@@ -11,6 +11,15 @@ export default defineConfig({
   appearance: false,
 
   head: [
+    ["link", { rel: "preconnect", href: "https://fonts-cdn.sharpdotnut.com", crossorigin: "" }],
+    ["link", { rel: "stylesheet", href: "https://fonts-cdn.sharpdotnut.com/Inter/Inter.css" }],
+    [
+      "link",
+      {
+        rel: "stylesheet",
+        href: "https://fonts-cdn.sharpdotnut.com/SourceHanSansCN/SourceHanSansCN.css",
+      },
+    ],
     [
       "script",
       {},

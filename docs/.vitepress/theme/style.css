@@ -1,3 +1,20 @@
+/*
+ * Inter covers Latin, Source Han Sans CN covers CJK; both come from
+ * fonts-cdn.sharpdotnut.com (linked in .vitepress/config.ts). The system
+ * faces stay as fallbacks when the CDN is unreachable.
+ *
+ * VitePress ships a `[lang]:where(:lang(zh))` override for its own font stack,
+ * so the zh selector here has to carry the extra specificity.
+ */
+:root,
+:root:lang(zh) {
+  --vp-font-family-base:
+    "Inter", "Source Han Sans CN", "Noto Sans CJK SC", "PingFang SC", system-ui, sans-serif;
+  /* Demos and component previews follow the docs typography. */
+  --ds-font:
+    "Inter", "Source Han Sans CN", "Noto Sans CJK SC", "PingFang SC", system-ui, sans-serif;
+}
+
 .ds-theme-switcher {
   display: inline-flex;
   align-items: center;
