@@ -18,12 +18,18 @@
   --ds-sat-brand: 75%;
   --ds-sat-neutral: 5%;
   --ds-sat-on-primary: 75%;
+  --ds-sat-tonal: 60%;
   --ds-focus-alpha: 35%;
 
   /* Light-mode lightness scale. */
   --ds-lum-bg: 100%;
   --ds-lum-surface: 96%;
   --ds-lum-surface-hover: 90%;
+  --ds-lum-elevated: 99%;
+  --ds-lum-elevated-hover: 93%;
+  --ds-lum-tonal: 92%;
+  --ds-lum-tonal-hover: 87%;
+  --ds-lum-on-tonal: 24%;
   --ds-lum-border: 84%;
   --ds-lum-text: 10%;
   --ds-lum-text-muted: 46%;
@@ -42,6 +48,13 @@
   --ds-bg: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-bg));
   --ds-surface: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-surface));
   --ds-surface-hover: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-surface-hover));
+  --ds-elevated: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-elevated));
+  --ds-elevated-hover: hsl(
+    var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-elevated-hover)
+  );
+  --ds-tonal: hsl(var(--ds-hue-brand) var(--ds-sat-tonal) var(--ds-lum-tonal));
+  --ds-tonal-hover: hsl(var(--ds-hue-brand) var(--ds-sat-tonal) var(--ds-lum-tonal-hover));
+  --ds-on-tonal: hsl(var(--ds-hue-brand) var(--ds-sat-tonal) var(--ds-lum-on-tonal));
   --ds-border: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-border));
   --ds-text: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-text));
   --ds-text-muted: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-text-muted));
@@ -61,6 +74,11 @@
   --color-ds-bg: var(--ds-bg);
   --color-ds-surface: var(--ds-surface);
   --color-ds-surface-hover: var(--ds-surface-hover);
+  --color-ds-elevated: var(--ds-elevated);
+  --color-ds-elevated-hover: var(--ds-elevated-hover);
+  --color-ds-tonal: var(--ds-tonal);
+  --color-ds-tonal-hover: var(--ds-tonal-hover);
+  --color-ds-on-tonal: var(--ds-on-tonal);
   --color-ds-line: var(--ds-border);
   --color-ds-fg: var(--ds-text);
   --color-ds-muted: var(--ds-text-muted);
@@ -82,11 +100,17 @@
 
     --ds-sat-brand: 89%;
     --ds-sat-on-primary: 45%;
+    --ds-sat-tonal: 30%;
     --ds-focus-alpha: 40%;
 
     --ds-lum-bg: 4%;
     --ds-lum-surface: 10%;
     --ds-lum-surface-hover: 16%;
+    --ds-lum-elevated: 13%;
+    --ds-lum-elevated-hover: 19%;
+    --ds-lum-tonal: 28%;
+    --ds-lum-tonal-hover: 34%;
+    --ds-lum-on-tonal: 88%;
     --ds-lum-border: 26%;
     --ds-lum-text: 98%;
     --ds-lum-text-muted: 65%;
@@ -101,11 +125,17 @@
 
   --ds-sat-brand: 89%;
   --ds-sat-on-primary: 45%;
+  --ds-sat-tonal: 30%;
   --ds-focus-alpha: 40%;
 
   --ds-lum-bg: 4%;
   --ds-lum-surface: 10%;
   --ds-lum-surface-hover: 16%;
+  --ds-lum-elevated: 13%;
+  --ds-lum-elevated-hover: 19%;
+  --ds-lum-tonal: 28%;
+  --ds-lum-tonal-hover: 34%;
+  --ds-lum-on-tonal: 88%;
   --ds-lum-border: 26%;
   --ds-lum-text: 98%;
   --ds-lum-text-muted: 65%;
