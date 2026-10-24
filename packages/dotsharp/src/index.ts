@@ -1,6 +1,9 @@
 export { default as Button } from "./components/button/Button.vue";
 export { default as Icon } from "./components/icon/Icon.vue";
 export { default as Input } from "./components/input/Input.vue";
+export { default as NavigationBar } from "./components/navigation-bar/NavigationBar.vue";
+export { default as NavigationItem } from "./components/navigation-bar/NavigationItem.vue";
+export type { NavigationValue, NavigationVariant } from "./components/navigation-bar/context";
 export { default as Tabs } from "./components/tabs/Tabs.vue";
 export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";
