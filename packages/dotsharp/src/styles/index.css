@@ -36,6 +36,7 @@
     sans-serif;
   --ds-radius: 8px;
   --ds-radius-lg: 16px;
+  --ds-radius-xl: 28px;
   --ds-scrim: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) 0% / 32%);
 
   --ds-bg: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-bg));
@@ -71,6 +72,7 @@
 
   --radius-ds: var(--ds-radius);
   --radius-ds-lg: var(--ds-radius-lg);
+  --radius-ds-xl: var(--ds-radius-xl);
   --font-ds: var(--ds-font);
 }
 

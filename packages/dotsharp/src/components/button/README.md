@@ -30,12 +30,14 @@ const clicks = ref(0);
 
 ## 变体
 
-通过 `variant` 指定按钮的视觉层级：`primary`（默认）、`secondary`、`ghost`。
+通过 `variant` 指定按钮的视觉层级：`primary`（默认）、`secondary`、`ghost`、`text`。
+`text` 是无底色的主色文字按钮，Material Design 3 里用于对话框操作等低强调场景。
 
 <div class="demo-row">
   <Button variant="primary">主要按钮</Button>
   <Button variant="secondary">次要按钮</Button>
   <Button variant="ghost">幽灵按钮</Button>
+  <Button variant="text">文字按钮</Button>
 </div>
 
 ```vue
@@ -43,6 +45,7 @@ const clicks = ref(0);
   <Button variant="primary">主要按钮</Button>
   <Button variant="secondary">次要按钮</Button>
   <Button variant="ghost">幽灵按钮</Button>
+  <Button variant="text">文字按钮</Button>
 </template>
 ```
 

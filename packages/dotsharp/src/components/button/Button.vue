@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineOptions({ inheritAttrs: false });
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "text";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface ButtonProps {
@@ -22,6 +22,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary: "bg-ds-primary text-ds-on-primary enabled:hover:bg-ds-primary-hover",
   secondary: "border-ds-line bg-ds-surface text-ds-fg enabled:hover:bg-ds-surface-hover",
   ghost: "bg-transparent text-ds-fg enabled:hover:bg-ds-surface",
+  text: "bg-transparent text-ds-primary enabled:hover:bg-ds-primary/10",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

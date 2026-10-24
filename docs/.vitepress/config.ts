@@ -67,6 +67,7 @@ export default defineConfig({
         text: "组件",
         items: [
           { text: "Button 按钮", link: "/components/button" },
+          { text: "Dialog 对话框", link: "/components/dialog" },
           { text: "Icon 图标", link: "/components/icon" },
           { text: "Input 输入框", link: "/components/input" },
           { text: "NavigationBar 导航栏", link: "/components/navigation-bar" },
