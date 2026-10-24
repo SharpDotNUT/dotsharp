@@ -100,6 +100,21 @@ inventing a second convention.
 - **Document the paradigm in the component README** (`label`-only, slot override, index fallback, plus the variant
   boolean if there is one), and keep the `TabsValue`-style value type exported from `src/index.ts`.
 
+### Icons
+
+- `Icon` (`src/components/icon/Icon.vue`) is the library's only icon component: a thin wrapper over `@iconify/vue`.
+  Never add a second icon implementation, and never inline one-off `<svg>` markup in components or docs demos.
+- Icons are data, not fonts: import each icon from its Iconify data package and pass it to `icon`
+  (`import flight from "@iconify-icons/material-symbols/flight"`). Do not use remote icon name strings in examples or
+  components — string names hit the Iconify API at runtime.
+- Material Symbols (`@iconify-icons/material-symbols`) is the default icon style for this library; reach for another
+  Iconify set only when a component genuinely needs one. Icon names follow the Material Symbols catalogue, with
+  `-outline` / `-rounded` / `-sharp` suffix variants.
+- `@iconify/vue` is a runtime dependency of the library (externalized in the build). Icon data packages are dev
+  dependencies of `docs` for the README demos and consumer-side dependencies for real apps.
+- Sizing follows `font-size` (`size` defaults to `1em`) and color follows `currentColor`, so compose icons with
+  `text-ds-*` utilities and `size` instead of hardcoding `color`/`width`.
+
 ### Component docs
 
 - Each component's docs page is `src/components/<name>/README.md`: a `<script setup>` block, live demos wrapped in

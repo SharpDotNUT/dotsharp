@@ -13,6 +13,7 @@
     "vue": "^3.5.44"
   },
   "devDependencies": {
+    "@iconify-icons/material-symbols": "^2.0.7",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.0.0",
     "tailwindcss": "^4.3.3",

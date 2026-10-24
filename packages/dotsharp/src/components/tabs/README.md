@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Tab, Tabs } from "@sharpdotnut/dotsharp";
+import { Icon, Tab, Tabs } from "@sharpdotnut/dotsharp";
+import explore from "@iconify-icons/material-symbols/explore";
+import flight from "@iconify-icons/material-symbols/flight";
+import luggage from "@iconify-icons/material-symbols/luggage";
 
 const tab = ref("overview");
 const index = ref(0);
@@ -83,28 +86,15 @@ const index = ref(0);
 <div class="demo-row">
   <Tabs v-model:value="content" class="w-full max-w-md">
     <Tab value="flights">
-      <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"
-          fill="currentColor"
-        />
-      </svg>
+      <Icon :icon="flight" :size="20" />
       <span>航班</span>
     </Tab>
     <Tab value="trips">
-      <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          d="M9 3h6a2 2 0 0 1 2 2v1h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3V5a2 2 0 0 1 2-2Zm6 3V5H9v1h6ZM4 10v8h16v-8H4Z"
-          fill="currentColor"
-        />
-      </svg>
+      <Icon :icon="luggage" :size="20" />
       <span>行程</span>
     </Tab>
     <Tab value="explore">
-      <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" />
-        <path d="m15.5 8.5-2 5-5 2 2-5z" fill="currentColor" />
-      </svg>
+      <Icon :icon="explore" :size="20" />
       <span>探索</span>
     </Tab>
   </Tabs>
@@ -113,20 +103,29 @@ const index = ref(0);
 当前选中值：{{ content }}
 
 ```vue
-<Tabs v-model:value="content">
-  <Tab value="flights">
-    <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true"><!-- 飞机图标 --></svg>
-    <span>航班</span>
-  </Tab>
-  <Tab value="trips">
-    <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true"><!-- 行李箱图标 --></svg>
-    <span>行程</span>
-  </Tab>
-  <Tab value="explore">
-    <svg class="size-5" viewBox="0 0 24 24" aria-hidden="true"><!-- 罗盘图标 --></svg>
-    <span>探索</span>
-  </Tab>
-</Tabs>
+<script setup lang="ts">
+import { Icon } from "@sharpdotnut/dotsharp";
+import explore from "@iconify-icons/material-symbols/explore";
+import flight from "@iconify-icons/material-symbols/flight";
+import luggage from "@iconify-icons/material-symbols/luggage";
+</script>
+
+<template>
+  <Tabs v-model:value="content">
+    <Tab value="flights">
+      <Icon :icon="flight" :size="20" />
+      <span>航班</span>
+    </Tab>
+    <Tab value="trips">
+      <Icon :icon="luggage" :size="20" />
+      <span>行程</span>
+    </Tab>
+    <Tab value="explore">
+      <Icon :icon="explore" :size="20" />
+      <span>探索</span>
+    </Tab>
+  </Tabs>
+</template>
 ```
 
 只写 `label` 时内容为单行文字；插槽内容与标签文字一起放入插槽即可，布局（纵向或单行）由 `Tabs` 决定：
