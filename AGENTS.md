@@ -77,6 +77,29 @@ types/assets.d.ts              # module declarations for *.css and *.vue
 - The published `dist/style.css` is compiled by the Tailwind CLI (`pnpm build:css`), so consumers need no Tailwind
   install and no `@source` configuration.
 
+### Item components (the Tabs / Tab paradigm)
+
+Any component that is configured as a list of child components (`Tabs` + `Tab`, and later `Select` + `Option`,
+`Steps` + `Step`, …) uses this one contract. `Tabs` / `Tab` is the reference implementation; copy it instead of
+inventing a second convention.
+
+- **Selection is a model.** The parent declares `const model = defineModel<Value>("value", { default: 0 })`, so
+  consumers write `v-model:value`. The default `0` means the first child is selected before any interaction.
+- **Child text is slot-else-prop.** A child declares `label?: string` for plain text and renders `<slot>{{ label }}</slot>`.
+  Slot content always wins; `label` is only the fallback when no default slot is provided.
+- **Child identity is `value ?? index`.** A child declares `value?: string | number`; when omitted its identity is its
+  declaration-order index (0-based). The index is internal: users never pass it.
+- **The parent owns the index.** The parent flattens `Fragment`s in its default slot (so `v-for` works), then
+  `cloneVNode(node, { index })` for every child component; `v-if`/`v-for` therefore renumber by final render order.
+- **Shared state goes through a typed context.** `src/components/<name>/context.ts` holds the value type, the
+  `InjectionKey`, and the context interface (`model`, plus any layout flag such as `variant`); the parent `provide`s it,
+  children `inject` it with a `null` fallback so they render standalone.
+- **Read the slot inside a render-evaluated `computed`.** Never call `slots.default()` in `setup()` or a module-scope
+  helper: it warns and drops slot dependency tracking. A `computed` that only the template reads is evaluated during
+  render, which is correct.
+- **Document the paradigm in the component README** (`label`-only, slot override, index fallback, plus the variant
+  boolean if there is one), and keep the `TabsValue`-style value type exported from `src/index.ts`.
+
 ### Component docs
 
 - Each component's docs page is `src/components/<name>/README.md`: a `<script setup>` block, live demos wrapped in
