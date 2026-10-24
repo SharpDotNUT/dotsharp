@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@sharpdotnut/dotsharp": ["../packages/dotsharp/src/index.ts"]
+    }
+  },
+  "include": [".vitepress/**/*.ts", ".vitepress/**/*.vue", "../types/assets.d.ts"]
+}

@@ -1,0 +1,25 @@
+{
+  "name": "dotsharp-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @dotsharp/docs dev",
+    "build": "pnpm run build:lib && pnpm run build:docs",
+    "build:lib": "pnpm --filter @sharpdotnut/dotsharp build",
+    "build:docs": "pnpm --filter @dotsharp/docs build",
+    "preview": "pnpm --filter @dotsharp/docs preview",
+    "check": "vp check",
+    "test": "vp test",
+    "typecheck": "pnpm --filter @sharpdotnut/dotsharp typecheck && pnpm --filter @dotsharp/docs typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "happy-dom": "^21.0.4",
+    "typescript": "~5.9.3",
+    "vite-plus": "1.4.0"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@12.14.0"
+}

@@ -1,0 +1,81 @@
+:root {
+  color-scheme: light;
+
+  /*
+   * HSL anchors. Every colour token below is composed from these, so shifting
+   * a hue or saturation restyles the whole palette consistently.
+   */
+  --ds-hue-brand: 243;
+  --ds-hue-neutral: 240;
+  --ds-sat-brand: 75%;
+  --ds-sat-neutral: 5%;
+  --ds-sat-on-primary: 75%;
+  --ds-focus-alpha: 35%;
+
+  /* Light-mode lightness scale. */
+  --ds-lum-bg: 100%;
+  --ds-lum-surface: 96%;
+  --ds-lum-surface-hover: 90%;
+  --ds-lum-border: 84%;
+  --ds-lum-text: 10%;
+  --ds-lum-text-muted: 46%;
+  --ds-lum-primary: 59%;
+  --ds-lum-primary-hover: 51%;
+  --ds-lum-on-primary: 100%;
+
+  --ds-font:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
+    sans-serif;
+  --ds-radius: 8px;
+
+  --ds-bg: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-bg));
+  --ds-surface: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-surface));
+  --ds-surface-hover: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-surface-hover));
+  --ds-border: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-border));
+  --ds-text: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-text));
+  --ds-text-muted: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-text-muted));
+  --ds-primary: hsl(var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary));
+  --ds-primary-hover: hsl(var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary-hover));
+  --ds-on-primary: hsl(var(--ds-hue-brand) var(--ds-sat-on-primary) var(--ds-lum-on-primary));
+  --ds-focus-ring: hsl(
+    var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary) / var(--ds-focus-alpha)
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ds-sat-brand: 89%;
+    --ds-sat-on-primary: 45%;
+    --ds-focus-alpha: 40%;
+
+    --ds-lum-bg: 4%;
+    --ds-lum-surface: 10%;
+    --ds-lum-surface-hover: 16%;
+    --ds-lum-border: 26%;
+    --ds-lum-text: 98%;
+    --ds-lum-text-muted: 65%;
+    --ds-lum-primary: 74%;
+    --ds-lum-primary-hover: 82%;
+    --ds-lum-on-primary: 20%;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ds-sat-brand: 89%;
+  --ds-sat-on-primary: 45%;
+  --ds-focus-alpha: 40%;
+
+  --ds-lum-bg: 4%;
+  --ds-lum-surface: 10%;
+  --ds-lum-surface-hover: 16%;
+  --ds-lum-border: 26%;
+  --ds-lum-text: 98%;
+  --ds-lum-text-muted: 65%;
+  --ds-lum-primary: 74%;
+  --ds-lum-primary-hover: 82%;
+  --ds-lum-on-primary: 20%;
+}

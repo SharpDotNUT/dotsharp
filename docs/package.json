@@ -1,0 +1,21 @@
+{
+  "name": "@dotsharp/docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@sharpdotnut/dotsharp": "workspace:*",
+    "vue": "^3.5.44"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "~5.9.3",
+    "vitepress": "2.0.0-alpha.20",
+    "vue-tsc": "^3.3.13"
+  }
+}
