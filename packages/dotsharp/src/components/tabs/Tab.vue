@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { computed, inject, onBeforeUnmount, onMounted, ref } from "vue";
+import type { IconifyIcon } from "@iconify/vue";
+import Icon from "../icon/Icon.vue";
 import { tabsContextKey, type TabsValue } from "./context";
 
 defineOptions({ inheritAttrs: false });
 
 interface TabProps {
   label?: string;
+  /** 与 `Icon` 相同：图标数据或图标名，渲染在文字/插槽之前。 */
+  icon?: IconifyIcon | string;
   value?: TabsValue;
   /** 由 Tabs 注入的内部索引，无需手写。 */
   index?: number;
@@ -13,6 +17,7 @@ interface TabProps {
 
 const props = withDefaults(defineProps<TabProps>(), {
   label: undefined,
+  icon: undefined,
   value: undefined,
   index: 0,
 });
@@ -49,6 +54,7 @@ function select(): void {
     @click="select"
     v-bind="$attrs"
   >
+    <Icon v-if="icon" :icon="icon" size="1.25em" />
     <slot>{{ label }}</slot>
   </button>
 </template>

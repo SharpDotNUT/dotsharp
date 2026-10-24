@@ -87,6 +87,9 @@ inventing a second convention.
   consumers write `v-model:value`. The default `0` means the first child is selected before any interaction.
 - **Child text is slot-else-prop.** A child declares `label?: string` for plain text and renders `<slot>{{ label }}</slot>`.
   Slot content always wins; `label` is only the fallback when no default slot is provided.
+- **Icons are a prop, not slot work.** A child declares `icon?: IconifyIcon | string` and renders the shared `Icon`
+  before the slot/label (sized in `em` so it follows the font), so `<Tab label="Flights" :icon="flight" />` works
+  without any slot.
 - **Child identity is `value ?? index`.** A child declares `value?: string | number`; when omitted its identity is its
   declaration-order index (0-based). The index is internal: users never pass it.
 - **The parent owns the index.** The parent flattens `Fragment`s in its default slot (so `v-for` works), then

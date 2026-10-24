@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Icon, Tab, Tabs } from "@sharpdotnut/dotsharp";
+import { Tab, Tabs } from "@sharpdotnut/dotsharp";
 import explore from "@iconify-icons/material-symbols/explore";
 import flight from "@iconify-icons/material-symbols/flight";
 import luggage from "@iconify-icons/material-symbols/luggage";
@@ -17,7 +17,7 @@ const variantTab = ref("overview");
 
 - 所有 `Tab` 平分 `Tabs` 的宽度，与文字长短无关。
 - `Tab` 的标识默认为自身索引，也可以用 `value` 指定。
-- `Tab` 的文字用 `label`，需要图标等自定义内容时改用默认插槽。
+- `Tab` 的文字用 `label`，图标用 `icon`（直接传图标数据），其它自定义内容用默认插槽。
 
 ## 基础用法
 
@@ -79,24 +79,19 @@ const index = ref(0);
 
 索引由 `Tabs` 按声明顺序注入，只统计 `Tab` 子项本身；`v-if` 增删、`v-for` 循环都按最终渲染顺序重新编号。需要跨版本稳定的标识时显式传 `value`。
 
-## 内容：label 与插槽
+## 内容：label、icon 与插槽
 
-`label` 写纯文本；需要图标、徽标等自定义内容时用默认插槽。**插槽优先于 `label`**，两者同时存在时 `label` 不参与渲染。
+三种写法可以组合：
+
+- `label`：纯文本；
+- `icon`：与 `Icon` 的 `icon` 同源，直接给图标数据，渲染在文字之前（尺寸 `1.25em`，跟随字号）；
+- 默认插槽：其它自定义内容，**优先于 `label`**——插槽与 `label` 同时存在时 `label` 不参与渲染。
 
 <div class="demo-row">
   <Tabs v-model:value="content" class="w-full max-w-md">
-    <Tab value="flights">
-      <Icon :icon="flight" :size="20" />
-      <span>航班</span>
-    </Tab>
-    <Tab value="trips">
-      <Icon :icon="luggage" :size="20" />
-      <span>行程</span>
-    </Tab>
-    <Tab value="explore">
-      <Icon :icon="explore" :size="20" />
-      <span>探索</span>
-    </Tab>
+    <Tab label="航班" value="flights" :icon="flight" />
+    <Tab label="行程" value="trips" :icon="luggage" />
+    <Tab label="探索" value="explore" :icon="explore" />
   </Tabs>
 </div>
 
@@ -104,37 +99,31 @@ const index = ref(0);
 
 ```vue
 <script setup lang="ts">
-import { Icon } from "@sharpdotnut/dotsharp";
+import { ref } from "vue";
+import { Tab, Tabs } from "@sharpdotnut/dotsharp";
 import explore from "@iconify-icons/material-symbols/explore";
 import flight from "@iconify-icons/material-symbols/flight";
 import luggage from "@iconify-icons/material-symbols/luggage";
+
+const content = ref("flights");
 </script>
 
 <template>
   <Tabs v-model:value="content">
-    <Tab value="flights">
-      <Icon :icon="flight" :size="20" />
-      <span>航班</span>
-    </Tab>
-    <Tab value="trips">
-      <Icon :icon="luggage" :size="20" />
-      <span>行程</span>
-    </Tab>
-    <Tab value="explore">
-      <Icon :icon="explore" :size="20" />
-      <span>探索</span>
-    </Tab>
+    <Tab label="航班" value="flights" :icon="flight" />
+    <Tab label="行程" value="trips" :icon="luggage" />
+    <Tab label="探索" value="explore" :icon="explore" />
   </Tabs>
 </template>
 ```
 
-只写 `label` 时内容为单行文字；插槽内容与标签文字一起放入插槽即可，布局（纵向或单行）由 `Tabs` 决定：
+插槽适合徽标、角标等自由排版；图标仍由 `icon` 提供，插槽内容排在图标之后：
 
 ```vue
-<Tab label="这行文字会被插槽覆盖" value="custom">
+<Tab label="这行文字会被插槽覆盖" :icon="flight" value="custom">
   <span class="font-medium">插槽内容</span>
 </Tab>
-<Tab label="没有插槽时用 label" value="label" />
+<Tab label="只用 label 时就是一行文字" value="label" />
 ```
 
 ## 变体样式
@@ -169,7 +158,7 @@ import luggage from "@iconify-icons/material-symbols/luggage";
 `Tabs` / `Tab` 确立了本库「子项组件」的统一写法，后续同类组件（`Select` / `Option`、`Steps` / `Step` 等）沿用同一套约定：
 
 - 父组件用 `defineModel` 暴露选中值，消费方写 `v-model:value`；未绑定模型时首个子项默认选中。
-- 子组件用 `label` 承载纯文本，用默认插槽承载自定义内容；**插槽优先，`label` 兜底**。
+- 子组件用 `label` 承载纯文本，用 `icon` 直接承载图标（与 `Icon` 的 `icon` 同源），用默认插槽承载其它自定义内容；**插槽优先，`label` 兜底**。
 - 子组件用 **`value`** 声明标识；省略时按声明顺序取 **数字索引**（`0` 起），索引由父组件注入，使用方无需关心。
 - 选中值类型为 `string | number`。需要稳定的跨版本标识时显式传 `value`，纯展示顺序的场合用索引即可。
 
@@ -186,12 +175,14 @@ import luggage from "@iconify-icons/material-symbols/luggage";
 
 ### Tab
 
-| 属性  | 类型               | 默认值       | 说明                                 |
-| ----- | ------------------ | ------------ | ------------------------------------ |
-| label | `string`           | —            | 纯文本内容；存在默认插槽时被插槽覆盖 |
-| value | `string \| number` | 所在位置索引 | 子项标识                             |
+| 属性  | 类型                    | 默认值       | 说明                                              |
+| ----- | ----------------------- | ------------ | ------------------------------------------------- |
+| label | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖              |
+| icon  | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.25em` 跟随字号 |
+| value | `string \| number`      | 所在位置索引 | 子项标识                                          |
 
-- 默认插槽：标签内容，优先于 `label`。
+- 默认插槽：标签内容，优先于 `label`；与 `icon` 同时使用时插槽内容排在图标之后。
+- 需要不受 `1.25em` 限制的图标时，改用插槽放 `<Icon :icon="…" :size="…" />`。
 - 根元素是 `role="tab"` 的 `button`，带 `aria-selected`，其余属性与事件透传到该按钮。
 - 点击已选中的标签不会重复写模型，也不会触发 `update:value`。
 
