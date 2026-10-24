@@ -25,7 +25,7 @@ Material Design 3 的 navigation drawer：`NavigationDrawer` 持有选中值（`
 `NavigationDrawerItem` 描述每一项，`NavigationDrawerHeading` / `NavigationDrawerDivider` 负责分组。
 
 - `variant="standard"`：嵌在应用布局里、始终可见，常用于平板 / 桌面。
-- `variant="modal"`：浮在应用之上，带遮罩、焦点陷阱与滚动锁定，由 `v-model:open` 控制。
+- `variant="modal"`：在最近的定位容器内覆盖内容，带遮罩与焦点陷阱，由 `v-model:open` 控制；不脱离容器、不锁定页面滚动。
 - 两种变体宽度都是 M3 规定的 360px，窄屏时收缩到可用宽度。
 - 选中项是整行胶囊（`secondary-container` 语义，取主色 10% 底色），行尾可放 `badge`。
 
@@ -86,27 +86,31 @@ const current = ref("inbox");
 
 宽度固定为 360px 是 M3 的建议值；需要更窄时用 `class="!w-…"` 覆写，或在外层容器里裁切。
 
-## Modal：遮罩浮层
+## Modal：容器内遮罩
 
-打开时抽屉从左侧滑入，遮罩覆盖页面；点击遮罩、按 Escape 都会关闭。打开期间背景滚动被锁定，
+modal 抽屉在最近的定位容器内覆盖内容（父元素需要 `relative`）。打开时从左侧滑入，遮罩只覆盖该容器；
+点击遮罩、按 Escape 都会关闭。组件不会 Teleport 到 body、不会固定到视口，也不锁定页面滚动。
 焦点移入抽屉并在内部循环，关闭后回到打开前的元素。
 
 <div class="demo-row">
-  <Button @click="modalOpen = true">打开 Modal drawer</Button>
-  <span class="text-sm text-ds-muted">点击遮罩或按 Escape 关闭</span>
+  <div class="relative flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <div class="flex flex-1 flex-col items-start gap-3 p-6">
+      <Button @click="modalOpen = true">打开 Modal drawer</Button>
+      <span class="text-sm text-ds-muted">遮罩只覆盖这个容器</span>
+    </div>
+    <NavigationDrawer v-model:value="modal" v-model:open="modalOpen" variant="modal" label="邮件">
+      <NavigationDrawerHeading label="邮件" />
+      <NavigationDrawerItem label="收件箱" value="inbox" :icon="inbox" :badge="24" />
+      <NavigationDrawerItem label="发件箱" value="outbox" :icon="send" />
+      <NavigationDrawerItem label="收藏" value="favorites" :icon="favorite" />
+      <NavigationDrawerItem label="垃圾箱" value="trash" :icon="deleteIcon" />
+      <NavigationDrawerDivider />
+      <NavigationDrawerHeading label="标签" />
+      <NavigationDrawerItem label="工作" value="work" :icon="folder" />
+      <NavigationDrawerItem label="生活" value="life" :icon="folder" />
+    </NavigationDrawer>
+  </div>
 </div>
-
-<NavigationDrawer v-model:value="modal" v-model:open="modalOpen" variant="modal" label="邮件">
-  <NavigationDrawerHeading label="邮件" />
-  <NavigationDrawerItem label="收件箱" value="inbox" :icon="inbox" :badge="24" />
-  <NavigationDrawerItem label="发件箱" value="outbox" :icon="send" />
-  <NavigationDrawerItem label="收藏" value="favorites" :icon="favorite" />
-  <NavigationDrawerItem label="垃圾箱" value="trash" :icon="deleteIcon" />
-  <NavigationDrawerDivider />
-  <NavigationDrawerHeading label="标签" />
-  <NavigationDrawerItem label="工作" value="work" :icon="folder" />
-  <NavigationDrawerItem label="生活" value="life" :icon="folder" />
-</NavigationDrawer>
 
 当前选中值：{{ modal }}
 
@@ -127,18 +131,24 @@ const current = ref("inbox");
 </script>
 
 <template>
-  <Button @click="open = true">打开导航</Button>
+  <div class="relative flex h-[26rem]">
+    <div class="flex-1 p-6">
+      <Button @click="open = true">打开导航</Button>
+    </div>
 
-  <NavigationDrawer v-model:value="current" v-model:open="open" variant="modal" label="邮件">
-    <NavigationDrawerHeading label="邮件" />
-    <NavigationDrawerItem label="收件箱" value="inbox" :icon="inbox" :badge="24" />
-    <NavigationDrawerItem label="发件箱" value="outbox" :icon="send" />
-  </NavigationDrawer>
+    <NavigationDrawer v-model:value="current" v-model:open="open" variant="modal" label="邮件">
+      <NavigationDrawerHeading label="邮件" />
+      <NavigationDrawerItem label="收件箱" value="inbox" :icon="inbox" :badge="24" />
+      <NavigationDrawerItem label="发件箱" value="outbox" :icon="send" />
+    </NavigationDrawer>
+  </div>
 </template>
 ```
 
-Modal 结构：遮罩 `z-40`（`--ds-scrim`，32% 黑），面板 `z-50`、`role="dialog"`、`aria-modal="true"`，
-宽度 360px 并在窄屏收缩到 100%，只有尾侧（右侧）两角是 16px 圆角。进入动画 250ms，退出 200ms。
+Modal 结构：遮罩 `absolute inset-0 z-40`（`--ds-scrim`，32% 黑），面板 `absolute inset-y-0 left-0 z-50`、
+`role="dialog"`、`aria-modal="true"`，宽度 360px 并在窄屏收缩到容器宽度，只有尾侧（右侧）两角是 16px 圆角。
+进入动画 250ms，退出 200ms。两者都锚定最近的定位容器，容器需要 `position: relative`（Tailwind 的 `relative`）；
+没有定位父元素时会锚到更外层的定位祖先，因此务必给容器加 `relative`。
 
 `label` 会同时写到 `<nav>` 与对话框的 `aria-label`；modal 下的其余透传属性落在对话框面板上，
 standard 下则落在 `<nav>` 上。
@@ -247,6 +257,6 @@ const index = ref(0);
 ### 可访问性
 
 - `standard` 输出 `<nav>`；`modal` 输出 `role="dialog"` + `aria-modal="true"` 的面板，内部仍是 `<nav>`。
-- modal 打开时焦点移入抽屉（优先选中项），Tab / Shift+Tab 在面板内循环，Escape 关闭，关闭后焦点回到打开前的元素；背景滚动被锁定。
+- modal 打开时焦点移入抽屉（优先选中项），Tab / Shift+Tab 在面板内循环，Escape 关闭，关闭后焦点回到打开前的元素；不会锁定页面滚动，也不会 Teleport 到容器外。
 - 选中项用 `aria-current="page"` 表达当前位置，不要只依赖颜色。
 - 每个抽屉都建议传 `label`，否则 landmark / dialog 没有可访问名称。

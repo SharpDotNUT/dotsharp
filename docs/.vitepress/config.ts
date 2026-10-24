@@ -71,6 +71,7 @@ export default defineConfig({
           { text: "Input 输入框", link: "/components/input" },
           { text: "NavigationBar 导航栏", link: "/components/navigation-bar" },
           { text: "NavigationDrawer 导航抽屉", link: "/components/navigation-drawer" },
+          { text: "NavigationRail 侧边导航栏", link: "/components/navigation-rail" },
           { text: "Tabs 标签页", link: "/components/tabs" },
         ],
       },

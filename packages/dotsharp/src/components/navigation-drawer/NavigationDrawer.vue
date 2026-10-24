@@ -4,15 +4,12 @@ import {
   computed,
   createVNode,
   Fragment,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
   provide,
   ref,
   useSlots,
-  watch,
   type VNode,
 } from "vue";
+import { useOverlayPanel } from "../../composables/useOverlayPanel";
 import NavigationDrawerItem from "./NavigationDrawerItem.vue";
 import { navigationDrawerContextKey, type NavigationDrawerValue } from "./context";
 
@@ -43,83 +40,15 @@ const isModal = computed(() => props.variant === "modal");
 
 const panelRef = ref<HTMLElement | null>(null);
 
-let restoreFocus: HTMLElement | null = null;
-let previousOverflow = "";
-
 function close(): void {
   open.value = false;
 }
 
-function focusableElements(): HTMLElement[] {
-  const panel = panelRef.value;
-  if (!panel) return [];
-  return [
-    ...panel.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-    ),
-  ];
-}
-
-/** modal 打开期间：Escape 关闭，Tab 在面板内循环（焦点陷阱）。 */
-function onKeydown(event: KeyboardEvent): void {
-  if (!open.value || !isModal.value) return;
-
-  if (event.key === "Escape") {
-    event.preventDefault();
-    open.value = false;
-    return;
-  }
-
-  if (event.key !== "Tab") return;
-
-  const items = focusableElements();
-  const first = items[0];
-  const last = items[items.length - 1];
-
-  if (!first || !last) {
-    event.preventDefault();
-    panelRef.value?.focus();
-    return;
-  }
-
-  if (event.shiftKey) {
-    if (document.activeElement === first || document.activeElement === panelRef.value) {
-      event.preventDefault();
-      last.focus();
-    }
-  } else if (document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
-  }
-}
-
-watch(open, (isOpen) => {
-  if (!isModal.value || typeof document === "undefined") return;
-
-  if (isOpen) {
-    restoreFocus = document.activeElement as HTMLElement | null;
-    previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    nextTick(() => {
-      const panel = panelRef.value;
-      if (!panel) return;
-      (panel.querySelector<HTMLElement>('[aria-current="page"]') ?? panel).focus();
-    });
-  } else {
-    document.body.style.overflow = previousOverflow;
-    restoreFocus?.focus();
-    restoreFocus = null;
-  }
-});
-
-onMounted(() => window.addEventListener("keydown", onKeydown));
-
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", onKeydown);
-  if (typeof document !== "undefined" && isModal.value && open.value) {
-    document.body.style.overflow = previousOverflow;
-  }
+useOverlayPanel({
+  active: computed(() => isModal.value && open.value),
+  panel: panelRef,
+  initialFocus: '[aria-current="page"]',
+  onDismiss: close,
 });
 
 function flatten(nodes: VNode[]): VNode[] {
@@ -147,7 +76,7 @@ const DrawerNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
 </script>
 
 <template>
-  <Teleport v-if="isModal" to="body">
+  <template v-if="isModal">
     <Transition
       enter-from-class="opacity-0"
       enter-active-class="transition-opacity duration-[250ms] ease-out"
@@ -157,7 +86,7 @@ const DrawerNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
       <div
         v-if="open"
         aria-hidden="true"
-        class="ds-navigation-drawer__scrim fixed inset-0 z-40 bg-ds-scrim"
+        class="ds-navigation-drawer__scrim absolute inset-0 z-40 bg-ds-scrim"
         @click="close"
       />
     </Transition>
@@ -176,14 +105,14 @@ const DrawerNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
         aria-modal="true"
         :aria-label="label"
         tabindex="-1"
-        class="ds-navigation-drawer ds-navigation-drawer--modal fixed inset-y-0 left-0 z-50 flex w-90 max-w-full flex-col overflow-y-auto rounded-r-ds-lg bg-ds-surface font-ds shadow-xl focus-visible:outline-none"
+        class="ds-navigation-drawer ds-navigation-drawer--modal absolute inset-y-0 left-0 z-50 flex w-90 max-w-full flex-col overflow-y-auto rounded-r-ds-lg bg-ds-surface font-ds shadow-xl focus-visible:outline-none"
       >
         <nav :aria-label="label" class="flex min-h-full flex-col px-3 py-3">
           <DrawerNodes :nodes="items" />
         </nav>
       </aside>
     </Transition>
-  </Teleport>
+  </template>
 
   <nav
     v-else

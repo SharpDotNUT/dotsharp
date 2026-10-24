@@ -9,6 +9,9 @@ export { default as NavigationDrawerItem } from "./components/navigation-drawer/
 export { default as NavigationDrawerHeading } from "./components/navigation-drawer/NavigationDrawerHeading.vue";
 export { default as NavigationDrawerDivider } from "./components/navigation-drawer/NavigationDrawerDivider.vue";
 export type { NavigationDrawerValue } from "./components/navigation-drawer/context";
+export { default as NavigationRail } from "./components/navigation-rail/NavigationRail.vue";
+export { default as NavigationRailItem } from "./components/navigation-rail/NavigationRailItem.vue";
+export type { NavigationRailValue } from "./components/navigation-rail/context";
 export { default as Tabs } from "./components/tabs/Tabs.vue";
 export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";
