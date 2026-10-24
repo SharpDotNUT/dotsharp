@@ -70,6 +70,7 @@ export default defineConfig({
           { text: "Icon 图标", link: "/components/icon" },
           { text: "Input 输入框", link: "/components/input" },
           { text: "NavigationBar 导航栏", link: "/components/navigation-bar" },
+          { text: "NavigationDrawer 导航抽屉", link: "/components/navigation-drawer" },
           { text: "Tabs 标签页", link: "/components/tabs" },
         ],
       },
