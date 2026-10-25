@@ -1,9 +1,13 @@
 export { default as AppBar } from "./components/app-bar/AppBar.vue";
 export { default as Button } from "./components/button/Button.vue";
+export { default as Checkbox } from "./components/checkbox/Checkbox.vue";
+export { default as Chip } from "./components/chip/Chip.vue";
 export { default as Dialog } from "./components/dialog/Dialog.vue";
 export { default as Icon } from "./components/icon/Icon.vue";
 export { default as IconButton } from "./components/icon-button/IconButton.vue";
 export { default as Input } from "./components/input/Input.vue";
+export { default as List } from "./components/list/List.vue";
+export { default as ListItem } from "./components/list/ListItem.vue";
 export { default as NavigationBar } from "./components/navigation-bar/NavigationBar.vue";
 export { default as NavigationItem } from "./components/navigation-bar/NavigationItem.vue";
 export type { NavigationValue, NavigationVariant } from "./components/navigation-bar/context";
@@ -18,12 +22,19 @@ export type {
   NavigationRailPresentation,
   NavigationRailValue,
 } from "./components/navigation-rail/context";
+export { default as RadioGroup } from "./components/radio/RadioGroup.vue";
+export { default as Radio } from "./components/radio/Radio.vue";
+export type { RadioValue } from "./components/radio/context";
+export { default as SegmentedButtons } from "./components/segmented-buttons/SegmentedButtons.vue";
+export { default as SegmentedButton } from "./components/segmented-buttons/SegmentedButton.vue";
+export type { SegmentedValue } from "./components/segmented-buttons/context";
 export { default as Select } from "./components/select/Select.vue";
 export { default as Option } from "./components/select/Option.vue";
 export type { SelectValue } from "./components/select/context";
 export { default as Slider } from "./components/slider/Slider.vue";
 export { default as RangeSlider } from "./components/slider/RangeSlider.vue";
 export type { SliderRangeValue, SliderSize, SliderValueDisplay } from "./components/slider/shared";
+export { default as Switch } from "./components/switch/Switch.vue";
 export { default as Tabs } from "./components/tabs/Tabs.vue";
 export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";

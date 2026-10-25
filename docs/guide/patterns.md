@@ -9,6 +9,8 @@
 | `NavigationBar`    | `NavigationItem`       | `string \| number` |
 | `NavigationRail`   | `NavigationRailItem`   | `string \| number` |
 | `NavigationDrawer` | `NavigationDrawerItem` | `string \| number` |
+| `SegmentedButtons` | `SegmentedButton`      | `string \| number` |
+| `RadioGroup`       | `Radio`                | `string \| number` |
 
 新增同类组件（如 `Steps` / `Step`）时沿用这套写法，不要另立规则。
 
