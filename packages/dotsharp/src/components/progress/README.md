@@ -34,11 +34,14 @@ function randomize() {
 
 ```vue
 <script setup lang="ts">
+import { ref } from "vue";
 import { Progress } from "@sharpdotnut/dotsharp";
+
+const value = ref(32);
 </script>
 
 <template>
-  <Progress :value="32" />
+  <Progress :value="value" label="上传进度" />
 </template>
 ```
 
@@ -57,8 +60,8 @@ import { Progress } from "@sharpdotnut/dotsharp";
 
 ```vue
 <template>
-  <Progress :value="76" />
-  <Progress :value="76" variant="continuous" />
+  <Progress :value="76" label="默认样式" />
+  <Progress :value="76" variant="continuous" label="整条背景" />
 </template>
 ```
 
@@ -76,9 +79,10 @@ import { Progress } from "@sharpdotnut/dotsharp";
 
 ```vue
 <template>
-  <Progress :value="48" shape="circular" />
-  <Progress :value="48" shape="circular" variant="continuous" />
-  <Progress :value="64" shape="circular" :size="96" variant="continuous" />
+  <Progress :value="48" shape="circular" label="播放进度" />
+  <Progress :value="48" shape="circular" variant="continuous" label="播放进度" />
+  <Progress :value="64" shape="circular" :size="72" label="同步进度" />
+  <Progress :value="64" shape="circular" variant="continuous" :size="96" label="同步进度" />
 </template>
 ```
 
@@ -97,8 +101,9 @@ import { Progress } from "@sharpdotnut/dotsharp";
 
 ```vue
 <template>
-  <Progress indeterminate />
-  <Progress indeterminate shape="circular" />
+  <Progress indeterminate label="正在处理" />
+  <Progress indeterminate shape="circular" label="正在加载" />
+  <Progress indeterminate shape="circular" :size="72" label="正在加载" />
 </template>
 ```
 
@@ -136,8 +141,8 @@ function randomize() {
 </script>
 
 <template>
-  <Progress ref="progress" v-model:value="random" />
-  <Progress ref="ring" v-model:value="random" shape="circular" :size="64" />
+  <Progress ref="progress" v-model:value="random" label="随机进度" class="min-w-0 flex-1" />
+  <Progress ref="ring" v-model:value="random" shape="circular" :size="64" label="随机进度" />
   <Button @click="randomize">随机更新</Button>
 </template>
 ```

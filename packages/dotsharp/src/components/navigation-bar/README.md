@@ -16,13 +16,13 @@ const index = ref(0);
 由 `NavigationBar` 与 `NavigationItem` 组合而成：`NavigationBar` 持有选中值（`v-model:value`），每个 `NavigationItem` 描述一项导航。
 
 - 所有 `NavigationItem` 平分 `NavigationBar` 的宽度，与文字长短无关。
-- 选中项有一个 `secondary-container`（`--ds-tonal`）胶囊：`compact` 只包住图标，`medium` 包住图标与文字；
+- 选中项有一个 `--ds-tonal` 胶囊：`compact` 只包住图标，`medium` 包住图标与文字；
   选中图标用 `--ds-on-tonal`，选中文字是 `--ds-fg` + medium 字重。
 - `NavigationItem` 的标识默认为自身索引，也可以用 `value` 指定。
 
 ## 子项约定
 
-`NavigationBar` / `NavigationItem` 遵循[子项组件统一范式](/guide/patterns)：选中值由 `v-model:value`
+`NavigationBar` / `NavigationItem` 遵循[父子组件以及插槽统一范式](/guide/patterns)：选中值由 `v-model:value`
 持有，`NavigationItem` 用 `label`、`icon` 或默认插槽描述内容，标识取 `value` 或父组件注入的索引。
 
 ## compact 标签栏
@@ -107,12 +107,15 @@ const current = ref("home");
 <script setup lang="ts">
 import { ref } from "vue";
 import { NavigationBar, NavigationItem } from "@sharpdotnut/dotsharp";
+import explore from "@iconify-icons/material-symbols/explore";
+import home from "@iconify-icons/material-symbols/home";
+import radio from "@iconify-icons/material-symbols/radio";
 
 const index = ref(0);
 </script>
 
 <template>
-  <NavigationBar v-model:value="index" variant="medium">
+  <NavigationBar v-model:value="index" variant="medium" max-width="34rem">
     <NavigationItem label="首页" :icon="home" />
     <NavigationItem label="发现" :icon="explore" />
     <NavigationItem label="电台" :icon="radio" />
@@ -120,7 +123,7 @@ const index = ref(0);
 </template>
 ```
 
-索引由 `NavigationBar` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
+索引由 `NavigationBar` 按最终渲染顺序注入，规则见[父子组件以及插槽统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 内容：label、icon 与插槽
 

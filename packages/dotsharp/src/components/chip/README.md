@@ -67,12 +67,15 @@ const filters = reactive([
 import { ref } from "vue";
 import { Chip } from "@sharpdotnut/dotsharp";
 import favoriteIcon from "@iconify-icons/material-symbols/favorite";
+import wifiIcon from "@iconify-icons/material-symbols/wifi";
 
 const favoritesOnly = ref(false);
+const enabled = ref(false);
 </script>
 
 <template>
   <Chip v-model:selected="favoritesOnly" label="收藏" :icon="favoriteIcon" />
+  <Chip v-model:selected="enabled" label="Wi-Fi" :icon="wifiIcon" />
 </template>
 ```
 

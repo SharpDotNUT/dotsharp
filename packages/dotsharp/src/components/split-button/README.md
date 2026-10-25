@@ -75,10 +75,32 @@ import saveIcon from "@iconify-icons/material-symbols/save";
 </div>
 
 ```vue
-<SplitButton label="编辑" :icon="editIcon" menu-label="更多编辑操作" variant="outlined">
-  <MenuItem label="重命名" value="重命名" />
-  <MenuItem label="移动到…" value="移动到…" />
-</SplitButton>
+<script setup lang="ts">
+import { ref } from "vue";
+import { SplitButton, MenuItem } from "@sharpdotnut/dotsharp";
+import editIcon from "@iconify-icons/material-symbols/edit";
+
+const outlined = ref("—");
+</script>
+
+<template>
+  <SplitButton label="编辑" :icon="editIcon" menu-label="更多编辑操作" variant="filled">
+    <MenuItem label="重命名" value="重命名" />
+  </SplitButton>
+  <SplitButton
+    label="编辑"
+    :icon="editIcon"
+    menu-label="更多编辑操作"
+    variant="outlined"
+    @select="outlined = String($event)"
+  >
+    <MenuItem label="重命名" value="重命名" />
+    <MenuItem label="移动到…" value="移动到…" />
+  </SplitButton>
+  <SplitButton label="编辑" :icon="editIcon" menu-label="更多编辑操作" variant="text">
+    <MenuItem label="重命名" value="重命名" />
+  </SplitButton>
+</template>
 ```
 
 ## 尺寸与禁用

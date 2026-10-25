@@ -34,17 +34,20 @@ const connected = ref("list");
 
 ```vue
 <script setup lang="ts">
+import { ref } from "vue";
 import { ButtonGroup, ButtonGroupItem } from "@sharpdotnut/dotsharp";
 import editIcon from "@iconify-icons/material-symbols/edit";
 import shareIcon from "@iconify-icons/material-symbols/share";
 import deleteIcon from "@iconify-icons/material-symbols/delete";
+
+const clicked = ref("");
 </script>
 
 <template>
   <ButtonGroup>
-    <ButtonGroupItem label="编辑" :icon="editIcon" />
-    <ButtonGroupItem label="分享" :icon="shareIcon" />
-    <ButtonGroupItem label="删除" :icon="deleteIcon" />
+    <ButtonGroupItem label="编辑" :icon="editIcon" @click="clicked = '编辑'" />
+    <ButtonGroupItem label="分享" :icon="shareIcon" @click="clicked = '分享'" />
+    <ButtonGroupItem label="删除" :icon="deleteIcon" @click="clicked = '删除'" />
   </ButtonGroup>
 </template>
 ```
@@ -128,11 +131,21 @@ const prices = ref<Array<string | number>>(["$$"]);
 </div>
 
 ```vue
-<ButtonGroup v-model:value="connected" selection="single" shape="connected">
-  <ButtonGroupItem label="列表" value="list" />
-  <ButtonGroupItem label="网格" value="grid" />
-  <ButtonGroupItem label="时间线" value="timeline" />
-</ButtonGroup>
+<script setup lang="ts">
+import { ref } from "vue";
+import { ButtonGroup, ButtonGroupItem } from "@sharpdotnut/dotsharp";
+import filterIcon from "@iconify-icons/material-symbols/filter-list";
+
+const connected = ref("list");
+</script>
+
+<template>
+  <ButtonGroup v-model:value="connected" selection="single" shape="connected">
+    <ButtonGroupItem label="列表" value="list" :icon="filterIcon" />
+    <ButtonGroupItem label="网格" value="grid" />
+    <ButtonGroupItem label="时间线" value="timeline" />
+  </ButtonGroup>
+</template>
 ```
 
 ## 层级与尺寸
@@ -143,7 +156,7 @@ const prices = ref<Array<string | number>>(["$$"]);
 <div class="demo-row">
   <ButtonGroup variant="outlined" size="sm">
     <ButtonGroupItem label="小号" />
-    <ButtonGroupItem label="Outlined" />
+    <ButtonGroupItem label="描边" />
     <ButtonGroupItem label="禁用" disabled />
   </ButtonGroup>
 </div>
@@ -151,7 +164,7 @@ const prices = ref<Array<string | number>>(["$$"]);
 ```vue
 <ButtonGroup variant="outlined" size="sm">
   <ButtonGroupItem label="小号" />
-  <ButtonGroupItem label="Outlined" />
+  <ButtonGroupItem label="描边" />
   <ButtonGroupItem label="禁用" disabled />
 </ButtonGroup>
 ```

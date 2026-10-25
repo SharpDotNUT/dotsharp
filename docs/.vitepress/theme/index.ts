@@ -1,7 +1,7 @@
 import { watch } from "vue";
 import type { Theme } from "vitepress";
 import DefaultTheme from "vitepress/theme";
-import { useTheme } from "@sharpdotnut/dotsharp";
+import { setLocale, useTheme } from "@sharpdotnut/dotsharp";
 import Layout from "./ThemeLayout.vue";
 import "@sharpdotnut/dotsharp/style.css";
 import "./style.css";
@@ -10,6 +10,8 @@ export default {
   extends: DefaultTheme,
   Layout,
   setup() {
+    setLocale("zh-Hans");
+
     const { resolvedTheme } = useTheme();
 
     watch(

@@ -12,26 +12,26 @@ const keyword = ref("");
 
 # AppBar 顶部应用栏
 
-Material Design 3 的顶部应用栏：左侧操作区、标题区、右侧操作区三段结构，标题区可以换成任意内容。
+顶部应用栏：左侧操作区、标题区、右侧操作区三段结构，标题区可以换成任意内容。
 
 - 标题区优先取默认插槽，`title` 只是纯文本回退。
 - `#left` / `#right` 是两侧操作区，推荐放 `IconButton`：40×40 圆形点击区，图标 24px，相邻图标的字形间距约 20px。
-- `variant` 三档：`small` 单行；`medium-flexible` / `large-flexible` 的标题另起一行、字号逐级变大（材质 3 的
-  flexible 排版），并可用 `subtitle` 加一行副标题。
+- `variant` 三档：`small` 单行；`medium-flexible` / `large-flexible` 的标题另起一行、字号逐级变大，
+  并可用 `subtitle` 加一行副标题。
 - `fixed` 把栏留在原位之外的视口顶部，`placeholder` 在文档流里补一个等高占位元素，页面内容不会被抽走。
 
 ## small 应用栏
 
 默认排版：单行，高度 64px。左侧是菜单按钮，中间是搜索栏（默认插槽），右侧是账户按钮。
 
-搜索栏用 `Input` 的 `shape="pill"`：无描边、浅色填充、40px 高的胶囊形，正是材质 3 的搜索栏样式。
+搜索栏用 `Input` 的 `shape="pill"`：无描边、浅色填充、40px 高的胶囊形。
 
 <div class="demo-row">
   <AppBar>
     <template #left>
       <IconButton :icon="menu" label="打开菜单" />
     </template>
-    <Input v-model="keyword" shape="pill" type="search" placeholder="Search" />
+    <Input v-model="keyword" shape="pill" type="search" placeholder="搜索" />
     <template #right>
       <IconButton :icon="accountCircle" label="账户" />
     </template>
@@ -53,7 +53,7 @@ const keyword = ref("");
     <template #left>
       <IconButton :icon="menu" label="打开菜单" />
     </template>
-    <Input v-model="keyword" shape="pill" type="search" placeholder="Search" />
+    <Input v-model="keyword" shape="pill" type="search" placeholder="搜索" />
     <template #right>
       <IconButton :icon="accountCircle" label="账户" />
     </template>
@@ -66,7 +66,7 @@ const keyword = ref("");
 `title` 渲染在左侧操作区之后，过长时截断为省略号。右侧可以放多个操作按钮。
 
 <div class="demo-row">
-  <AppBar title="Small">
+  <AppBar title="小号应用栏">
     <template #left>
       <IconButton :icon="arrowBack" label="返回" />
     </template>
@@ -78,7 +78,7 @@ const keyword = ref("");
 </div>
 
 ```vue
-<AppBar title="Small">
+<AppBar title="小号应用栏">
   <template #left>
     <IconButton :icon="arrowBack" label="返回" />
   </template>
@@ -93,7 +93,7 @@ const keyword = ref("");
 
 ## medium-flexible / large-flexible 应用栏
 
-`variant="medium-flexible"`、`variant="large-flexible"` 把标题移到单独一行（材质 3 的 flexible 排版）：
+`variant="medium-flexible"`、`variant="large-flexible"` 把标题移到单独一行：
 第一行只有两侧操作区，第二行是标题（`large-flexible` 字号 36px，`medium-flexible` 28px）。
 
 高度按是否有副标题分两档：
@@ -106,7 +106,7 @@ const keyword = ref("");
 副标题用 `subtitle`，或用 `#subtitle` 插槽给自定义内容；`small` 变体忽略 `subtitle`。
 
 <div class="demo-row">
-  <AppBar title="Medium flexible" variant="medium-flexible">
+  <AppBar title="中号灵活应用栏" variant="medium-flexible">
     <template #left>
       <IconButton :icon="arrowBack" label="返回" />
     </template>
@@ -118,7 +118,7 @@ const keyword = ref("");
 </div>
 
 <div class="demo-row">
-  <AppBar title="Large flexible" variant="large-flexible" subtitle="With subtitle">
+  <AppBar title="大号灵活应用栏" variant="large-flexible" subtitle="带副标题">
     <template #left>
       <IconButton :icon="arrowBack" label="返回" />
     </template>
@@ -130,7 +130,7 @@ const keyword = ref("");
 </div>
 
 ```vue
-<AppBar title="Medium flexible" variant="medium-flexible">
+<AppBar title="中号灵活应用栏" variant="medium-flexible">
   <template #left>
     <IconButton :icon="arrowBack" label="返回" />
   </template>
@@ -140,8 +140,14 @@ const keyword = ref("");
   </template>
 </AppBar>
 
-<AppBar title="Large flexible" variant="large-flexible" subtitle="With subtitle">
-  <!-- 同样的插槽 -->
+<AppBar title="大号灵活应用栏" variant="large-flexible" subtitle="带副标题">
+  <template #left>
+    <IconButton :icon="arrowBack" label="返回" />
+  </template>
+  <template #right>
+    <IconButton :icon="search" label="搜索" />
+    <IconButton :icon="calendarMonth" label="日历" />
+  </template>
 </AppBar>
 ```
 
@@ -156,7 +162,7 @@ const keyword = ref("");
 
 ```vue
 <template>
-  <AppBar title="Fixed" fixed placeholder>
+  <AppBar title="固定应用栏" fixed placeholder>
     <template #left>
       <IconButton :icon="arrowBack" label="返回" />
     </template>

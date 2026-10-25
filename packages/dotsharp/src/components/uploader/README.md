@@ -45,10 +45,14 @@ import { ref } from "vue";
 import { Button, Uploader } from "@sharpdotnut/dotsharp";
 
 const picked = ref<string[]>([]);
+
+function names(files: File[]): string[] {
+  return files.map((file) => file.name);
+}
 </script>
 
 <template>
-  <Uploader accept="image/*" multiple @select="picked = $event.map((file) => file.name)">
+  <Uploader accept="image/*" multiple @select="picked = names($event)">
     <Button>选择图片</Button>
   </Uploader>
 </template>
@@ -123,7 +127,14 @@ uploader.value?.open();
 最近一次被拒绝：{{ rejected.length ? rejected.join("、") : "（没有）" }}
 
 ```vue
-<UploadArea accept="image/*" multiple @select="onSelect" @invalid="onInvalid" />
+<UploadArea
+  accept="image/*"
+  multiple
+  label="只接受图片"
+  description="试试拖入一个文本文件"
+  @select="onSelect"
+  @invalid="onInvalid"
+/>
 ```
 
 - 不符合 `accept` 的文件只进入 `invalid`，不会进入 `select`；
@@ -163,6 +174,7 @@ uploader.value?.open();
   <template #default="{ dragging }">
     <Icon :icon="uploadFile" size="2em" />
     <div>{{ dragging ? "松开即可添加" : "把文本文件拖到这里" }}</div>
+    <div>或点击选择 .txt / .md</div>
   </template>
 </UploadArea>
 ```
@@ -197,7 +209,14 @@ const note = ref("");
 </script>
 
 <template>
-  <UploadArea text v-model:value="note" accept=".txt,.md" @select="onSelect" />
+  <UploadArea
+    text
+    v-model:value="note"
+    accept=".txt,.md"
+    label="拖入文本文件，或点击选择"
+    description="也可以在下方直接输入 / 粘贴"
+    @select="onSelect"
+  />
 </template>
 ```
 

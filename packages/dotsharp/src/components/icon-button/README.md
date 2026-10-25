@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Badge, Icon, IconButton } from "@sharpdotnut/dotsharp";
+import { Badge, IconButton } from "@sharpdotnut/dotsharp";
 import arrowBack from "@iconify-icons/material-symbols/arrow-back";
 import calendarMonth from "@iconify-icons/material-symbols/calendar-month";
 import mailIcon from "@iconify-icons/material-symbols/mail-outline";
@@ -31,8 +31,10 @@ import search from "@iconify-icons/material-symbols/search";
 ```vue
 <script setup lang="ts">
 import { IconButton } from "@sharpdotnut/dotsharp";
+import arrowBack from "@iconify-icons/material-symbols/arrow-back";
 import calendarMonth from "@iconify-icons/material-symbols/calendar-month";
 import menu from "@iconify-icons/material-symbols/menu";
+import moreVert from "@iconify-icons/material-symbols/more-vert";
 import search from "@iconify-icons/material-symbols/search";
 </script>
 
@@ -40,6 +42,8 @@ import search from "@iconify-icons/material-symbols/search";
   <IconButton :icon="menu" label="打开菜单" />
   <IconButton :icon="search" label="搜索" />
   <IconButton :icon="calendarMonth" label="日历" />
+  <IconButton :icon="moreVert" label="更多" />
+  <IconButton :icon="arrowBack" label="返回" disabled />
 </template>
 ```
 
@@ -63,7 +67,7 @@ import search from "@iconify-icons/material-symbols/search";
 <template>
   <IconButton label="账户">
     <span
-      class="flex h-6 w-6 items-center justify-center rounded-full bg-ds-primary-strong text-xs text-ds-primary"
+      class="flex h-6 w-6 items-center justify-center rounded-full bg-ds-primary-strong text-xs font-medium text-ds-primary"
     >
       A
     </span>
@@ -92,15 +96,20 @@ import search from "@iconify-icons/material-symbols/search";
 <script setup lang="ts">
 import { Badge, IconButton } from "@sharpdotnut/dotsharp";
 import mailIcon from "@iconify-icons/material-symbols/mail-outline";
+import notificationsIcon from "@iconify-icons/material-symbols/notifications-outline";
 
 const unread = 3;
 </script>
 
 <template>
   <IconButton :icon="mailIcon" label="消息">
-    <template #badge>
-      <Badge :value="unread" label="3 条未读消息" />
-    </template>
+    <template #badge><Badge :value="unread" label="3 条未读消息" /></template>
+  </IconButton>
+  <IconButton :icon="notificationsIcon" label="通知">
+    <template #badge><Badge :value="120" label="120 条未读通知" /></template>
+  </IconButton>
+  <IconButton :icon="notificationsIcon" label="有新通知">
+    <template #badge><Badge label="有新通知" /></template>
   </IconButton>
 </template>
 ```

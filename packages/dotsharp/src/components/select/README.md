@@ -18,14 +18,14 @@ const disabledValue = ref("economy");
 
 - 收起时触发器显示选中项的 `label`，展开后从弹层里挑选。
 - `label` 提供与 `Input` 一致的浮动标签：空值未聚焦时居中，聚焦、展开或有选中值时上浮到描边缺口。
-- 触发器沿用 `Input` outlined 变体的几何：56px 高、4px 圆角、1px 描边、16px 正文，尾部 24px 箭头。
-- 弹层按 Material 3 菜单绘制：`surface-container` 底色、elevation 2 阴影、4px 圆角、8px 上下内边距，选项行高 48px。
+- 触发器沿用 `Input` 描边样式的几何：56px 高、4px 圆角、1px 描边、16px 正文，尾部 24px 箭头。
+- 弹层与 `Menu` 规格一致：`--ds-elevated` 底色、阴影、4px 圆角、8px 上下内边距，选项行高 48px。
 - `Option` 的标识默认为自身索引，也可以用 `value` 指定。
 - 弹层渲染到 `body`，宽度跟随触发器，下方空间不足时向上展开，因此不会被父级的 `overflow: hidden` 裁掉。
 
 ## 子项约定
 
-`Select` / `Option` 遵循[子项组件统一范式](/guide/patterns)：选中值由 `v-model:value` 持有，`Option` 用
+`Select` / `Option` 遵循[父子组件以及插槽统一范式](/guide/patterns)：选中值由 `v-model:value` 持有，`Option` 用
 `label`、`icon` 或默认插槽描述内容，标识取 `value` 或父组件注入的索引。下文只说明 `Select` 自己的弹层与交互。
 
 ## 基础用法
@@ -126,12 +126,12 @@ const empty = ref<string | number>("");
 </Select>
 ```
 
-索引由 `Select` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
+索引由 `Select` 按最终渲染顺序注入，规则见[父子组件以及插槽统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 内容：label、icon 与插槽
 
 - `label`：选项文本，同时是收起态触发器显示的文字；
-- `icon`：与 `Icon` 的 `icon` 同源，直接给图标数据，渲染在文字之前（尺寸 `1.5em`，即 24dp）；
+- `icon`：与 `Icon` 的 `icon` 同源，直接给图标数据，渲染在文字之前（尺寸 `1.5em`）；
 - 默认插槽：选项行内的自定义内容，**优先于 `label`**。
 
 <div class="demo-row">
@@ -143,10 +143,23 @@ const empty = ref<string | number>("");
 </div>
 
 ```vue
-<Select v-model:value="cabin">
-  <Option label="经济舱" value="economy" :icon="flight" />
-  <Option label="商务舱" value="business" :icon="luggage" />
-</Select>
+<script setup lang="ts">
+import { ref } from "vue";
+import { Option, Select } from "@sharpdotnut/dotsharp";
+import explore from "@iconify-icons/material-symbols/explore";
+import flight from "@iconify-icons/material-symbols/flight";
+import luggage from "@iconify-icons/material-symbols/luggage";
+
+const cabinIcon = ref("business");
+</script>
+
+<template>
+  <Select v-model:value="cabinIcon">
+    <Option label="经济舱" value="economy" :icon="flight" />
+    <Option label="商务舱" value="business" :icon="luggage" />
+    <Option label="探索套餐" value="explore" :icon="explore" />
+  </Select>
+</template>
 ```
 
 插槽只改变选项行的渲染，**不改变触发器显示的文字**：触发器只读 `label`。所以用了插槽时 `label` 仍然必须提供，
@@ -182,7 +195,10 @@ const empty = ref<string | number>("");
   <Option label="商务舱" value="business" />
 </Select>
 
-<Select v-model:value="cabin" disabled>…</Select>
+<Select v-model:value="disabledValue" disabled>
+  <Option label="经济舱" value="economy" />
+  <Option label="商务舱" value="business" />
+</Select>
 ```
 
 单个选项可以用 `disabled` 禁用：它仍然渲染，但不可点击、不参与键盘移动，`aria-disabled` 为 `true`。
@@ -235,12 +251,12 @@ const empty = ref<string | number>("");
 
 ### Option
 
-| 属性     | 类型                    | 默认值       | 说明                                     |
-| -------- | ----------------------- | ------------ | ---------------------------------------- |
-| label    | `string`                | —            | 选项文本；同时用于收起态触发器显示       |
-| icon     | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.25em` |
-| value    | `string \| number`      | 所在位置索引 | 子项标识                                 |
-| disabled | `boolean`               | `false`      | 禁用：不可点击、不参与键盘移动           |
+| 属性     | 类型                    | 默认值       | 说明                                    |
+| -------- | ----------------------- | ------------ | --------------------------------------- |
+| label    | `string`                | —            | 选项文本；同时用于收起态触发器显示      |
+| icon     | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.5em` |
+| value    | `string \| number`      | 所在位置索引 | 子项标识                                |
+| disabled | `boolean`               | `false`      | 禁用：不可点击、不参与键盘移动          |
 
 - 默认插槽：选项行内容，优先于 `label`；`label` 仍需提供，否则触发器无文字可显示。
 - 根元素是 `role="option"` 的 `div`，带 `aria-selected`，选中项显示对勾并着色。

@@ -21,6 +21,7 @@ import { Badge } from "@sharpdotnut/dotsharp";
 
 ```vue
 <Badge :value="3" label="3 条未读" />
+<Badge :value="42" label="42 条未读" />
 <Badge :value="120" label="120 条未读" />
 <Badge :value="120" :max="999" label="120 条未读" />
 ```
@@ -43,7 +44,14 @@ import { Badge } from "@sharpdotnut/dotsharp";
 </div>
 
 ```vue
-<Badge label="有新通知" />
+<span class="inline-flex items-center gap-2">
+  <Badge label="有新通知" />
+  有新通知
+</span>
+<span class="inline-flex items-center gap-2">
+  <Badge label="离线" class="!bg-ds-outline" />
+  离线
+</span>
 ```
 
 徽标默认是 `inline-flex`。需要贴到图标或按钮上时，用 `Icon` / `IconButton` 的 `#badge` 插槽，

@@ -27,6 +27,8 @@ import { Divider } from "@sharpdotnut/dotsharp";
   <div>收件箱</div>
   <Divider />
   <div>已发送</div>
+  <Divider />
+  <div>草稿</div>
 </div>
 ```
 
@@ -54,8 +56,17 @@ import { Divider } from "@sharpdotnut/dotsharp";
 </div>
 
 ```vue
-<Divider inset="start" />
-<Divider inset="both" />
+<div>
+  <div>对齐缩进的内容</div>
+  <Divider inset="start" />
+  <div>对齐缩进的内容</div>
+</div>
+
+<div>
+  <div>两端都留白</div>
+  <Divider inset="both" />
+  <div>两端都留白</div>
+</div>
 ```
 
 ## 垂直分隔
@@ -77,6 +88,8 @@ import { Divider } from "@sharpdotnut/dotsharp";
   <span>撤销</span>
   <Divider vertical />
   <span>重做</span>
+  <Divider vertical />
+  <span>另存为</span>
 </div>
 ```
 

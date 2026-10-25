@@ -15,7 +15,7 @@ import { Card, Container } from "@sharpdotnut/dotsharp";
 
 ## 自动层级
 
-嵌套三层即可看到圆角与表面逐层收窄：
+嵌套三层即可看到圆角与表面逐层收窄，再往里嵌套会停在第 3 层：
 
 <div class="demo-row">
   <Container class="w-full max-w-md">
@@ -44,6 +44,9 @@ import { Container } from "@sharpdotnut/dotsharp";
       <p>第 2 层</p>
       <Container>
         <p>第 3 层</p>
+        <Container>
+          <p>第 4 层回落到第 3 层</p>
+        </Container>
       </Container>
     </Container>
   </Container>
@@ -56,13 +59,13 @@ import { Container } from "@sharpdotnut/dotsharp";
 
 <div class="demo-row">
   <Container level="3" class="w-full max-w-sm">
-    <p class="text-sm text-ds-muted">level="3"，与嵌套深度无关</p>
+    <p class="text-sm text-ds-muted">手动指定为第 3 层，与嵌套深度无关</p>
   </Container>
 </div>
 
 ```vue
 <template>
-  <Container level="3">level="3"</Container>
+  <Container level="3">手动指定为第 3 层，与嵌套深度无关</Container>
 </template>
 ```
 

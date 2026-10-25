@@ -6,6 +6,7 @@ import wifiIcon from "@iconify-icons/material-symbols/wifi";
 
 const wifi = ref(true);
 const bluetooth = ref(false);
+const notifications = ref(true);
 </script>
 
 # List 列表
@@ -17,14 +18,14 @@ const bluetooth = ref(false);
 
 <div class="demo-row">
   <List class="w-full max-w-md">
-    <ListItem label="List item">
+    <ListItem label="Wi-Fi">
       <template #trailing>
-        <Checkbox v-model="wifi" aria-label="List item" />
+        <Checkbox v-model="wifi" aria-label="Wi-Fi" />
       </template>
     </ListItem>
-    <ListItem label="List item">
+    <ListItem label="蓝牙">
       <template #trailing>
-        <Checkbox v-model="bluetooth" aria-label="List item" />
+        <Checkbox v-model="bluetooth" aria-label="蓝牙" />
       </template>
     </ListItem>
   </List>
@@ -41,14 +42,14 @@ const bluetooth = ref(false);
 
 <template>
   <List>
-    <ListItem label="List item">
+    <ListItem label="Wi-Fi">
       <template #trailing>
-        <Checkbox v-model="wifi" aria-label="List item" />
+        <Checkbox v-model="wifi" aria-label="Wi-Fi" />
       </template>
     </ListItem>
-    <ListItem label="List item">
+    <ListItem label="蓝牙">
       <template #trailing>
-        <Checkbox v-model="bluetooth" aria-label="List item" />
+        <Checkbox v-model="bluetooth" aria-label="蓝牙" />
       </template>
     </ListItem>
   </List>
@@ -69,20 +70,37 @@ const bluetooth = ref(false);
     </ListItem>
     <ListItem label="通知" description="仅接收重要提醒" :icon="notificationsIcon">
       <template #trailing>
-        <Switch v-model="bluetooth" aria-label="通知" />
+        <Switch v-model="notifications" aria-label="通知" />
       </template>
     </ListItem>
   </List>
 </div>
 
 ```vue
-<List>
-  <ListItem label="Wi-Fi" description="已连接到 dotsharp" :icon="wifiIcon">
-    <template #trailing>
-      <Checkbox v-model="wifi" aria-label="Wi-Fi" />
-    </template>
-  </ListItem>
-</List>
+<script setup lang="ts">
+import { ref } from "vue";
+import { Checkbox, List, ListItem, Switch } from "@sharpdotnut/dotsharp";
+import wifiIcon from "@iconify-icons/material-symbols/wifi";
+import notificationsIcon from "@iconify-icons/material-symbols/notifications";
+
+const wifi = ref(true);
+const notifications = ref(true);
+</script>
+
+<template>
+  <List>
+    <ListItem label="Wi-Fi" description="已连接到 dotsharp" :icon="wifiIcon">
+      <template #trailing>
+        <Checkbox v-model="wifi" aria-label="Wi-Fi" />
+      </template>
+    </ListItem>
+    <ListItem label="通知" description="仅接收重要提醒" :icon="notificationsIcon">
+      <template #trailing>
+        <Switch v-model="notifications" aria-label="通知" />
+      </template>
+    </ListItem>
+  </List>
+</template>
 ```
 
 ## 链接行
@@ -98,8 +116,8 @@ const bluetooth = ref(false);
 
 ```vue
 <List>
-  <ListItem label="账户设置" description="修改密码与通知偏好" href="/settings" />
-  <ListItem label="不可用行" description="暂时无法进入" href="/settings" disabled />
+  <ListItem label="账户设置" description="修改密码与通知偏好" href="#账户设置" />
+  <ListItem label="不可用行" description="暂时无法进入" href="#不可用行" disabled />
 </List>
 ```
 

@@ -107,14 +107,17 @@ const clicks = ref(0);
 
 ```vue
 <script setup lang="ts">
+import { ref } from "vue";
 import { Fab, FabMenu } from "@sharpdotnut/dotsharp";
 import documentIcon from "@iconify-icons/material-symbols/description";
 import messageIcon from "@iconify-icons/material-symbols/chat";
 import folderIcon from "@iconify-icons/material-symbols/folder";
+
+const menuOpen = ref(false);
 </script>
 
 <template>
-  <FabMenu label="新建">
+  <FabMenu v-model:open="menuOpen" label="新建">
     <Fab :icon="documentIcon" label="文档" variant="secondary" />
     <Fab :icon="messageIcon" label="消息" variant="secondary" />
     <Fab :icon="folderIcon" label="文件夹" variant="secondary" />

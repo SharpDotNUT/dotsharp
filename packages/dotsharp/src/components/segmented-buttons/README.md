@@ -130,7 +130,9 @@ const days = ref<Array<string | number>>(["mon", "fri"]);
 <script setup lang="ts">
 import { ref } from "vue";
 import { SegmentedButton, SegmentedButtons } from "@sharpdotnut/dotsharp";
+import calendarIcon from "@iconify-icons/material-symbols/calendar-today";
 import homeIcon from "@iconify-icons/material-symbols/home";
+import wifiIcon from "@iconify-icons/material-symbols/wifi";
 
 const place = ref("home");
 </script>
@@ -139,6 +141,7 @@ const place = ref("home");
   <SegmentedButtons v-model:value="place">
     <SegmentedButton label="首页" value="home" :icon="homeIcon" />
     <SegmentedButton label="日程" value="calendar" :icon="calendarIcon" />
+    <SegmentedButton label="网络" value="wifi" :icon="wifiIcon" />
   </SegmentedButtons>
 </template>
 ```

@@ -6,7 +6,6 @@ import progressActivity from "@iconify-icons/material-symbols/progress-activity"
 const minimal = ref(false);
 const iconDemo = ref(false);
 const flowDemo = ref(false);
-const confirmDemo = ref(false);
 const longDemo = ref(false);
 const persistent = ref(false);
 const terms = ref(false);
@@ -43,12 +42,11 @@ function decide(value: boolean): void {
 
 <div class="demo-row">
   <Button @click="minimal = true">打开对话框</Button>
-  <Dialog v-model:open="minimal" title="Basic dialog title">
-    A dialog is a modal window that appears in front of app content to provide critical information
-    or ask for a decision.
+  <Dialog v-model:open="minimal" title="基础对话框标题">
+    对话框是浮在页面内容上方的模态窗口，用来传达关键信息，或要求用户做出选择。
     <template #footer-right>
-      <Button variant="text" @click="minimal = false">Cancel</Button>
-      <Button variant="text" @click="minimal = false">Accept</Button>
+      <Button variant="text" @click="minimal = false">取消</Button>
+      <Button @click="minimal = false">接受</Button>
     </template>
   </Dialog>
 </div>
@@ -64,13 +62,12 @@ const open = ref(false);
 <template>
   <Button @click="open = true">打开对话框</Button>
 
-  <Dialog v-model:open="open" title="Basic dialog title">
-    A dialog is a modal window that appears in front of app content to provide critical information
-    or ask for a decision.
+  <Dialog v-model:open="open" title="基础对话框标题">
+    对话框是浮在页面内容上方的模态窗口，用来传达关键信息，或要求用户做出选择。
 
     <template #footer-right>
-      <Button variant="text" @click="open = false">Cancel</Button>
-      <Button variant="text" @click="open = false">Accept</Button>
+      <Button variant="text" @click="open = false">取消</Button>
+      <Button @click="open = false">接受</Button>
     </template>
   </Dialog>
 </template>
@@ -96,28 +93,27 @@ const open = ref(false);
 
 <div class="demo-row">
   <Button @click="iconDemo = true">打开带图标的对话框</Button>
-  <Dialog v-model:open="iconDemo" title="Reset settings?" :icon="progressActivity">
-    This will reset your app preferences back to their default settings. The following accounts will
-    also be signed out:
+  <Dialog v-model:open="iconDemo" title="重置设置？" :icon="progressActivity">
+    这会把你的应用偏好恢复为默认设置，以下账号也会被登出：
     <hr class="my-4 border-0 border-t border-ds-line" />
     <ul class="space-y-3 text-ds-fg">
       <li class="flex items-center gap-3">
         <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary-strong/10 text-xs font-medium text-ds-primary-strong">
-          LV
+          林
         </span>
-        leevillanuevanotes@google.com
+        linxiaoyu@example.com
       </li>
       <li class="flex items-center gap-3">
         <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary-strong/10 text-xs font-medium text-ds-primary-strong">
-          AA
+          陈
         </span>
-        alloalejandro@google.com
+        chenmo@example.com
       </li>
     </ul>
     <hr class="my-4 border-0 border-t border-ds-line" />
     <template #footer-right>
-      <Button variant="text" @click="iconDemo = false">Cancel</Button>
-      <Button variant="text" @click="iconDemo = false">Accept</Button>
+      <Button variant="text" @click="iconDemo = false">取消</Button>
+      <Button variant="text" @click="iconDemo = false">接受</Button>
     </template>
   </Dialog>
 </div>
@@ -132,7 +128,7 @@ const open = ref(false);
 </script>
 
 <template>
-  <Dialog v-model:open="open" title="Reset settings?" :icon="progressActivity">
+  <Dialog v-model:open="open" title="重置设置？" :icon="progressActivity">
     正文……
 
     <template #icon>
@@ -140,8 +136,8 @@ const open = ref(false);
     </template>
 
     <template #footer-right>
-      <Button variant="text" @click="open = false">Cancel</Button>
-      <Button variant="text" @click="open = false">Accept</Button>
+      <Button variant="text" @click="open = false">取消</Button>
+      <Button variant="text" @click="open = false">接受</Button>
     </template>
   </Dialog>
 </template>
@@ -149,20 +145,7 @@ const open = ref(false);
 
 ## 底部操作：主操作在右
 
-`footer-right` 是右对齐的一组操作，主操作放末尾，次要操作用 `variant="text"` 压低视觉重量。
-
-<div class="demo-row">
-  <Button @click="confirmDemo = true">打开删除确认</Button>
-  <Dialog v-model:open="confirmDemo" title="删除这个文件夹？">
-    删除后「设计稿-2026」里的 32 个文件会一并移除，且无法从回收站恢复。
-    <template #footer-right>
-      <Button variant="text" @click="confirmDemo = false">取消</Button>
-      <Button @click="confirmDemo = false">删除</Button>
-    </template>
-  </Dialog>
-</div>
-
-状态：{{ confirmDemo ? "已打开" : "已关闭" }}
+`footer-right` 是右对齐的一组操作：主操作（默认按钮）放末尾，次要操作用 `variant="text"` 压低视觉重量。
 
 ```vue
 <Dialog v-model:open="open" title="删除这个文件夹？">
@@ -181,15 +164,14 @@ const open = ref(false);
 
 <div class="demo-row">
   <Button @click="flowDemo = true">打开位置服务对话框</Button>
-  <Dialog v-model:open="flowDemo" title="Use location service?">
-    Let this service help other apps determine your location. This means sharing anonymous location
-    data, even when no apps are running.
+  <Dialog v-model:open="flowDemo" title="启用位置服务？">
+    允许此服务帮助其他应用确定你的位置。这会共享匿名位置数据，即使没有应用在运行。
     <template #footer-left>
-      <Button variant="text" @click="accepted = null">Learn more</Button>
+      <Button variant="text" @click="accepted = null">了解更多</Button>
     </template>
     <template #footer-right>
-      <Button variant="text" @click="decide(false)">Disagree</Button>
-      <Button variant="text" @click="decide(true)">Agree</Button>
+      <Button variant="text" @click="decide(false)">不同意</Button>
+      <Button variant="text" @click="decide(true)">同意</Button>
     </template>
   </Dialog>
 </div>
@@ -197,15 +179,15 @@ const open = ref(false);
 选择结果：{{ accepted === null ? "未决定" : accepted ? "已同意" : "已拒绝" }}
 
 ```vue
-<Dialog v-model:open="open" title="Use location service?">
-  正文……
+<Dialog v-model:open="open" title="启用位置服务？">
+  允许此服务帮助其他应用确定你的位置。这会共享匿名位置数据，即使没有应用在运行。
 
   <template #footer-left>
-    <Button variant="text">Learn more</Button>
+    <Button variant="text">了解更多</Button>
   </template>
   <template #footer-right>
-    <Button variant="text" @click="open = false">Disagree</Button>
-    <Button variant="text" @click="open = false">Agree</Button>
+    <Button variant="text" @click="open = false">不同意</Button>
+    <Button variant="text" @click="open = false">同意</Button>
   </template>
 </Dialog>
 ```
@@ -254,16 +236,16 @@ const open = ref(false);
 
 <div class="demo-row">
   <Button @click="editor = true">打开全屏对话框</Button>
-  <Dialog v-model:open="editor" variant="fullscreen" title="Full-screen dialog title">
+  <Dialog v-model:open="editor" variant="fullscreen" title="全屏对话框标题">
     <div class="mx-auto flex max-w-xl flex-col gap-4">
-      <Input v-model="eventName" label="Event name" />
+      <Input v-model="eventName" label="事件名称" />
       <div class="grid grid-cols-2 gap-4">
-        <Input v-model="fromDate" label="From date" />
-        <Input v-model="fromTime" label="From time" />
+        <Input v-model="fromDate" label="开始日期" />
+        <Input v-model="fromTime" label="开始时间" />
       </div>
     </div>
     <template #title-right>
-      <Button variant="text" @click="editor = false">Save</Button>
+      <Button variant="text" @click="editor = false">保存</Button>
     </template>
   </Dialog>
 </div>
@@ -275,16 +257,22 @@ import { Button, Dialog, Input } from "@sharpdotnut/dotsharp";
 
 const open = ref(false);
 const eventName = ref("");
+const fromDate = ref("");
+const fromTime = ref("");
 </script>
 
 <template>
-  <Dialog v-model:open="open" variant="fullscreen" title="Full-screen dialog title">
+  <Dialog v-model:open="open" variant="fullscreen" title="全屏对话框标题">
     <div class="mx-auto flex max-w-xl flex-col gap-4">
-      <Input v-model="eventName" label="Event name" />
+      <Input v-model="eventName" label="事件名称" />
+      <div class="grid grid-cols-2 gap-4">
+        <Input v-model="fromDate" label="开始日期" />
+        <Input v-model="fromTime" label="开始时间" />
+      </div>
     </div>
 
     <template #title-right>
-      <Button variant="text" @click="open = false">Save</Button>
+      <Button variant="text" @click="open = false">保存</Button>
     </template>
   </Dialog>
 </template>
@@ -302,22 +290,22 @@ Escape 走原生 `cancel` 事件，组件始终拦截它：先播完面板的离
 
 <div class="demo-row">
   <Button @click="persistent = true">打开不可取消的对话框</Button>
-  <Dialog v-model:open="persistent" title="Save changes?" :dismissible="false">
-    You have unsaved changes. Choose an action to continue.
+  <Dialog v-model:open="persistent" title="保存更改？" :dismissible="false">
+    你有未保存的修改，请选择一个操作继续。
     <template #footer-right>
-      <Button variant="text" @click="persistent = false">Discard</Button>
-      <Button variant="text" @click="persistent = false">Save</Button>
+      <Button variant="text" @click="persistent = false">放弃</Button>
+      <Button variant="text" @click="persistent = false">保存</Button>
     </template>
   </Dialog>
 </div>
 
 ```vue
-<Dialog v-model:open="open" title="Save changes?" :dismissible="false">
-  You have unsaved changes. Choose an action to continue.
+<Dialog v-model:open="open" title="保存更改？" :dismissible="false">
+  你有未保存的修改，请选择一个操作继续。
 
   <template #footer-right>
-    <Button variant="text" @click="open = false">Discard</Button>
-    <Button variant="text" @click="open = false">Save</Button>
+    <Button variant="text" @click="open = false">放弃</Button>
+    <Button variant="text" @click="open = false">保存</Button>
   </template>
 </Dialog>
 ```
@@ -356,21 +344,21 @@ Escape 走原生 `cancel` 事件，组件始终拦截它：先播完面板的离
 
 <div class="demo-row">
   <Button @click="unlabeled = true">打开无标题对话框</Button>
-  <Dialog v-model:open="unlabeled" aria-label="Quick actions">
+  <Dialog v-model:open="unlabeled" aria-label="快捷操作">
     <div class="flex flex-col gap-2">
-      <Button variant="text" @click="unlabeled = false">Duplicate</Button>
-      <Button variant="text" @click="unlabeled = false">Move to…</Button>
-      <Button variant="text" @click="unlabeled = false">Delete</Button>
+      <Button variant="text" @click="unlabeled = false">复制</Button>
+      <Button variant="text" @click="unlabeled = false">移动到…</Button>
+      <Button variant="text" @click="unlabeled = false">删除</Button>
     </div>
   </Dialog>
 </div>
 
 ```vue
-<Dialog v-model:open="open" aria-label="Quick actions">
+<Dialog v-model:open="open" aria-label="快捷操作">
   <div class="flex flex-col gap-2">
-    <Button variant="text">Duplicate</Button>
-    <Button variant="text">Move to…</Button>
-    <Button variant="text">Delete</Button>
+    <Button variant="text">复制</Button>
+    <Button variant="text">移动到…</Button>
+    <Button variant="text">删除</Button>
   </div>
 </Dialog>
 ```

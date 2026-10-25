@@ -39,20 +39,20 @@ const clicks = ref(0);
 ## 变体
 
 <div class="demo-row">
-  <Button variant="elevated">Elevated</Button>
-  <Button variant="filled">Filled</Button>
-  <Button variant="tonal">Tonal</Button>
-  <Button variant="outlined">Outlined</Button>
-  <Button variant="text">Text</Button>
+  <Button variant="elevated">浮起</Button>
+  <Button variant="filled">填充</Button>
+  <Button variant="tonal">色调</Button>
+  <Button variant="outlined">描边</Button>
+  <Button variant="text">文字</Button>
 </div>
 
 ```vue
 <template>
-  <Button variant="elevated">Elevated</Button>
-  <Button variant="filled">Filled</Button>
-  <Button variant="tonal">Tonal</Button>
-  <Button variant="outlined">Outlined</Button>
-  <Button variant="text">Text</Button>
+  <Button variant="elevated">浮起</Button>
+  <Button variant="filled">填充</Button>
+  <Button variant="tonal">色调</Button>
+  <Button variant="outlined">描边</Button>
+  <Button variant="text">文字</Button>
 </template>
 ```
 
@@ -82,16 +82,16 @@ const clicks = ref(0);
 `disabled` 为 `true` 时按钮不可点击，悬浮样式也不再生效。
 
 <div class="demo-row">
-  <Button disabled>Filled</Button>
-  <Button variant="outlined" disabled>Outlined</Button>
-  <Button variant="text" disabled>Text</Button>
+  <Button disabled>填充</Button>
+  <Button variant="outlined" disabled>描边</Button>
+  <Button variant="text" disabled>文字</Button>
 </div>
 
 ```vue
 <template>
-  <Button disabled>Filled</Button>
-  <Button variant="outlined" disabled>Outlined</Button>
-  <Button variant="text" disabled>Text</Button>
+  <Button disabled>填充</Button>
+  <Button variant="outlined" disabled>描边</Button>
+  <Button variant="text" disabled>文字</Button>
 </template>
 ```
 

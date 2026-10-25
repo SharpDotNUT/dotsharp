@@ -24,7 +24,7 @@ const indexValue = ref(0);
 竖向导航。`NavigationRail` 持有选中值（`v-model:value`），`NavigationRailItem` 描述每一项。
 同一应用里导航栏应当是唯一的导航元素，不要再叠加 `NavigationBar` / `NavigationDrawer`。
 
-按 Material 3 Expressive 的导航栏规格：折叠态固定 96px，展开态 220–360px，文字始终显示。
+折叠态固定 96px，展开态 220–360px，两种形态都始终显示文字。
 
 | 形态                        | 宽度        | 排版                                      |
 | --------------------------- | ----------- | ----------------------------------------- |
@@ -34,7 +34,7 @@ const indexValue = ref(0);
 
 ## 子项约定
 
-`NavigationRail` / `NavigationRailItem` 遵循[子项组件统一范式](/guide/patterns)：选中值由
+`NavigationRail` / `NavigationRailItem` 遵循[父子组件以及插槽统一范式](/guide/patterns)：选中值由
 `v-model:value` 持有，`NavigationRailItem` 用 `label`、`icon` 或默认插槽描述内容，标识取 `value` 或
 父组件注入的索引。
 
@@ -69,12 +69,15 @@ const current = ref("timer");
 </script>
 
 <template>
-  <NavigationRail v-model:value="current" :menu="false" label="时钟">
-    <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
-    <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
-    <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
-    <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
-  </NavigationRail>
+  <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail v-model:value="current" :menu="false" label="时钟">
+      <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+      <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+    </NavigationRail>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容</div>
+  </div>
 </template>
 ```
 
@@ -119,22 +122,31 @@ import alarm from "@iconify-icons/material-symbols/alarm";
 import hourglass from "@iconify-icons/material-symbols/hourglass";
 import menu from "@iconify-icons/material-symbols/menu";
 import menuOpen from "@iconify-icons/material-symbols/menu-open";
+import schedule from "@iconify-icons/material-symbols/schedule";
+import timer from "@iconify-icons/material-symbols/timer";
 
 const current = ref("timer");
 const expanded = ref(false);
 </script>
 
 <template>
-  <NavigationRail
-    v-model:value="current"
-    v-model:expanded="expanded"
-    expandable
-    :menu-icon="menu"
-    :menu-expanded-icon="menuOpen"
-  >
-    <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
-    <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
-  </NavigationRail>
+  <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail
+      v-model:value="current"
+      v-model:expanded="expanded"
+      expandable
+      :menu-icon="menu"
+      :menu-expanded-icon="menuOpen"
+      menu-label="展开或收起导航"
+      label="时钟"
+    >
+      <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+      <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+    </NavigationRail>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容</div>
+  </div>
 </template>
 ```
 
@@ -166,17 +178,17 @@ import alarm from "@iconify-icons/material-symbols/alarm";
 import hourglass from "@iconify-icons/material-symbols/hourglass";
 import menu from "@iconify-icons/material-symbols/menu";
 import menuOpen from "@iconify-icons/material-symbols/menu-open";
+import schedule from "@iconify-icons/material-symbols/schedule";
+import timer from "@iconify-icons/material-symbols/timer";
 
 const current = ref("timer");
 const expanded = ref(false);
 </script>
 
 <template>
-  <div class="relative flex h-[24rem]">
-    <div class="flex-1 p-6">
-      <Button @click="expanded = true">展开导航</Button>
-    </div>
-
+  <div
+    class="relative flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg"
+  >
     <NavigationRail
       v-model:value="current"
       v-model:expanded="expanded"
@@ -185,10 +197,18 @@ const expanded = ref(false);
       :menu-icon="menu"
       :menu-expanded-icon="menuOpen"
       menu-label="收起导航"
+      label="时钟"
     >
       <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
       <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
     </NavigationRail>
+
+    <div class="flex flex-1 flex-col items-start gap-3 p-6">
+      <Button @click="expanded = true">展开导航</Button>
+      <span class="text-sm text-ds-muted">应用内容（展开时被 rail 覆盖）</span>
+    </div>
   </div>
 </template>
 ```
@@ -214,8 +234,13 @@ const expanded = ref(false);
   v-model:expanded="expanded"
   expandable
   :expanded-width="300"
+  :menu-icon="menu"
+  :menu-expanded-icon="menuOpen"
+  label="时钟"
 >
   <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+  <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+  <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
 </NavigationRail>
 ```
 
@@ -271,9 +296,27 @@ const expanded = ref(false);
 </div>
 
 ```vue
-<NavigationRailItem label="闹钟" value="alarm" :icon="alarm" :active-icon="alarmOn" />
-<NavigationRailItem label="时钟" value="clock" :icon="schedule" href="/clock" />
-<NavigationRailItem label="秒表" value="stopwatch" :icon="timer" disabled />
+<script setup lang="ts">
+import { NavigationRail, NavigationRailItem } from "@sharpdotnut/dotsharp";
+import alarm from "@iconify-icons/material-symbols/alarm";
+import alarmOn from "@iconify-icons/material-symbols/alarm-on";
+import hourglass from "@iconify-icons/material-symbols/hourglass";
+import timer from "@iconify-icons/material-symbols/timer";
+</script>
+
+<template>
+  <NavigationRail :value="'alarm'" :menu="false" label="链接示例">
+    <NavigationRailItem label="计时器" value="timer" :icon="hourglass" href="/timer" />
+    <NavigationRailItem
+      label="闹钟"
+      value="alarm"
+      :icon="alarm"
+      :active-icon="alarmOn"
+      href="/alarm"
+    />
+    <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" disabled />
+  </NavigationRail>
+</template>
 ```
 
 ## 选中值与索引
@@ -306,7 +349,7 @@ const index = ref(0);
 </script>
 
 <template>
-  <NavigationRail v-model:value="index">
+  <NavigationRail v-model:value="index" :menu="false" label="索引示例">
     <NavigationRailItem label="第一项" :icon="hourglass" />
     <NavigationRailItem label="第二项" :icon="alarm" />
     <NavigationRailItem label="第三项" :icon="schedule" />
@@ -314,7 +357,7 @@ const index = ref(0);
 </template>
 ```
 
-索引由 `NavigationRail` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
+索引由 `NavigationRail` 按最终渲染顺序注入，规则见[父子组件以及插槽统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 单项内容
 

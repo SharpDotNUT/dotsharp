@@ -12,19 +12,19 @@ const email = ref("user@gmail.com");
 const password = ref("secret123");
 const username = ref("aurora");
 const note = ref("");
-const filled = ref("Aurora");
-const fruit = ref("Bl");
+const filled = ref("晓雨");
+const fruit = ref("黑");
 const usernameValidator = (value: string | number) =>
   String(value).trim().length >= 2 ? false : "用户名至少 2 个字符";
 const fruits = [
-  "Apple",
-  "Apricot",
-  "Banana",
-  "Blackberry",
-  "Blueberry",
-  "Cherry",
-  "Grape",
-  "Peach",
+  "苹果",
+  "杏",
+  "香蕉",
+  "黑莓",
+  "蓝莓",
+  "樱桃",
+  "葡萄",
+  "桃",
 ];
 function suggestFruit(input: string): string[] {
   const keyword = input.trim().toLowerCase();
@@ -35,7 +35,7 @@ function suggestFruit(input: string): string[] {
 
 # Input 文本框
 
-`v-model` 双向绑定的单行输入框 / 多行文本框，默认是 Material Design 3 的 **outlined** 样式：描边、浮动标签、可选的辅助文字与字数统计。
+`v-model` 双向绑定的单行输入框 / 多行文本框，默认是 **outlined** 样式：描边、浮动标签、可选的辅助文字与字数统计。
 
 - 标签悬停（浮动）由 CSS 完成：聚焦或有内容时，标签上浮到描边缺口处，缺口由 `fieldset` / `legend` 切出，不需要给标签加背景色，因此在任何页面背景上都正确。
 - `variant="filled"` 切换为浅色填充 + 底边的样式。
@@ -46,7 +46,7 @@ function suggestFruit(input: string): string[] {
 ## 基础用法
 
 <div class="demo-row">
-  <Input v-model="name" label="Username" description="*required" class="max-w-md" />
+  <Input v-model="name" label="用户名" description="必填" class="max-w-md" />
 </div>
 
 当前值：{{ name || '（空）' }}
@@ -60,7 +60,7 @@ const name = ref("");
 </script>
 
 <template>
-  <Input v-model="name" label="Username" description="*required" />
+  <Input v-model="name" label="用户名" description="必填" />
 </template>
 ```
 
@@ -71,7 +71,7 @@ const name = ref("");
 `maxlength` 会限制输入长度，并自动在辅助文字行的右侧显示 `当前 / 上限`。只想要计数、不限制长度时用 `showCount`。
 
 <div class="demo-row">
-  <Input v-model="amount" label="Amount" :maxlength="100" class="max-w-md" />
+  <Input v-model="amount" label="金额" :maxlength="100" class="max-w-md" />
 </div>
 
 ```vue
@@ -83,7 +83,7 @@ const amount = ref("55");
 </script>
 
 <template>
-  <Input v-model="amount" label="Amount" :maxlength="100" />
+  <Input v-model="amount" label="金额" :maxlength="100" />
 </template>
 ```
 
@@ -92,7 +92,7 @@ const amount = ref("55");
 `#leading` 和 `#trailing` 接受任意内容：图标、图片、按钮、下拉箭头，或完全自定义的排版。
 
 <div class="demo-row">
-  <Input v-model="searchText" label="Search" :leading-icon="search" :trailing-icon="mic" class="max-w-md" />
+  <Input v-model="searchText" label="搜索" :leading-icon="search" :trailing-icon="mic" class="max-w-md" />
 </div>
 
 ```vue
@@ -106,14 +106,14 @@ const searchText = ref("");
 </script>
 
 <template>
-  <Input v-model="searchText" label="Search" :leading-icon="search" :trailing-icon="mic" />
+  <Input v-model="searchText" label="搜索" :leading-icon="search" :trailing-icon="mic" />
 </template>
 ```
 
 插槽优先于同名图标属性，适合放图片或交互控件：
 
 <div class="demo-row">
-  <Input v-model="email" label="Email" class="max-w-md">
+  <Input v-model="email" label="邮箱" class="max-w-md">
     <template #trailing>
       <button
         type="button"
@@ -127,8 +127,16 @@ const searchText = ref("");
 </div>
 
 ```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Icon, Input } from "@sharpdotnut/dotsharp";
+import expandMore from "@iconify-icons/material-symbols/expand-more";
+
+const email = ref("user@gmail.com");
+</script>
+
 <template>
-  <Input v-model="email" label="Email">
+  <Input v-model="email" label="邮箱">
     <template #trailing>
       <button type="button" aria-label="选择邮箱">
         <Icon :icon="expandMore" />
@@ -147,7 +155,7 @@ const searchText = ref("");
 `clearable` 在有内容时显示清除按钮，点击后把模型设为 `""`、回焦输入框并触发 `clear` 事件。`type="password"` 默认带明文切换按钮；`revealable="false"` 可关闭。
 
 <div class="demo-row">
-  <Input v-model="password" type="password" label="Password" clearable class="max-w-md" />
+  <Input v-model="password" type="password" label="密码" clearable class="max-w-md" />
 </div>
 
 ```vue
@@ -159,7 +167,7 @@ const password = ref("secret123");
 </script>
 
 <template>
-  <Input v-model="password" type="password" label="Password" clearable />
+  <Input v-model="password" type="password" label="密码" clearable />
 </template>
 ```
 
@@ -167,10 +175,10 @@ const password = ref("secret123");
 
 ## 自动完成
 
-`autocomplete` 是原生属性名，因此候选函数用 **`suggest`**：它接收当前输入文本，同步返回候选文本数组，渲染为与 `Select` / `Menu` 同一套规格的弹层（`elevated` 底色、4px 圆角、elevation 2 阴影、48px 行高）。
+`autocomplete` 是原生属性名，因此候选函数用 **`suggest`**：它接收当前输入文本，同步返回候选文本数组，渲染为与 `Select` / `Menu` 同一套规格的弹层（`elevated` 底色、4px 圆角、阴影、48px 行高）。
 
 <div class="demo-row">
-  <Input v-model="fruit" label="Fruit" :suggest="suggestFruit" clearable class="max-w-md" />
+  <Input v-model="fruit" label="水果" :suggest="suggestFruit" clearable class="max-w-md" />
 </div>
 
 当前值：{{ fruit || '（空）' }}
@@ -180,8 +188,8 @@ const password = ref("secret123");
 import { ref } from "vue";
 import { Input } from "@sharpdotnut/dotsharp";
 
-const fruit = ref("Bl");
-const fruits = ["Apple", "Apricot", "Banana", "Blackberry", "Blueberry", "Cherry"];
+const fruit = ref("黑");
+const fruits = ["苹果", "杏", "香蕉", "黑莓", "蓝莓", "樱桃", "葡萄", "桃"];
 
 function suggestFruit(input: string): string[] {
   const keyword = input.trim().toLowerCase();
@@ -191,7 +199,7 @@ function suggestFruit(input: string): string[] {
 </script>
 
 <template>
-  <Input v-model="fruit" label="Fruit" :suggest="suggestFruit" clearable />
+  <Input v-model="fruit" label="水果" :suggest="suggestFruit" clearable />
 </template>
 ```
 
@@ -239,7 +247,7 @@ const note = ref("");
 ## Filled 变体
 
 <div class="demo-row">
-  <Input v-model="filled" variant="filled" label="Name" description="filled 变体" class="max-w-md" />
+  <Input v-model="filled" variant="filled" label="名称" description="filled 变体" class="max-w-md" />
 </div>
 
 ```vue
@@ -247,11 +255,11 @@ const note = ref("");
 import { ref } from "vue";
 import { Input } from "@sharpdotnut/dotsharp";
 
-const filled = ref("Aurora");
+const filled = ref("晓雨");
 </script>
 
 <template>
-  <Input v-model="filled" variant="filled" label="Name" description="filled 变体" />
+  <Input v-model="filled" variant="filled" label="名称" description="filled 变体" />
 </template>
 ```
 
@@ -259,10 +267,10 @@ const filled = ref("Aurora");
 
 ## 胶囊搜索栏
 
-`shape="pill"` 换成材质 3 的搜索栏：去掉描边、改用 `--ds-surface-hover` 填充、高度 40px、两端全圆角；聚焦与校验不通过用 `ring` 表示，不改变盒子尺寸。多行（`textarea`）时忽略该属性。
+`shape="pill"` 换成胶囊形搜索栏：去掉描边、改用 `--ds-surface-hover` 填充、高度 40px、两端全圆角；聚焦与校验不通过用 `ring` 表示，不改变盒子尺寸。多行（`textarea`）时忽略该属性。
 
 <div class="demo-row">
-  <Input v-model="searchText" shape="pill" type="search" placeholder="Search" class="max-w-md" />
+  <Input v-model="searchText" shape="pill" type="search" placeholder="搜索" class="max-w-md" />
 </div>
 
 ```vue
@@ -274,7 +282,7 @@ const searchText = ref("");
 </script>
 
 <template>
-  <Input v-model="searchText" shape="pill" type="search" placeholder="Search" />
+  <Input v-model="searchText" shape="pill" type="search" placeholder="搜索" />
 </template>
 ```
 
@@ -286,7 +294,7 @@ const searchText = ref("");
 `validator` 接收当前值，返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在输入与失焦时各校验一次，用 `validateOn` 调整；控件还暴露 `validate()` / `clearValidate()`。
 
 <div class="demo-row">
-  <Input v-model="username" label="Username" :validator="usernameValidator" class="max-w-md" />
+  <Input v-model="username" label="用户名" :validator="usernameValidator" class="max-w-md" />
 </div>
 
 ```vue
@@ -300,7 +308,7 @@ const usernameValidator = (value: string | number) =>
 </script>
 
 <template>
-  <Input v-model="username" label="Username" :validator="usernameValidator" />
+  <Input v-model="username" label="用户名" :validator="usernameValidator" />
 </template>
 ```
 

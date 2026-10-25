@@ -25,10 +25,12 @@ import { ref } from "vue";
 import { Switch } from "@sharpdotnut/dotsharp";
 
 const wifi = ref(true);
+const airplane = ref(false);
 </script>
 
 <template>
   <Switch v-model="wifi" label="Wi-Fi" />
+  <Switch v-model="airplane" label="飞行模式" />
 </template>
 ```
 

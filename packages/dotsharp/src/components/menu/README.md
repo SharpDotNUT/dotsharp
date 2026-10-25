@@ -25,7 +25,7 @@ const anchoredPicked = ref<string | number>("—");
 
 由 `Menu` 与 `MenuItem` 组合而成：`Menu` 是弹出层容器，每个 `MenuItem` 描述一个菜单项。
 
-- 菜单面板渲染到 `body`，`surface-container` 底色、elevation 2 阴影、4px 圆角、8px 上下内边距，行高 48px——与 `Select` 的弹层同一套规格。
+- 菜单面板渲染到 `body`，底色 `bg-ds-elevated`、阴影 `shadow-ds-2`、圆角 `rounded-ds-sm`、上下内边距 `py-2`——与 `Select` 的弹层同一套规格。
 - 触发元素由 `#trigger` 插槽描述，也可以省略插槽、用 `anchor` 指定贴靠元素，或用 `x` / `y` 直接定位（上下文菜单）。
 - `MenuItem` 支持前置图标、辅助说明、尾部快捷键 / 自定义内容、禁用、勾选态。
 - 菜单项里放 `#submenu` 插槽即成为二级菜单，悬停、点击或 `→` 展开。
@@ -52,6 +52,7 @@ const anchoredPicked = ref<string | number>("—");
 <script setup lang="ts">
 import { ref } from "vue";
 import { Button, Menu, MenuItem } from "@sharpdotnut/dotsharp";
+import deleteIcon from "@iconify-icons/material-symbols/delete";
 import redo from "@iconify-icons/material-symbols/redo";
 import undo from "@iconify-icons/material-symbols/undo";
 
@@ -79,6 +80,8 @@ const picked = ref<string | number>("—");
 ```vue
 <script setup lang="ts">
 import { ref } from "vue";
+import { Button, Menu, MenuItem } from "@sharpdotnut/dotsharp";
+import settings from "@iconify-icons/material-symbols/settings";
 
 const open = ref(false);
 </script>
@@ -110,7 +113,7 @@ const open = ref(false);
     <MenuItem label="创建副本" :icon="contentCopy" description="保存到同一文件夹" shortcut="⌘D" />
     <MenuItem label="重命名" :icon="create">
       <template #trailing>
-        <span class="rounded-ds-sm bg-ds-tonal px-1.5 py-0.5 text-xs text-ds-on-tonal">New</span>
+        <span class="rounded-ds-sm bg-ds-tonal px-1.5 py-0.5 text-xs text-ds-on-tonal">新</span>
       </template>
     </MenuItem>
     <MenuItem label="分享" :icon="share" disabled />
@@ -125,7 +128,7 @@ const open = ref(false);
   <MenuItem label="创建副本" :icon="contentCopy" description="保存到同一文件夹" shortcut="⌘D" />
   <MenuItem label="重命名" :icon="create">
     <template #trailing>
-      <span class="rounded-ds-sm bg-ds-tonal px-1.5 py-0.5 text-xs text-ds-on-tonal">New</span>
+      <span class="rounded-ds-sm bg-ds-tonal px-1.5 py-0.5 text-xs text-ds-on-tonal">新</span>
     </template>
   </MenuItem>
   <MenuItem label="分享" :icon="share" disabled />
@@ -166,6 +169,7 @@ const open = ref(false);
 ```vue
 <script setup lang="ts">
 import { ref } from "vue";
+import { Button, Menu, MenuItem } from "@sharpdotnut/dotsharp";
 
 const offline = ref(true);
 </script>
@@ -175,7 +179,8 @@ const offline = ref(true);
     <template #trigger>
       <Button variant="tonal">偏好设置</Button>
     </template>
-    <MenuItem label="离线模式" :checked="offline" @select="offline = !offline" />
+    <MenuItem label="离线模式" :checked="offline" shortcut="⌘O" @select="offline = !offline" />
+    <MenuItem label="显示网格" :checked="false" disabled />
   </Menu>
 </template>
 ```
@@ -249,6 +254,14 @@ const offline = ref(true);
       <MenuItem label="幻灯片" :icon="slideshow" />
     </template>
   </MenuItem>
+  <MenuItem label="下载" :icon="download">
+    <template #submenu>
+      <MenuItem label="原始文件" />
+      <MenuItem label="PDF" />
+    </template>
+  </MenuItem>
+  <Divider class="my-2" />
+  <MenuItem label="分享" :icon="share" />
 </Menu>
 ```
 
@@ -277,6 +290,8 @@ const offline = ref(true);
 <script setup lang="ts">
 import { ref } from "vue";
 import { Button, Menu, MenuItem } from "@sharpdotnut/dotsharp";
+import contentCopy from "@iconify-icons/material-symbols/content-copy";
+import deleteIcon from "@iconify-icons/material-symbols/delete";
 
 const anchor = ref<HTMLElement | null>(null);
 const open = ref(false);
@@ -284,7 +299,7 @@ const open = ref(false);
 
 <template>
   <span ref="anchor" class="inline-flex">
-    <Button @click="open = !open">贴靠定位</Button>
+    <Button variant="outlined" @click="open = !open">贴靠定位</Button>
   </span>
   <Menu v-model:open="open" :anchor="anchor">
     <MenuItem label="复制" :icon="contentCopy" shortcut="⌘C" />
@@ -336,9 +351,9 @@ const open = ref(false);
 - 事件：`select(value)`；同时冒泡到所属 `Menu`。
 - 点击可勾选项只切换勾选态，菜单保持展开；点击普通项收起整棵菜单。
 - 根元素是原生 `button`，其余属性与事件透传到该按钮。
-- 行高 48px；紧凑用法可用 `class="py-1"` 之类调整，但会牺牲触控面积。
+- 单行高度由 `px-3 py-2` 与 `leading-5` 决定（约 36px）；紧凑用法可用 `class="py-1"` 之类调整，但会牺牲触控面积。
 
 ### 子项约定
 
-`Menu` / `MenuItem` 沿用[子项组件统一范式](/guide/patterns)的取值规则：`value` 省略时使用 `Menu` 注入的渲染顺序索引，
+`Menu` / `MenuItem` 沿用[父子组件以及插槽统一范式](/guide/patterns)的取值规则：`value` 省略时使用 `Menu` 注入的渲染顺序索引，
 `v-for` 与 `v-if` 会按最终顺序重新编号；`label` 只做纯文本回退，默认插槽优先。

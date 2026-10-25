@@ -24,7 +24,7 @@ function show(value: Date | null): string {
 - **模态**：加 `modal` 并用 `v-model:open` 控制，组件自带遮罩、焦点陷阱、Escape 与滚动锁定。
 - **输入**：`mode="input"` 把日历换成日期输入框；头部右侧的按钮在两者之间切换。
 
-选择过程有两步：点日期只更新草稿，`OK` 才写回 `v-model`；`Cancel` 丢弃草稿并关闭。
+选择过程有两步：点日期只更新草稿，「确定」才写回 `v-model`；「取消」丢弃草稿并关闭。
 `actions="false"` 时点击日期立即提交、不显示按钮。
 
 ## 卡片
@@ -87,11 +87,12 @@ const date = ref<Date | null>(null);
 
 ```vue
 <template>
+  <Button @click="open = true">输入日期</Button>
   <DatePicker v-model="date" v-model:open="open" modal mode="input" />
 </template>
 ```
 
-输入框按当前语言接受数字日期（英文 `MM/DD/YYYY`，中日 `YYYY/MM/DD`），失焦或按 `OK` 时解析；
+输入框按当前语言接受数字日期（英文 `MM/DD/YYYY`，中日 `YYYY/MM/DD`），失焦或按「确定」时解析；
 无法解析的输入会被标红并阻止提交。
 
 ## 头部与操作
@@ -122,6 +123,6 @@ const date = ref<Date | null>(null);
 | `mode`    | `"calendar" \| "input"` | `"calendar"` | 正文初始模式                   |
 | `title`   | `string`                | 当前语言     | 头部小标题                     |
 | `header`  | `boolean`               | `true`       | 是否显示头部                   |
-| `actions` | `boolean`               | `true`       | 是否显示 Cancel / OK           |
+| `actions` | `boolean`               | `true`       | 是否显示「取消」/「确定」按钮  |
 
 事件：`confirm(value)` 在提交后触发（`actions="false"` 时点击日期也会触发），`cancel` 在取消时触发。

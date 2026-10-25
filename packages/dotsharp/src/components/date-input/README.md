@@ -21,7 +21,7 @@ function show(value: Date | null): string {
 - `v-model` 绑定 `Date | null`；输入框里始终按当前语言的顺序显示（英文 `MM/DD/YYYY`，中日 `YYYY/MM/DD`）。
 - 失焦或回车时解析输入；非法日期标红并显示错误，合法日期写回模型。
 - `picker="false"` 去掉日历按钮，只剩输入。
-- 标签始终浮动在描边上方，空值时占位提示（`mm/dd/yyyy`）仍完整可见。
+- 标签始终浮动在描边上方，空值时占位提示（按当前语言的顺序生成，如 `yyyy/mm/dd`）仍完整可见。
 - 选择器默认是贴着输入框的弹出层；`modal` 改成模态对话框。
 - `description` 默认显示数字顺序提示，可以换成自己的说明。
 
@@ -51,7 +51,7 @@ const date = ref<Date | null>(new Date(2025, 7, 17));
 
 ## 弹出层选择
 
-默认 `picker` 打开贴住输入框的日历弹出层，按 `Cancel` / `OK` 提交或丢弃。
+默认 `picker` 打开贴住输入框的日历弹出层，按「取消」/「确定」提交或丢弃。
 
 <div class="demo-row">
   <DateInput v-model="picked" label="日期" class="w-full max-w-sm" />

@@ -94,8 +94,20 @@ const lower = ref("");
 </script>
 
 <template>
-  <OptInputs v-model="upper" accept="alphanumeric" letter-case="uppercase" :length="5" />
-  <OptInputs v-model="lower" accept="alphanumeric" letter-case="lowercase" :length="5" />
+  <OptInputs
+    v-model="upper"
+    accept="alphanumeric"
+    letter-case="uppercase"
+    :length="5"
+    label="自动大写"
+  />
+  <OptInputs
+    v-model="lower"
+    accept="alphanumeric"
+    letter-case="lowercase"
+    :length="5"
+    label="自动小写"
+  />
 </template>
 ```
 
@@ -104,7 +116,7 @@ const lower = ref("");
 `mask` 让每一格显示为圆点，适用于 PIN 码；粘贴、过滤与 `complete` 行为不变。
 
 <div class="demo-row">
-  <OptInputs v-model="masked" mask :length="4" label="PIN" @complete="completed = $event" />
+  <OptInputs v-model="masked" mask :length="4" label="PIN" />
 </div>
 
 ```vue

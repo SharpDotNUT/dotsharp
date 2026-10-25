@@ -49,30 +49,30 @@ const lastAction = ref<string | null>(null);
 `variant` 决定表面，层级决定圆角与内边距：
 
 <div class="demo-row">
-  <Card variant="elevated" title="Elevated" class="w-52">
+  <Card variant="elevated" title="浮起" class="w-52">
     <p class="text-sm text-ds-muted">阴影抬升，浮在页面上。</p>
   </Card>
-  <Card variant="filled" title="Filled" class="w-52">
+  <Card variant="filled" title="填充" class="w-52">
     <p class="text-sm text-ds-muted">填充底色，视觉重量更低。</p>
   </Card>
-  <Card variant="surface" title="Surface" class="w-52">
+  <Card variant="surface" title="表面" class="w-52">
     <p class="text-sm text-ds-muted">只有表面色，没有任何装饰。</p>
   </Card>
-  <Card variant="outlined" title="Outlined" class="w-52">
+  <Card variant="outlined" title="描边" class="w-52">
     <p class="text-sm text-ds-muted">一条描边，适合密集排布。</p>
   </Card>
-  <Card variant="plain" title="Plain" class="w-52">
+  <Card variant="plain" title="透明" class="w-52">
     <p class="text-sm text-ds-muted">完全透明，只保留圆角与排版。</p>
   </Card>
 </div>
 
 ```vue
 <template>
-  <Card variant="elevated" title="Elevated">…</Card>
-  <Card variant="filled" title="Filled">…</Card>
-  <Card variant="surface" title="Surface">…</Card>
-  <Card variant="outlined" title="Outlined">…</Card>
-  <Card variant="plain" title="Plain">…</Card>
+  <Card variant="elevated" title="浮起">…</Card>
+  <Card variant="filled" title="填充">…</Card>
+  <Card variant="surface" title="表面">…</Card>
+  <Card variant="outlined" title="描边">…</Card>
+  <Card variant="plain" title="透明">…</Card>
 </template>
 ```
 
@@ -90,7 +90,7 @@ const lastAction = ref<string | null>(null);
   <Card class="w-full max-w-sm">
     <template #title>
       <div class="flex items-center gap-2">
-        <span class="rounded-ds-sm bg-ds-tonal px-2 py-0.5 text-xs text-ds-on-tonal">Beta</span>
+        <span class="rounded-ds-sm bg-ds-tonal px-2 py-0.5 text-xs text-ds-on-tonal">公测</span>
         <span class="text-base leading-6 font-medium">共享文件夹</span>
       </div>
     </template>
@@ -108,7 +108,7 @@ const lastAction = ref<string | null>(null);
   <Card>
     <template #title>
       <div class="flex items-center gap-2">
-        <span class="rounded-ds-sm bg-ds-tonal px-2 py-0.5 text-xs text-ds-on-tonal">Beta</span>
+        <span class="rounded-ds-sm bg-ds-tonal px-2 py-0.5 text-xs text-ds-on-tonal">公测</span>
         <span class="text-base leading-6 font-medium">共享文件夹</span>
       </div>
     </template>
@@ -149,11 +149,23 @@ const lastAction = ref<string | null>(null);
 
 ```vue
 <template>
+  <Card title="收件箱">
+    <template #title-left>
+      <Icon :icon="folderIcon" size="20" />
+    </template>
+    左槽位放前置图标。
+  </Card>
   <Card title="共享文件夹" subtitle="邀请链接 7 天后过期">
     <template #title-right>
       <IconButton :icon="moreIcon" label="更多操作" />
     </template>
-    任何拿到链接的人都可以查看这个文件夹。
+    右槽位放操作按钮。
+  </Card>
+  <Card title="已归档">
+    <template #title-right>
+      <IconButton :icon="closeIcon" label="关闭" />
+    </template>
+    关闭按钮与标题同一行。
   </Card>
 </template>
 ```
@@ -200,31 +212,30 @@ const lastAction = ref<string | null>(null);
 两侧都要时，把「了解更多」这类入口放进 `footer-left`：
 
 <div class="demo-row">
-  <Card title="Use location service?" class="w-full max-w-sm">
+  <Card title="开启定位服务？" class="w-full max-w-sm">
     <p class="text-sm leading-5 text-ds-muted">
-      Let this service help other apps determine your location. This means sharing anonymous
-      location data, even when no apps are running.
+      允许其他应用借助此服务确定你的位置。这意味着即使没有应用在运行，也会共享匿名的位置数据。
     </p>
     <template #footer-left>
-      <Button variant="text">Learn more</Button>
+      <Button variant="text">了解更多</Button>
     </template>
     <template #footer-right>
-      <Button variant="text">Disagree</Button>
-      <Button variant="text">Agree</Button>
+      <Button variant="text">不同意</Button>
+      <Button variant="text">同意</Button>
     </template>
   </Card>
 </div>
 
 ```vue
 <template>
-  <Card title="Use location service?">
+  <Card title="开启定位服务？">
     正文……
     <template #footer-left>
-      <Button variant="text">Learn more</Button>
+      <Button variant="text">了解更多</Button>
     </template>
     <template #footer-right>
-      <Button variant="text">Disagree</Button>
-      <Button variant="text">Agree</Button>
+      <Button variant="text">不同意</Button>
+      <Button variant="text">同意</Button>
     </template>
   </Card>
 </template>
@@ -342,8 +353,8 @@ const lastAction = ref<string | null>(null);
 <div class="demo-row">
   <Card title="外层" class="w-full max-w-md">
     <Container class="mt-3">
-      <Card variant="outlined" title="固定的第 1 层" :level="1" :padded="false">
-        <p class="p-4 text-sm text-ds-muted">圆角与内边距按第 1 层计算。</p>
+      <Card variant="outlined" title="固定的第 1 层" :level="1">
+        <p class="text-sm text-ds-muted">圆角与内边距按第 1 层计算。</p>
       </Card>
     </Container>
   </Card>

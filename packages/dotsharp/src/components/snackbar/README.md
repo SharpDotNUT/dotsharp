@@ -76,7 +76,22 @@ const open = ref(false);
 最近一次操作：{{ lastAction }}
 
 ```vue
-<Snackbar v-model:open="open" text="邮件已归档" action="撤销" @action="undo" />
+<script setup lang="ts">
+import { ref } from "vue";
+import { Button, Snackbar } from "@sharpdotnut/dotsharp";
+
+const open = ref(false);
+
+function undo(): void {
+  // 撤销归档
+}
+</script>
+
+<template>
+  <Button @click="open = true">归档</Button>
+
+  <Snackbar v-model:open="open" text="邮件已归档" action="撤销" @action="undo" />
+</template>
 ```
 
 需要给操作加图标或自定义内容时用 `action` 插槽，它优先于 `action` 属性。
@@ -97,7 +112,7 @@ const open = ref(false);
 </div>
 
 ```vue
-<Snackbar v-model:open="open" text="有未保存的修改" :duration="0" dismissible />
+<Snackbar v-model:open="open" text="有未保存的修改，离开前请先保存" :duration="0" dismissible />
 ```
 
 ## 函数式调用
@@ -143,7 +158,7 @@ closeAllSnackbars();
 </div>
 
 ```vue
-<Snackbar v-model:open="open">
+<Snackbar v-model:open="open" :duration="0" dismissible>
   已从「草稿箱」删除 3 个会话
   <span class="text-ds-bg/70">（可在 30 天内从回收站恢复）</span>
 </Snackbar>

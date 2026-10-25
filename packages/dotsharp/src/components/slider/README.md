@@ -31,7 +31,7 @@ function increaseBrightness() {
 
 # Slider 滑块
 
-`Slider` 从区间中选一个值，`RangeSlider` 用两个手柄选一段区间。两者共用 Material 3 Expressive 的外观：
+`Slider` 从区间中选一个值，`RangeSlider` 用两个手柄选一段区间。两者外观一致：
 圆角轨道、竖条手柄、手柄两侧的间隙、端点圆点，以及可选的刻度点与数值气泡。
 
 - `v-model` 绑定数值（`Slider` 为 `number`，`RangeSlider` 为 `[最小值, 最大值]`）。
@@ -83,7 +83,7 @@ const centered = ref(20);
 </script>
 
 <template>
-  <Slider v-model="centered" :min="-100" :max="100" :step="5" centered />
+  <Slider v-model="centered" :min="-100" :max="100" :step="5" centered label="偏移量" />
 </template>
 ```
 
@@ -117,7 +117,7 @@ const range = ref<[number, number]>([30, 70]);
 ## 显示可用值
 
 `ticks` 在轨道上为每个可选值画一个点，选中部分用反色点、未选中部分用主题色点；端点圆点始终保留。
-如 Material 的建议，只有「范围 ÷ 步长」较小时才适合开启：刻度超过 20 个时组件会自动省略，避免糊成一条线。
+只有「范围 ÷ 步长」较小时才适合开启：刻度超过 20 个时组件会自动省略，避免糊成一条线。
 
 <div class="demo-row">
   <Slider v-model="discrete" :step="20" ticks label="显示尺寸" class="w-full max-w-lg" />
@@ -134,7 +134,7 @@ const discrete = ref(40);
 </script>
 
 <template>
-  <Slider v-model="discrete" :step="20" ticks />
+  <Slider v-model="discrete" :step="20" ticks label="显示尺寸" />
 </template>
 ```
 
@@ -161,7 +161,7 @@ const indicator = ref(50);
 </script>
 
 <template>
-  <Slider v-model="indicator" show-value="always" />
+  <Slider v-model="indicator" show-value="always" label="不透明度" />
 </template>
 ```
 
@@ -201,12 +201,22 @@ function increaseBrightness() {
 </script>
 
 <template>
-  <Slider v-model="brightness">
+  <Slider v-model="brightness" label="亮度">
     <template #start>
-      <IconButton :icon="remove" label="降低亮度" @click="decreaseBrightness" />
+      <IconButton
+        :icon="remove"
+        label="降低亮度"
+        :disabled="brightness <= 0"
+        @click="decreaseBrightness"
+      />
     </template>
     <template #end>
-      <IconButton :icon="add" label="提高亮度" @click="increaseBrightness" />
+      <IconButton
+        :icon="add"
+        label="提高亮度"
+        :disabled="brightness >= 100"
+        @click="increaseBrightness"
+      />
     </template>
   </Slider>
 </template>
@@ -216,7 +226,7 @@ function increaseBrightness() {
 
 ## 尺寸
 
-五种厚度对应 Material 3 Expressive 的 XS–XL，手柄高度随轨道增长（最小 44px）。大尺寸适合强调某一个数值或触控设备。
+五种厚度对应 XS–XL，手柄高度随轨道增长（最小 44px）。大尺寸适合强调某一个数值或触控设备。
 
 <div class="demo-row">
   <div class="flex w-full max-w-2xl flex-col gap-6">
@@ -250,7 +260,7 @@ function increaseBrightness() {
 
 ```vue
 <template>
-  <Slider v-model="value" disabled />
+  <Slider v-model="value" disabled label="不可用" />
 </template>
 ```
 

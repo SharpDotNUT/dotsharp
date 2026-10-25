@@ -54,5 +54,6 @@ setTheme("dark");
 ## 下一步
 
 - [简介](/guide/intro)：库的定位与约定。
-- [统一范式](/guide/patterns)：`Tabs` / `Tab` 这类子项组件的组合方式。
+- [父子组件以及插槽统一范式](/guide/patterns)：子项组件的组合方式，以及属性与插槽的取舍。
+- [图标](/guide/icons)：选择图标集并按需引入。
 - [组件](/components/button)：浏览全部组件。

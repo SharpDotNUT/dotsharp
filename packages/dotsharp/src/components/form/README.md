@@ -202,18 +202,28 @@ function onSubmit(valid: boolean): void {
 </script>
 
 <template>
-  <Form @submit="onSubmit">
+  <Form class="max-w-md" @submit="onSubmit">
     <FormItem label="用户名" required>
       <Input v-model="name" :validator="nameValidator" placeholder="至少 2 个字符" />
     </FormItem>
     <FormItem label="邮箱" required>
-      <Input v-model="email" type="email" :validator="emailValidator" />
+      <Input
+        v-model="email"
+        type="email"
+        :validator="emailValidator"
+        placeholder="name@example.com"
+      />
     </FormItem>
     <FormItem label="密码" required>
-      <Input v-model="password" type="password" :validator="passwordValidator" />
+      <Input
+        v-model="password"
+        type="password"
+        :validator="passwordValidator"
+        placeholder="至少 8 个字符"
+      />
     </FormItem>
     <FormItem label="套餐" required>
-      <Select v-model:value="plan" :validator="planValidator">
+      <Select v-model:value="plan" :validator="planValidator" placeholder="请选择套餐">
         <Option label="基础版" value="basic" />
         <Option label="专业版" value="pro" />
         <Option label="团队版" value="team" />
@@ -304,20 +314,36 @@ const age = (value: string | number) => (Number(value) >= 18 ? false : true); //
 import { ref } from "vue";
 import { Button, Form, FormItem, Input } from "@sharpdotnut/dotsharp";
 
-const formRef = ref<{ validate: () => boolean } | null>(null);
+const name = ref("");
+const email = ref("");
+const manualResult = ref("");
+
+const basicRef = ref<{ validate: () => boolean } | null>(null);
 const emailRef = ref<{ validate: () => boolean } | null>(null);
 
+const nameValidator = (value: string | number) =>
+  String(value).trim().length >= 2 ? false : "用户名至少 2 个字符";
+const emailValidator = (value: string | number) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value)) ? false : "邮箱格式不正确";
+
 function validateForm(): void {
-  formRef.value?.validate();
+  const valid = basicRef.value?.validate() ?? true;
+  manualResult.value = valid ? "整张表单通过" : "整张表单未通过";
 }
 
 function validateEmail(): void {
-  emailRef.value?.validate();
+  const valid = emailRef.value?.validate() ?? true;
+  manualResult.value = valid ? "邮箱字段通过" : "邮箱字段未通过";
+}
+
+function clearAll(): void {
+  basicRef.value?.clearValidate();
+  manualResult.value = "";
 }
 </script>
 
 <template>
-  <Form ref="formRef">
+  <Form ref="basicRef" class="max-w-md">
     <FormItem label="昵称">
       <Input v-model="name" :validator="nameValidator" :validate-on="[]" />
     </FormItem>
@@ -325,6 +351,11 @@ function validateEmail(): void {
       <Input ref="emailRef" v-model="email" :validator="emailValidator" :validate-on="[]" />
     </FormItem>
   </Form>
+  <div class="flex flex-col gap-2">
+    <Button variant="outlined" @click="validateForm">校验整张表单</Button>
+    <Button variant="outlined" @click="validateEmail">只校验邮箱</Button>
+    <Button variant="text" @click="clearAll">清空校验结果</Button>
+  </div>
 </template>
 ```
 
@@ -363,23 +394,29 @@ import { Button, Checkbox, Form, FormItem, Input, Option, Select } from "@sharpd
 const plan = ref("basic");
 const note = ref("");
 const agree = ref(false);
+const result = ref("");
 
 const planValidator = (value: string | number) => (value ? false : "请选择套餐");
 const agreeValidator = (value: boolean) => (value ? false : "请先阅读并同意条款");
 const noteValidator = (value: string | number) =>
   String(value).length <= 20 ? false : "备注最多 20 个字符";
+
+function onSubmit(valid: boolean): void {
+  result.value = valid ? "校验通过，可以提交" : "还有字段没有通过校验";
+}
 </script>
 
 <template>
-  <Form @submit="onSubmit">
+  <Form class="max-w-md" @submit="onSubmit">
     <FormItem label="套餐" required>
-      <Select v-model:value="plan" :validator="planValidator">
+      <Select v-model:value="plan" :validator="planValidator" placeholder="请选择">
         <Option label="基础版" value="basic" />
         <Option label="专业版" value="pro" />
+        <Option label="团队版" value="team" />
       </Select>
     </FormItem>
     <FormItem label="备注">
-      <Input v-model="note" textarea :validator="noteValidator" />
+      <Input v-model="note" textarea :rows="2" :validator="noteValidator" />
     </FormItem>
     <FormItem label="条款">
       <Checkbox v-model="agree" label="我已阅读并同意服务条款" :validator="agreeValidator" />

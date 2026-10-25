@@ -20,10 +20,10 @@ function show(value: TimeValue | null): string {
 
 把 `Input` 的时间模式与时钟按钮合在一起：直接输入时刻，或点右侧时钟按钮打开选择器。
 
-- `v-model` 绑定 `TimeValue | null`；输入框里的文本按 `format` 显示（`07:00 AM` 或 `20:00`）。
+- `v-model` 绑定 `TimeValue | null`；输入框里的文本按 `format` 显示（如 `07:00 上午` 或 `20:00`）。
 - 失焦或回车时解析输入；非法时刻标红并显示错误，合法时刻写回模型。
 - `format` 省略时取当前语言的默认时钟格式；`picker="false"` 去掉时钟按钮，只剩输入。
-- `seconds` 打开秒：文本变成 `20:15:30` / `8:15:30 PM`，选择器里多一个秒字段。
+- `seconds` 打开秒：文本变成 `20:15:30` / `08:15:30 下午`，选择器里多一个秒字段。
 - 标签始终浮动在描边上方，空值时占位提示（`hh:mm`）仍完整可见。
 - 选择器默认是贴着输入框的弹出层；`modal` 改成模态对话框，`layout` 决定选择器的排布。
 
@@ -50,11 +50,11 @@ const time = ref<TimeValue | null>({ hour: 7, minute: 0 });
 ```
 
 输入接受 `20:00`、`7:5`、`7:05 PM` 这类写法，分隔符可以是 `:`、`：` 或 `.`。
-24 小时制拒绝 AM/PM 与大于 23 的小时；12 小时制的小时必须是 1–12，省略 AM/PM 时按上午处理。
+24 小时制拒绝 `AM` / `PM` 与大于 23 的小时；12 小时制的小时必须是 1–12，省略 `AM` / `PM` 时按上午处理。
 
 ## 弹出层选择
 
-默认点时钟按钮打开贴住输入框的表盘，按 `Cancel` / `OK` 提交或丢弃。
+默认点时钟按钮打开贴住输入框的表盘，按「取消」/「确定」提交或丢弃。
 
 <div class="demo-row">
   <TimeInput v-model="picked" format="24h" label="时间" class="w-full max-w-sm" />
@@ -64,7 +64,7 @@ const time = ref<TimeValue | null>({ hour: 7, minute: 0 });
 
 ```vue
 <template>
-  <TimeInput v-model="picked" format="24h" />
+  <TimeInput v-model="picked" format="24h" label="时间" />
 </template>
 ```
 
@@ -80,7 +80,7 @@ const time = ref<TimeValue | null>({ hour: 7, minute: 0 });
 
 ```vue
 <template>
-  <TimeInput v-model="time" modal />
+  <TimeInput v-model="time" modal label="时间" />
 </template>
 ```
 

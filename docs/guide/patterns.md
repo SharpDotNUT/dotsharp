@@ -1,6 +1,12 @@
-# 统一范式
+# 父子组件以及插槽统一范式
 
-本库中由「父组件 + 一组子项」构成的组件共用同一套约定。已有实现：
+本库有两条贯穿全部组件的约定：
+
+- 由「父组件 + 一组子项」构成的组件（`Tabs` / `Tab`、`NavigationBar` / `NavigationItem` 等）使用同一套
+  选中值、子项标识与状态传递方式；
+- 组件的每块内容都可以用属性或插槽描述：简单内容用属性，复杂内容用插槽，插槽优先。
+
+已有父子组件实现：
 
 | 父组件             | 子项                   | 选中值类型         |
 | ------------------ | ---------------------- | ------------------ |
@@ -13,6 +19,49 @@
 | `RadioGroup`       | `Radio`                | `string \| number` |
 
 新增同类组件（如 `Steps` / `Step`）时沿用这套写法，不要另立规则。
+
+## 属性与插槽：两种写法
+
+同一个位置若同时提供属性和插槽，属性接收纯文本或图标数据，插槽接收任意内容，**插槽优先**。两者只写一处，
+不要既传属性又在插槽里重复同样的内容。
+
+```vue
+<!-- 简单内容：属性 -->
+<Tab label="航班" :icon="flight" value="flights" />
+<Card title="本周概览" subtitle="10 月 20 日 – 10 月 26 日">…</Card>
+
+<!-- 富内容：同名插槽 -->
+<Tab value="custom">
+  <span class="font-medium">航班</span>
+  <Badge value="3" label="3 个更新" />
+</Tab>
+<Card>
+  <template #title>本周<b>概览</b></template>
+</Card>
+```
+
+| 组件                            | 属性                                     | 对应插槽                                      |
+| ------------------------------- | ---------------------------------------- | --------------------------------------------- |
+| `Tab` / `NavigationItem` 等子项 | `label`、`icon`                          | 默认插槽（文字区域）                          |
+| `Card`                          | `title`、`subtitle`                      | `#title`、`#subtitle`、默认插槽（正文）       |
+| `AppBar`                        | `title`、`subtitle`                      | 默认插槽、`#subtitle`、`#left`、`#right`      |
+| `Dialog`                        | `title`、`icon`                          | `#icon`、默认插槽（正文）、`footer-*`         |
+| `ListItem`                      | `label`、`description`、`icon`           | 默认插槽、`#leading`、`#trailing`             |
+| `MenuItem`                      | `label`、`icon`                          | 默认插槽、`#leading`、`#trailing`、`#submenu` |
+| `Checkbox` / `Chip` / `Fab`     | `label`                                  | 默认插槽                                      |
+| `IconButton`                    | `icon`                                   | 默认插槽、`#badge`                            |
+| `Button`                        | —                                        | 默认插槽（文字与图标）                        |
+| `Input`                         | `leadingIcon`、`trailingIcon`            | `#leading`、`#trailing`                       |
+| `Select` / `Option`             | `label`、`icon`                          | 默认插槽（选项内容）                          |
+| `Tooltip`                       | `label`、`title`、`text`、`action-label` | 默认插槽（触发元素）、`#content`、`#action`   |
+| `FormItem`                      | `label`、`description`                   | 默认插槽（字段控件）                          |
+
+选择原则：
+
+- 纯文本、单个图标：用属性。组件会处理截断、字号、间距与无障碍名称。
+- 链接、徽标、多段文字、自定义控件：用插槽，排版由使用方负责。
+- 图标优先用 `icon` 属性；需要不受组件排版限制的尺寸或换用别的图形时，才改用插槽放 `<Icon>`。
+- 具体组件的插槽表与优先级说明见各组件文档。
 
 ## 选中值是一个模型
 

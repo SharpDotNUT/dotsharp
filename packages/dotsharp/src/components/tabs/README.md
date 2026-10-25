@@ -22,7 +22,7 @@ const variantTab = ref("overview");
 
 ## 子项约定
 
-`Tabs` / `Tab` 遵循[子项组件统一范式](/guide/patterns)：选中值由 `v-model:value` 持有，`Tab` 用
+`Tabs` / `Tab` 遵循[父子组件以及插槽统一范式](/guide/patterns)：选中值由 `v-model:value` 持有，`Tab` 用
 `label`、`icon` 或默认插槽描述内容，标识取 `value` 或父组件注入的索引。下文只说明 `Tabs` 自己的排版与交互。
 
 ## 基础用法
@@ -57,7 +57,7 @@ const tab = ref("overview");
 `Tab` 省略 `value` 时用自己的数字索引（从 `0` 开始）作为标识。`Tabs` 的 `v-model:value` 默认是 `0`，所以首个标签默认选中。
 
 <div class="demo-row">
-  <Tabs v-model:value="index" variant class="w-full max-w-md">
+  <Tabs v-model:value="index" class="w-full max-w-md">
     <Tab label="第一步" />
     <Tab label="第二步" />
     <Tab label="第三步" />
@@ -75,7 +75,7 @@ const index = ref(0);
 </script>
 
 <template>
-  <Tabs v-model:value="index" variant>
+  <Tabs v-model:value="index">
     <Tab label="第一步" />
     <Tab label="第二步" />
     <Tab label="第三步" />
@@ -83,7 +83,7 @@ const index = ref(0);
 </template>
 ```
 
-索引由 `Tabs` 按最终渲染顺序注入，规则见[统一范式](/guide/patterns#子项标识-value-或索引)。
+索引由 `Tabs` 按最终渲染顺序注入，规则见[父子组件以及插槽统一范式](/guide/patterns#子项标识-value-或索引)。
 
 ## 内容：label、icon 与插槽
 
@@ -165,7 +165,7 @@ const content = ref("flights");
 
 - `←` / `→`：在标签之间移动焦点，首尾循环；RTL 方向自动对调。
 - `Home` / `End`：跳到第一个 / 最后一个可用标签。
-- 焦点移动默认**不**切换选中项，按回车 / 空格才激活——与 material-web 一致。
+- 焦点移动默认**不**切换选中项，按回车 / 空格才激活。
 
 `autoActivate` 打开后，焦点移动即切换选中项：
 

@@ -25,10 +25,10 @@ function show(value: TimeValue | null): string {
 - **模态**：加 `modal` 并用 `v-model:open` 控制，组件自带遮罩、焦点陷阱、Escape 与滚动锁定。
 
 `v-model` 绑定 `TimeValue | null`（`{ hour: 0–23, minute: 0–59, second?: 0–59 }`）。选择过程是分步的：
-改值只更新草稿，`OK` 才写回 `v-model`；`Cancel` 丢弃草稿并关闭。`actions="false"` 时选完分钟立即提交、
+改值只更新草稿，「确定」才写回 `v-model`；「取消」丢弃草稿并关闭。`actions="false"` 时选完分钟立即提交、
 不显示按钮。
 
-时钟格式由 `format` 决定：`"12h"` 显示 AM/PM 列，`"24h"` 用内外两圈数字排下 0–23。省略时取当前语言的
+时钟格式由 `format` 决定：`"12h"` 显示上午 / 下午列，`"24h"` 用内外两圈数字排下 0–23。省略时取当前语言的
 默认值（`en` 是 12 小时制，中日是 24 小时制）。
 
 ## 直接编辑
@@ -80,7 +80,7 @@ const time = ref<TimeValue | null>({ hour: 7, minute: 0 });
 ## 横向布局
 
 `layout="horizontal"` 把表盘放到右侧，宽屏或平板用它；默认的纵向布局适合手机。
-横向时 AM/PM 是一整行，贴着左栏底部对齐。
+横向时上午 / 下午列是一整行，贴着左栏底部对齐。
 
 <div class="demo-row">
   <TimePicker v-model="wide" format="12h" layout="horizontal" />
@@ -126,9 +126,10 @@ const time = ref<TimeValue | null>({ hour: 7, minute: 0 });
 <script setup lang="ts">
 import { ref } from "vue";
 import { Button, TimePicker } from "@sharpdotnut/dotsharp";
+import type { TimeValue } from "@sharpdotnut/dotsharp";
 
 const open = ref(false);
-const time = ref(null);
+const time = ref<TimeValue | null>(null);
 </script>
 
 <template>
@@ -160,6 +161,6 @@ const time = ref(null);
 | `seconds` | `boolean`                    | `false`      | 是否显示秒输入                 |
 | `title`   | `string`                     | 当前语言     | 头部小标题                     |
 | `header`  | `boolean`                    | `true`       | 是否显示头部                   |
-| `actions` | `boolean`                    | `true`       | 是否显示 Cancel / OK           |
+| `actions` | `boolean`                    | `true`       | 是否显示「取消」/「确定」按钮  |
 
 事件：`confirm(value)` 在提交后触发（`actions="false"` 时选完分钟也会触发），`cancel` 在取消时触发。

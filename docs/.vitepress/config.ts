@@ -73,11 +73,18 @@ export default defineConfig({
         items: [
           { text: "简介", link: "/guide/intro" },
           { text: "快速开始", link: "/guide/getting-started" },
-          { text: "统一范式", link: "/guide/patterns" },
+          { text: "父子组件以及插槽统一范式", link: "/guide/patterns" },
           { text: "表单", link: "/guide/form" },
-          { text: "涟漪 Ripple", link: "/guide/ripple" },
+          { text: "图标", link: "/guide/icons" },
           { text: "主题", link: "/guide/theme" },
           { text: "国际化", link: "/guide/i18n" },
+        ],
+      },
+      {
+        text: "效果",
+        items: [
+          { text: "涟漪 Ripple", link: "/guide/ripple" },
+          { text: "层级 Elevation", link: "/guide/elevation" },
         ],
       },
       {
@@ -112,17 +119,22 @@ export default defineConfig({
         ],
       },
       {
-        text: "展示与容器",
+        text: "布局与展示",
         items: [
           { text: "Container 容器", link: "/components/container" },
           { text: "Card 卡片", link: "/components/card" },
           { text: "Divider 分隔线", link: "/components/divider" },
+          { text: "List 列表", link: "/components/list" },
           { text: "Badge 徽标", link: "/components/badge" },
-          { text: "Tooltip 工具提示", link: "/components/tooltip" },
           { text: "Menu 菜单", link: "/components/menu" },
           { text: "ContextMenu 上下文菜单", link: "/components/context-menu" },
+        ],
+      },
+      {
+        text: "反馈",
+        items: [
+          { text: "Tooltip 工具提示", link: "/components/tooltip" },
           { text: "Progress 进度条", link: "/components/progress" },
-          { text: "List 列表", link: "/components/list" },
           { text: "Dialog 对话框", link: "/components/dialog" },
           { text: "Snackbar 消息条", link: "/components/snackbar" },
         ],

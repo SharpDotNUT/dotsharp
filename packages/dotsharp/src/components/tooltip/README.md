@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { Button, IconButton, Tooltip } from "@sharpdotnut/dotsharp";
 import deleteIcon from "@iconify-icons/material-symbols/delete-outline";
-import helpIcon from "@iconify-icons/material-symbols/help-outline";
 import infoIcon from "@iconify-icons/material-symbols/info-outline";
 
 const controlled = ref(false);
@@ -18,12 +17,12 @@ const lastAction = ref("尚未触发");
 
 默认出现在触发元素上方（`placement="top"`），空间不足时自动翻到对面并贴住视口边缘。
 
-## 基础用法（Plain）
+## 基础用法
 
 把触发元素放进默认插槽，`label` 是提示文字。出现有 500ms 的悬停延迟，键盘聚焦则立即出现。
 
 <div class="demo-row">
-  <Tooltip label="Plain Tooltip">
+  <Tooltip label="基础提示">
     <IconButton :icon="infoIcon" label="信息" />
   </Tooltip>
   <Tooltip label="删除这条记录">
@@ -36,13 +35,20 @@ const lastAction = ref("尚未触发");
 
 ```vue
 <script setup lang="ts">
-import { Tooltip, IconButton } from "@sharpdotnut/dotsharp";
+import { Button, IconButton, Tooltip } from "@sharpdotnut/dotsharp";
+import deleteIcon from "@iconify-icons/material-symbols/delete-outline";
 import infoIcon from "@iconify-icons/material-symbols/info-outline";
 </script>
 
 <template>
-  <Tooltip label="Plain Tooltip">
+  <Tooltip label="基础提示">
     <IconButton :icon="infoIcon" label="信息" />
+  </Tooltip>
+  <Tooltip label="删除这条记录">
+    <IconButton :icon="deleteIcon" label="删除" />
+  </Tooltip>
+  <Tooltip label="悬停 500ms 后出现">
+    <Button variant="tonal">悬停我</Button>
   </Tooltip>
 </template>
 ```
@@ -55,27 +61,36 @@ import infoIcon from "@iconify-icons/material-symbols/info-outline";
 <div class="demo-row">
   <Tooltip
     variant="rich"
-    title="Rich tooltip"
-    text="Rich tooltips bring attention to a particular element or feature that warrants the user’s focus."
-    action-label="Action"
-    @action="lastAction = 'Action 已点击'"
+    title="富工具提示"
+    text="富工具提示用于强调某个需要用户注意的元素或功能，可以包含更多说明。"
+    action-label="查看详情"
+    @action="lastAction = '已点击查看详情'"
   >
-    <Button>Rich tooltip</Button>
+    <Button>富提示</Button>
   </Tooltip>
 </div>
 
 最近一次操作：{{ lastAction }}
 
 ```vue
-<Tooltip
-  variant="rich"
-  title="Rich tooltip"
-  text="Rich tooltips bring attention to a particular element or feature that warrants the user’s focus."
-  action-label="Action"
-  @action="onAction"
->
-  <Button>Rich tooltip</Button>
-</Tooltip>
+<script setup lang="ts">
+import { ref } from "vue";
+import { Button, Tooltip } from "@sharpdotnut/dotsharp";
+
+const lastAction = ref("尚未触发");
+</script>
+
+<template>
+  <Tooltip
+    variant="rich"
+    title="富工具提示"
+    text="富工具提示用于强调某个需要用户注意的元素或功能，可以包含更多说明。"
+    action-label="查看详情"
+    @action="lastAction = '已点击查看详情'"
+  >
+    <Button>富提示</Button>
+  </Tooltip>
+</template>
 ```
 
 富提示宽度上限 320px，正文用 `--ds-text-muted`，标题与正文之间留 4px。指针移进卡片时保持展开，
@@ -86,26 +101,32 @@ import infoIcon from "@iconify-icons/material-symbols/info-outline";
 `placement` 支持 `top` / `bottom` / `left` / `right`。首选方位放不下时会自动翻到对面，再贴住视口边缘。
 
 <div class="demo-row">
-  <Tooltip label="Top" placement="top">
-    <Button variant="outlined">Top</Button>
+  <Tooltip label="上方" placement="top">
+    <Button variant="outlined">上方</Button>
   </Tooltip>
-  <Tooltip label="Bottom" placement="bottom">
-    <Button variant="outlined">Bottom</Button>
+  <Tooltip label="下方" placement="bottom">
+    <Button variant="outlined">下方</Button>
   </Tooltip>
-  <Tooltip label="Left" placement="left">
-    <Button variant="outlined">Left</Button>
+  <Tooltip label="左侧" placement="left">
+    <Button variant="outlined">左侧</Button>
   </Tooltip>
-  <Tooltip label="Right" placement="right">
-    <Button variant="outlined">Right</Button>
+  <Tooltip label="右侧" placement="right">
+    <Button variant="outlined">右侧</Button>
   </Tooltip>
 </div>
 
 ```vue
-<Tooltip label="Top" placement="top">
-  <Button variant="outlined">Top</Button>
+<Tooltip label="上方" placement="top">
+  <Button variant="outlined">上方</Button>
 </Tooltip>
-<Tooltip label="Bottom" placement="bottom">
-  <Button variant="outlined">Bottom</Button>
+<Tooltip label="下方" placement="bottom">
+  <Button variant="outlined">下方</Button>
+</Tooltip>
+<Tooltip label="左侧" placement="left">
+  <Button variant="outlined">左侧</Button>
+</Tooltip>
+<Tooltip label="右侧" placement="right">
+  <Button variant="outlined">右侧</Button>
 </Tooltip>
 ```
 
@@ -115,7 +136,7 @@ import infoIcon from "@iconify-icons/material-symbols/info-outline";
 
 <div class="demo-row">
   <Tooltip label="由按钮控制" v-model:open="controlled">
-    <Button variant="tonal">受控 Tooltip</Button>
+    <Button variant="tonal">受控提示</Button>
   </Tooltip>
   <Button variant="outlined" @click="controlled = !controlled">
     {{ controlled ? "收起" : "展开" }}
@@ -132,9 +153,11 @@ const controlled = ref(false);
 
 <template>
   <Tooltip label="由按钮控制" v-model:open="controlled">
-    <Button variant="tonal">受控 Tooltip</Button>
+    <Button variant="tonal">受控提示</Button>
   </Tooltip>
-  <Button variant="outlined" @click="controlled = !controlled">切换</Button>
+  <Button variant="outlined" @click="controlled = !controlled">
+    {{ controlled ? "收起" : "展开" }}
+  </Button>
 </template>
 ```
 
@@ -144,13 +167,13 @@ const controlled = ref(false);
 
 <div class="demo-row">
   <Tooltip label="不会出现" disabled>
-    <Button variant="outlined">Disabled</Button>
+    <Button variant="outlined">已禁用</Button>
   </Tooltip>
 </div>
 
 ```vue
 <Tooltip label="不会出现" disabled>
-  <Button variant="outlined">Disabled</Button>
+  <Button variant="outlined">已禁用</Button>
 </Tooltip>
 ```
 

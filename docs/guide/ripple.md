@@ -1,8 +1,8 @@
 # 涟漪 Ripple
 
 `v-ripple` 是库里的公共点按反馈指令：按下时从按压点扩散一圈淡淡的 `currentColor`，松开后淡出。
-它按 Material 3 的 ripple 参数实现（展开 450ms、淡出 150ms、不透明度 12%），颜色取自元素自身的文字颜色，
-所以 `text-ds-on-primary`、`text-ds-on-tonal` 这些既有的 token 会自动决定涟漪的颜色，不需要额外配置。
+展开 450ms、淡出 150ms、不透明度 12%，颜色取自元素自身的文字颜色，所以 `text-ds-on-primary`、
+`text-ds-on-tonal` 这些既有的 token 会自动决定涟漪的颜色，不需要额外配置。
 
 库里的 `Button`、`IconButton`、`Tab`、`NavigationItem`、`NavigationRailItem`、`NavigationDrawerItem`、
 `Input` 的尾部按钮、`Option` 与 `Select` 触发器都已经接上，直接使用即可。

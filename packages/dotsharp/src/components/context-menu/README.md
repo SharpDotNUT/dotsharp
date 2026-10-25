@@ -45,6 +45,9 @@ const picked = ref<string | number>("—");
 import { ref } from "vue";
 import { ContextMenu, Divider, MenuItem } from "@sharpdotnut/dotsharp";
 import contentCopy from "@iconify-icons/material-symbols/content-copy";
+import contentCut from "@iconify-icons/material-symbols/content-cut";
+import contentPaste from "@iconify-icons/material-symbols/content-paste";
+import deleteIcon from "@iconify-icons/material-symbols/delete";
 import undo from "@iconify-icons/material-symbols/undo";
 
 const picked = ref<string | number>("—");
@@ -52,12 +55,14 @@ const picked = ref<string | number>("—");
 
 <template>
   <ContextMenu @select="picked = $event">
-    <p>在这里右键。</p>
+    <p>在阅读区任意位置右键（或聚焦后按 Shift+F10）打开菜单。</p>
     <template #menu>
       <MenuItem label="撤销" :icon="undo" shortcut="⌘Z" />
       <MenuItem label="复制" :icon="contentCopy" shortcut="⌘C" />
+      <MenuItem label="剪切" :icon="contentCut" shortcut="⌘X" />
+      <MenuItem label="粘贴" :icon="contentPaste" shortcut="⌘V" />
       <Divider class="my-2" />
-      <MenuItem label="删除" />
+      <MenuItem label="删除" :icon="deleteIcon" />
     </template>
   </ContextMenu>
 </template>
@@ -72,26 +77,39 @@ const picked = ref<string | number>("—");
 `disabled` 为 `true` 时不响应右键；`#menu` 里照常使用 `MenuItem`，包括 `#submenu` 的二级菜单和 `disabled` 菜单项。
 
 ```vue
-<ContextMenu disabled>
-  <span>禁用的区域</span>
-  <template #menu>
-    <MenuItem label="复制" />
-  </template>
-</ContextMenu>
+<script setup lang="ts">
+import { ContextMenu, MenuItem } from "@sharpdotnut/dotsharp";
+</script>
+
+<template>
+  <ContextMenu disabled>
+    <span>禁用的区域</span>
+    <template #menu>
+      <MenuItem label="复制" />
+    </template>
+  </ContextMenu>
+</template>
 ```
 
 ```vue
-<ContextMenu>
-  <span>右键我</span>
-  <template #menu>
-    <MenuItem label="创建" :icon="create">
-      <template #submenu>
-        <MenuItem label="文档" />
-        <MenuItem label="图片" />
-      </template>
-    </MenuItem>
-  </template>
-</ContextMenu>
+<script setup lang="ts">
+import { ContextMenu, MenuItem } from "@sharpdotnut/dotsharp";
+import create from "@iconify-icons/material-symbols/edit";
+</script>
+
+<template>
+  <ContextMenu>
+    <span>右键我</span>
+    <template #menu>
+      <MenuItem label="创建" :icon="create">
+        <template #submenu>
+          <MenuItem label="文档" />
+          <MenuItem label="图片" />
+        </template>
+      </MenuItem>
+    </template>
+  </ContextMenu>
+</template>
 ```
 
 ## API
