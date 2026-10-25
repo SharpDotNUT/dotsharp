@@ -44,7 +44,22 @@ docs/
   guide/patterns.md            # the item-component paradigm (canonical explanation)
   guide/theme.md               # useTheme API and pre-paint theme setup
 types/assets.d.ts              # module declarations for *.css and *.vue
+references/material-web/       # git submodule: Material Web source, reference only (not built or shipped)
 ```
+
+## Reference implementation (material-web)
+
+`references/material-web` is a git submodule of
+[material-components/material-web](https://github.com/material-components/material-web). It exists **solely as a
+reference for component behaviour, DOM structure, ARIA usage, and interaction details** when designing this
+library's own components.
+
+- This library implements every component and feature independently. Do not copy material-web code into the
+  packages, do not depend on its packages, and do not let its Lit/TypeScript sources leak into the build.
+- It is not part of the pnpm workspace, is excluded from `tsc` (`tsconfig.json`) and from `vp check`
+  (`vite.config.ts` lint/fmt `ignorePatterns`), and must never be imported by `packages` or `docs`.
+- Fetch it with `git clone --recurse-submodules <repo>` or `git submodule update --init`; update deliberately and
+  commit the new gitlink, never automatically.
 
 ## Conventions
 
