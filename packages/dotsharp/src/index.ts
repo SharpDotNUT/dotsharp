@@ -76,6 +76,8 @@ export { default as TimePicker } from "./components/time-picker/TimePicker.vue";
 export type { TimeFormat, TimeValue } from "./components/time-picker/types";
 export { default as Tooltip } from "./components/tooltip/Tooltip.vue";
 export type { TooltipPlacement, TooltipVariant } from "./components/tooltip/types";
+export { default as UploadArea } from "./components/uploader/UploadArea.vue";
+export { default as Uploader } from "./components/uploader/Uploader.vue";
 export { useTheme } from "./composables/useTheme";
 export type { ResolvedTheme, ThemeMode, UseThemeReturn } from "./composables/useTheme";
 export {

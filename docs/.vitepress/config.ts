@@ -106,6 +106,7 @@ export default defineConfig({
           { text: "SegmentedButtons 分段按钮", link: "/components/segmented-buttons" },
           { text: "Chip 纸片", link: "/components/chip" },
           { text: "Slider 滑块", link: "/components/slider" },
+          { text: "Uploader 上传", link: "/components/uploader" },
         ],
       },
       {
