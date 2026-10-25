@@ -8,12 +8,14 @@ import wifiIcon from "@iconify-icons/material-symbols/wifi";
 const period = ref("day");
 const index = ref(0);
 const place = ref("home");
+const days = ref<Array<string | number>>(["mon", "fri"]);
 </script>
 
 # SegmentedButtons 分段按钮
 
 由 `SegmentedButtons` 与 `SegmentedButton` 组合而成：父组件持有选中值（`v-model:value`），
-每个 `SegmentedButton` 描述一个分段。一个分段组是一个单选控件——选中项不能被取消选中。
+每个 `SegmentedButton` 描述一个分段。默认是单选控件——选中项不能被取消选中；加上 `multiple`
+后变成一组可独立切换的按钮（`v-model:value` 是数组）。
 
 - 所有分段平分父组件宽度，与文字长短无关。
 - 分段标识默认为自身索引，也可以用 `value` 指定。
@@ -80,6 +82,37 @@ const index = ref(0);
 </template>
 ```
 
+## 多选
+
+`multiple` 打开后，模型是标识数组，点击分段切换它自己的选中态；一个都不选、全选都合法。
+
+<div class="demo-row">
+  <SegmentedButtons v-model:value="days" multiple class="w-full max-w-md">
+    <SegmentedButton label="周一" value="mon" />
+    <SegmentedButton label="周三" value="wed" />
+    <SegmentedButton label="周五" value="fri" />
+  </SegmentedButtons>
+</div>
+
+当前选中：{{ days.length ? days.join("、") : "无" }}
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { SegmentedButton, SegmentedButtons } from "@sharpdotnut/dotsharp";
+
+const days = ref<Array<string | number>>(["mon", "fri"]);
+</script>
+
+<template>
+  <SegmentedButtons v-model:value="days" multiple>
+    <SegmentedButton label="周一" value="mon" />
+    <SegmentedButton label="周三" value="wed" />
+    <SegmentedButton label="周五" value="fri" />
+  </SegmentedButtons>
+</template>
+```
+
 ## 图标
 
 未选中时渲染 `icon`；选中后该位置换成勾选图标，用来强调当前状态。需要不受 1.25em
@@ -137,15 +170,17 @@ const place = ref("home");
 - `←` / `→`：在可用分段之间移动焦点，首尾循环；RTL 方向自动对调。
 - `Home` / `End`：跳到第一个 / 最后一个可用分段。
 
-方向键移动焦点时**立即选中**，与单选组的行为一致；`Tab` 键正常离开整组。
+单选时方向键移动焦点会**立即选中**，与单选组的行为一致；多选时方向键只移动焦点，
+必须按回车 / 空格才会切换选中态——否则移动焦点就会把已有选择清掉。`Tab` 键正常离开整组。
 
 ## API
 
 ### SegmentedButtons
 
-| 属性          | 类型               | 默认值 | 说明                                  |
-| ------------- | ------------------ | ------ | ------------------------------------- |
-| v-model:value | `string \| number` | `0`    | 当前选中值，对应子项的 `value` 或索引 |
+| 属性          | 类型                                       | 默认值  | 说明                                                |
+| ------------- | ------------------------------------------ | ------- | --------------------------------------------------- |
+| v-model:value | `string \| number \| (string \| number)[]` | `0`     | 当前选中值，对应子项的 `value` 或索引；多选时是数组 |
+| multiple      | `boolean`                                  | `false` | 多选：点击切换各分段，模型改为标识数组              |
 
 根元素是 `role="group"` 的 `div`，其余属性与事件透传到该元素。
 

@@ -83,6 +83,9 @@ export default defineConfig({
         text: "基础",
         items: [
           { text: "Button 按钮", link: "/components/button" },
+          { text: "ButtonGroup 按钮组", link: "/components/button-group" },
+          { text: "SplitButton 分裂按钮", link: "/components/split-button" },
+          { text: "Fab 悬浮操作按钮", link: "/components/fab" },
           { text: "IconButton 图标按钮", link: "/components/icon-button" },
           { text: "Icon 图标", link: "/components/icon" },
         ],

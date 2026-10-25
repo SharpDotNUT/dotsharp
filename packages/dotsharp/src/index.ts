@@ -1,6 +1,14 @@
 export { default as AppBar } from "./components/app-bar/AppBar.vue";
 export { default as Badge } from "./components/badge/Badge.vue";
 export { default as Button } from "./components/button/Button.vue";
+export type { ButtonSize, ButtonVariant } from "./components/button/shared";
+export { default as ButtonGroup } from "./components/button-group/ButtonGroup.vue";
+export { default as ButtonGroupItem } from "./components/button-group/ButtonGroupItem.vue";
+export type {
+  ButtonGroupSelection,
+  ButtonGroupShape,
+  ButtonGroupValue,
+} from "./components/button-group/context";
 export { default as Card } from "./components/card/Card.vue";
 export { default as Checkbox } from "./components/checkbox/Checkbox.vue";
 export { default as Chip } from "./components/chip/Chip.vue";
@@ -13,6 +21,9 @@ export type { DatePickerMode } from "./components/date-picker/types";
 export { default as Dialog } from "./components/dialog/Dialog.vue";
 export { default as Divider } from "./components/divider/Divider.vue";
 export type { DividerInset } from "./components/divider/types";
+export { default as Fab } from "./components/fab/Fab.vue";
+export { default as FabMenu } from "./components/fab/FabMenu.vue";
+export type { FabSize, FabVariant } from "./components/fab/shared";
 export { default as Icon } from "./components/icon/Icon.vue";
 export { default as IconButton } from "./components/icon-button/IconButton.vue";
 export { default as Input } from "./components/input/Input.vue";
@@ -52,6 +63,7 @@ export type { SelectValue } from "./components/select/context";
 export { default as Slider } from "./components/slider/Slider.vue";
 export { default as RangeSlider } from "./components/slider/RangeSlider.vue";
 export type { SliderRangeValue, SliderSize, SliderValueDisplay } from "./components/slider/shared";
+export { default as SplitButton } from "./components/split-button/SplitButton.vue";
 export { default as Snackbar } from "./components/snackbar/Snackbar.vue";
 export { closeAllSnackbars, showSnackbar } from "./components/snackbar/snackbar";
 export type { SnackbarAction, SnackbarHandle, SnackbarOptions } from "./components/snackbar/types";

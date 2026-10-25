@@ -30,12 +30,23 @@ const props = withDefaults(defineProps<SegmentedButtonProps>(), {
 const group = inject(segmentedContextKey, null);
 
 const resolvedValue = computed<SegmentedValue>(() => props.value ?? props.index);
-const selected = computed(() => group?.model.value === resolvedValue.value);
-const focused = computed(() => group?.focusValue.value === resolvedValue.value);
+const selected = computed(() => group?.isSelected(resolvedValue.value) ?? false);
+
+/**
+ * 没有任何子项持有焦点标识时（例如多选组初始未选中），首个分段充当整组的
+ * Tab 落点；否则整组会从键盘顺序里消失。
+ */
+const focused = computed(() => {
+  if (!group) return false;
+  const current = group.focusValue.value;
+  return current === undefined ? props.index === 0 : current === resolvedValue.value;
+});
 
 function select(): void {
-  if (props.disabled || !group || selected.value) return;
-  group.model.value = resolvedValue.value;
+  if (props.disabled || !group) return;
+  // 单选组必须保留一项：点击已选中的分段不产生新值，也不触发 `update:value`。
+  if (!group.multiple && selected.value) return;
+  group.toggle(resolvedValue.value);
 }
 
 function focus(): void {
