@@ -1,6 +1,8 @@
+export { default as AppBar } from "./components/app-bar/AppBar.vue";
 export { default as Button } from "./components/button/Button.vue";
 export { default as Dialog } from "./components/dialog/Dialog.vue";
 export { default as Icon } from "./components/icon/Icon.vue";
+export { default as IconButton } from "./components/icon-button/IconButton.vue";
 export { default as Input } from "./components/input/Input.vue";
 export { default as NavigationBar } from "./components/navigation-bar/NavigationBar.vue";
 export { default as NavigationItem } from "./components/navigation-bar/NavigationItem.vue";

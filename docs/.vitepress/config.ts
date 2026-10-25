@@ -83,6 +83,7 @@ export default defineConfig({
           { text: "Button 按钮", link: "/components/button" },
           { text: "Dialog 对话框", link: "/components/dialog" },
           { text: "Icon 图标", link: "/components/icon" },
+          { text: "IconButton 图标按钮", link: "/components/icon-button" },
           { text: "Input 文本框", link: "/components/input" },
           { text: "Tabs 标签页", link: "/components/tabs" },
         ],
@@ -90,6 +91,7 @@ export default defineConfig({
       {
         text: "导航组件",
         items: [
+          { text: "AppBar 顶部应用栏", link: "/components/app-bar" },
           { text: "NavigationBar 导航栏", link: "/components/navigation-bar" },
           { text: "NavigationDrawer 导航抽屉", link: "/components/navigation-drawer" },
           { text: "NavigationRail 侧边导航栏", link: "/components/navigation-rail" },
