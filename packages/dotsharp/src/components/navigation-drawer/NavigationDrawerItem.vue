@@ -16,6 +16,9 @@ interface NavigationDrawerItemProps {
   value?: NavigationDrawerValue;
   /** 由 NavigationDrawer 注入的内部索引，无需手写。 */
   index?: number;
+  /** 有值时根元素渲染成 `<a>`，用于真实链接导航。 */
+  href?: string;
+  disabled?: boolean;
 }
 
 const props = withDefaults(defineProps<NavigationDrawerItemProps>(), {
@@ -24,6 +27,8 @@ const props = withDefaults(defineProps<NavigationDrawerItemProps>(), {
   badge: undefined,
   value: undefined,
   index: 0,
+  href: undefined,
+  disabled: false,
 });
 
 const drawer = inject(navigationDrawerContextKey, null);
@@ -31,21 +36,28 @@ const drawer = inject(navigationDrawerContextKey, null);
 const resolvedValue = computed<NavigationDrawerValue>(() => props.value ?? props.index);
 const selected = computed(() => drawer?.model.value === resolvedValue.value);
 
+const isLink = computed(() => props.href !== undefined);
+
 function select(): void {
-  if (!drawer || selected.value) return;
+  if (props.disabled || !drawer || selected.value) return;
   drawer.model.value = resolvedValue.value;
 }
 </script>
 
 <template>
-  <button
-    type="button"
+  <component
+    :is="isLink ? 'a' : 'button'"
+    :href="isLink ? href : undefined"
+    :type="isLink ? undefined : 'button'"
+    :disabled="isLink ? undefined : disabled"
+    :aria-disabled="isLink && disabled ? 'true' : undefined"
+    :tabindex="isLink && disabled ? -1 : undefined"
     :aria-current="selected ? 'page' : undefined"
     :class="[
-      'ds-navigation-drawer-item flex h-14 w-full cursor-pointer items-center gap-3 rounded-full border-0 px-4 text-left font-ds text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus',
+      'ds-navigation-drawer-item flex h-14 w-full cursor-pointer items-center gap-3 rounded-full border-0 px-4 text-left font-ds text-sm no-underline transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus',
       selected
-        ? 'bg-ds-primary-strong/10 text-ds-fg'
-        : 'bg-transparent text-ds-muted hover:bg-ds-surface-hover hover:text-ds-fg',
+        ? 'bg-ds-tonal text-ds-on-tonal font-medium'
+        : 'bg-transparent text-ds-muted font-normal hover:bg-ds-surface-hover hover:text-ds-fg',
     ]"
     @click="select"
     v-bind="$attrs"
@@ -55,5 +67,5 @@ function select(): void {
       <slot>{{ label }}</slot>
     </span>
     <span v-if="badge !== undefined" class="shrink-0 text-sm">{{ badge }}</span>
-  </button>
+  </component>
 </template>

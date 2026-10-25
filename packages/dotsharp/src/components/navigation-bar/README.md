@@ -16,7 +16,8 @@ const index = ref(0);
 由 `NavigationBar` 与 `NavigationItem` 组合而成：`NavigationBar` 持有选中值（`v-model:value`），每个 `NavigationItem` 描述一项导航。
 
 - 所有 `NavigationItem` 平分 `NavigationBar` 的宽度，与文字长短无关。
-- 选中项有一个浅色胶囊：`compact` 只包住图标，`medium` 包住图标与文字。
+- 选中项有一个 `secondary-container`（`--ds-tonal`）胶囊：`compact` 只包住图标，`medium` 包住图标与文字；
+  选中图标用 `--ds-on-tonal`，选中文字是 `--ds-fg` + medium 字重。
 - `NavigationItem` 的标识默认为自身索引，也可以用 `value` 指定。
 
 ## 子项约定
@@ -26,7 +27,8 @@ const index = ref(0);
 
 ## compact 标签栏
 
-默认排版：图标在上、文字在下，选中项高亮图标（胶囊 + 主色），文字保持中性色，适合移动端底栏。
+默认排版：图标在上、文字在下，选中项用 `--ds-tonal` 胶囊高亮图标、`--ds-on-tonal` 画图标，
+文字保持 `--ds-fg`（未选中为 `--ds-muted`），适合移动端底栏。
 
 <div class="demo-row">
   <NavigationBar v-model:value="compact">
@@ -138,6 +140,19 @@ const index = ref(0);
 
 长文字会把超出部分截断成省略号，不会撑破导航栏。
 
+## 链接与禁用
+
+- `href`：有值时根元素渲染成 `<a href>`，仍保留 `aria-current="page"`；需要路由接管导航时用
+  `<NavigationItem href="/x" @click.prevent="router.push('/x')" />`，组件不引入路由依赖。
+- `disabled`：按钮带原生 `disabled`；链接带 `aria-disabled="true"` 与 `tabindex="-1"`。两者都不再改写选中值。
+
+```vue
+<NavigationItem label="首页" :icon="home" href="/" />
+<NavigationItem label="电台" :icon="radio" disabled />
+```
+
+导航栏本身的无障碍名称用 `label`：`<NavigationBar label="主导航" v-model:value="current">`。
+
 ## API
 
 ### NavigationBar
@@ -147,20 +162,23 @@ const index = ref(0);
 | v-model:value | `string \| number`      | `0`         | 当前选中值，对应子项的 `value` 或索引                     |
 | variant       | `"compact" \| "medium"` | `"compact"` | `compact` 图标在上、文字在下；`medium` 图标与文字左右排列 |
 | max-width     | `string \| number`      | —           | 最大宽度；数字按 px 处理，导航栏在最大宽度内居中          |
+| label         | `string`                | —           | 无障碍名称，写入 `<nav>` 的 `aria-label`                  |
 
 根元素是 `<nav>`，其余属性与事件透传到该元素。
 
 ### NavigationItem
 
-| 属性  | 类型                    | 默认值       | 说明                                             |
-| ----- | ----------------------- | ------------ | ------------------------------------------------ |
-| label | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖             |
-| icon  | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.5em` 跟随字号 |
-| value | `string \| number`      | 所在位置索引 | 子项标识                                         |
+| 属性     | 类型                    | 默认值       | 说明                                                |
+| -------- | ----------------------- | ------------ | --------------------------------------------------- |
+| label    | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖                |
+| icon     | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.5em` 跟随字号    |
+| value    | `string \| number`      | 所在位置索引 | 子项标识                                            |
+| href     | `string`                | —            | 有值时根元素渲染成 `<a>`，用于真实链接导航          |
+| disabled | `boolean`               | `false`      | 禁用；按钮用原生 `disabled`，链接用 `aria-disabled` |
 
 - 所有子项平分导航栏宽度，点击区域是整块格子，而高亮胶囊只包住内容。
 - 默认插槽：导航项内容，优先于 `label`；与 `icon` 同时使用时插槽内容排在图标之后。
-- 根元素是 `type="button"` 的 `button`，其余属性与事件透传到该按钮。
+- 根元素是 `type="button"` 的 `button`（有 `href` 时是 `a`），其余属性与事件透传到该元素。
 - 选中项带 `aria-current="page"`；点击已选中的项不会重复写模型，也不会触发 `update:value`。
 
 ### 可访问性

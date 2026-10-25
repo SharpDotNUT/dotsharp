@@ -32,6 +32,8 @@ interface SliderBaseProps {
   format?: (value: number) => string;
   /** 无障碍名称，写到每个手柄的 `aria-label` 上。 */
   label?: string;
+  /** 逐个手柄的无障碍名称；优先于 `label`。 */
+  labels?: string[];
 }
 
 const props = defineProps<SliderBaseProps>();
@@ -304,7 +306,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
         role="slider"
         aria-orientation="horizontal"
         :tabindex="disabled ? -1 : 0"
-        :aria-label="label"
+        :aria-label="labels?.[index] ?? label"
         :aria-valuemin="min"
         :aria-valuemax="max"
         :aria-valuenow="value"

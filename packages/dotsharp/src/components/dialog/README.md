@@ -23,7 +23,9 @@ const toTime = ref("");
 - `basic`（默认）：视口居中的模态卡片，用于确认、提示和简短表单。
 - `fullscreen`：铺满视口的全屏对话框，用于移动端的多步骤表单等需要完整空间的任务。
 
-`v-model:open` 控制显示；打开时组件 Teleport 到 `body`、锁定页面滚动、把焦点移入面板并在内部循环。
+`v-model:open` 控制显示；组件 Teleport 到 `body`，用一个原生的 `<dialog>` 元素承载面板——打开时调用
+`showModal()`，由浏览器提供置顶图层（top layer）、焦点陷阱与背景不可交互，组件自己不再实现焦点管理；
+同时锁定页面滚动。
 关闭方式由操作按钮、关闭按钮（全屏变体）、遮罩点击与 Escape 组成，后两者受 `dismissible` 控制。
 
 ## 基础对话框
@@ -208,7 +210,8 @@ const eventName = ref("");
 ## 关闭行为
 
 默认 `dismissible` 为 `true`：点击遮罩、按 Escape 都会关闭对话框。置为 `false` 后这两种方式都失效，
-对话框只能由操作按钮关闭——用于必须做出决定或未保存的编辑。
+对话框只能由操作按钮关闭——用于必须做出决定或未保存的编辑。Escape 走原生 `cancel` 事件，组件始终拦截它，
+先播完面板离场动画再真正关闭 `<dialog>`。
 
 <div class="demo-row">
   <Button @click="persistent = true">打开不可取消的对话框</Button>
@@ -270,17 +273,22 @@ const eventName = ref("");
 
 ### 可访问性
 
-- 面板是 `role="dialog"` + `aria-modal="true"`，`title` 存在时通过 `aria-labelledby` 关联标题；
-  没有标题时请在组件上自行传 `aria-label`。
-- 打开时焦点进入面板，Tab / Shift+Tab 在面板内循环，关闭后焦点回到打开前的元素；Escape 关闭受
-  `dismissible` 控制。
-- 遮罩带 `aria-hidden`，不会进入无障碍树；遮罩只承担关闭，不需要可聚焦。
+- 原生 `<dialog>` + `showModal()` 提供模态语义：内容进入浏览器置顶图层，背景不可交互，焦点被限制在对话框内，
+  关闭后自动回到触发元素；组件不再自己实现焦点陷阱。
+- `title` 存在时通过 `aria-labelledby` 关联标题；没有标题时请在组件上自行传 `aria-label`——它会落到
+  `<dialog>` 上，对话框因此仍有可读名称。
+- `aria-*` 与事件等其它未列出的属性都透传到 `<dialog>`；只有 `class` 与 `style` 属于内部面板。
+- Escape 触发原生 `cancel`，受 `dismissible` 控制；遮罩点击只在 `basic` 变体生效。
 - 打开期间锁定 `body` 滚动，多个对话框叠加时只在最后一个关闭后恢复。
 
 ### 结构
 
-- 组件 Teleport 到 `body`，遮罩 `fixed inset-0 z-50`（`--ds-scrim`），面板 `absolute inset-0 z-10`。
+- 组件 Teleport 到 `body`，输出一个常驻的 `<dialog>` 宿主（`m-0 h-full max-h-none w-full max-w-none border-0 bg-transparent p-0`），
+  面板在它内部绝对定位。
+- 遮罩不再是独立元素，而是原生 `::backdrop`：`basic` 用 `backdrop:bg-ds-scrim`（`--ds-scrim`，32% 黑），
+  `fullscreen` 用 `backdrop:bg-transparent`。
 - `basic` 面板：`m-auto` 居中，最大宽度 560px，圆角 28px（`rounded-ds-xl`），内边距 24px；
   背景 `bg-ds-surface`，阴影 `shadow-xl`。进入 200ms 淡入并从 95% 放大，退出 150ms。
 - `fullscreen` 面板：`h-full w-full`，顶部栏高 64px；进入 250ms 从底部滑入，退出 200ms 滑出。
-- 两种变体都可被 `class` 或其它属性覆盖（透传到面板），但不要改 `position` 与 `inset`。
+- 关闭 `<dialog>` 会等到面板离场动画结束（`after-leave`）才发生，动画不会被截断。
+- `class` 与 `style` 透传到面板，可以覆盖外观，但不要改 `position` 与 `inset`。

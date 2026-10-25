@@ -27,7 +27,7 @@ const index = ref(0);
 - `variant="standard"`：嵌在应用布局里、始终可见，常用于平板 / 桌面。
 - `variant="modal"`：在最近的定位容器内覆盖内容，带遮罩与焦点陷阱，由 `v-model:open` 控制；不脱离容器、不锁定页面滚动。
 - 两种变体宽度都是 360px，窄屏时收缩到可用宽度。
-- 选中项是整行胶囊（主色 10% 底色），行尾可放 `badge`。
+- 选中项是整行胶囊（Material 3 的 `secondary-container` 角色，即 `--ds-tonal`），行尾可放 `badge`。
 
 ## 子项约定
 
@@ -204,14 +204,21 @@ const index = ref(0);
 - `label`：纯文本；
 - `icon`：与 `Icon` 的 `icon` 同源，尺寸固定 24px，渲染在文字之前；
 - `badge`：行尾计数或短文本，跟随当前项的文字颜色；
+- `href`：有值时根元素渲染成 `<a href>`，用于真实链接导航；
+- `disabled`：禁用；按钮用原生 `disabled`，链接用 `aria-disabled="true"` + `tabindex="-1"`，都不再改写选中值；
 - 默认插槽：**优先于 `label`**，适合自定义排版。
 
 ```vue
 <NavigationDrawerItem label="收件箱" :icon="inbox" :badge="24" />
+<NavigationDrawerItem label="发件箱" :icon="send" href="/outbox" />
+<NavigationDrawerItem label="垃圾箱" :icon="trash" disabled />
 <NavigationDrawerItem label="带插槽" :icon="folder">
   <span class="font-medium">自定义内容</span>
 </NavigationDrawerItem>
 ```
+
+选中行是 `--ds-tonal` 底 + `--ds-on-tonal` 文字（medium 字重），未选中行是透明底 + `--ds-muted` 文字，
+悬停时换成 `--ds-surface-hover` 底与 `--ds-fg` 文字；图标与 `badge` 继承当前行的文字颜色。
 
 长文字截断为省略号；没有 `icon` 时文字从行首开始，整行仍是 56px 高的可点击胶囊。
 
@@ -241,14 +248,16 @@ const index = ref(0);
 
 ### NavigationDrawerItem
 
-| 属性  | 类型                    | 默认值       | 说明                                 |
-| ----- | ----------------------- | ------------ | ------------------------------------ |
-| label | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖 |
-| icon  | `IconifyIcon \| string` | —            | 图标，尺寸 24px，渲染在文字/插槽之前 |
-| badge | `string \| number`      | —            | 行尾计数或短文本                     |
-| value | `string \| number`      | 所在位置索引 | 子项标识                             |
+| 属性     | 类型                    | 默认值       | 说明                                                |
+| -------- | ----------------------- | ------------ | --------------------------------------------------- |
+| label    | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖                |
+| icon     | `IconifyIcon \| string` | —            | 图标，尺寸 24px，渲染在文字/插槽之前                |
+| badge    | `string \| number`      | —            | 行尾计数或短文本                                    |
+| value    | `string \| number`      | 所在位置索引 | 子项标识                                            |
+| href     | `string`                | —            | 有值时根元素渲染成 `<a>`，用于真实链接导航          |
+| disabled | `boolean`               | `false`      | 禁用；按钮用原生 `disabled`，链接用 `aria-disabled` |
 
-- 根元素是 `type="button"` 的 `button`，选中项带 `aria-current="page"`。
+- 根元素是 `type="button"` 的 `button`（有 `href` 时是 `a`），选中项带 `aria-current="page"`。
 - 默认插槽优先于 `label`；与 `icon` 同时使用时插槽内容排在图标之后。
 
 ### NavigationDrawerHeading

@@ -23,7 +23,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   elevated: "bg-ds-elevated text-ds-primary-strong shadow-sm enabled:hover:bg-ds-elevated-hover",
   filled: "bg-ds-primary text-ds-on-primary enabled:hover:bg-ds-primary-hover",
   tonal: "bg-ds-tonal text-ds-on-tonal enabled:hover:bg-ds-tonal-hover",
-  outlined: "border-ds-line bg-transparent text-ds-fg enabled:hover:bg-ds-fg/10",
+  outlined: "border-ds-outline bg-transparent text-ds-fg enabled:hover:bg-ds-fg/10",
   text: "bg-transparent text-ds-primary-strong enabled:hover:bg-ds-primary-strong/10",
 };
 

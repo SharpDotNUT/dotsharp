@@ -16,7 +16,8 @@ Material Design 3 的顶部应用栏：左侧操作区、标题区、右侧操�
 
 - 标题区优先取默认插槽，`title` 只是纯文本回退。
 - `#left` / `#right` 是两侧操作区，推荐放 `IconButton`：40×40 圆形点击区，图标 24px，相邻图标的字形间距约 20px。
-- `variant` 三档：`small` 单行；`medium` / `large` 的标题另起一行，字号更大（对应材质 3 的 medium / large flexible）。
+- `variant` 三档：`small` 单行；`medium-flexible` / `large-flexible` 的标题另起一行、字号逐级变大（材质 3 的
+  flexible 排版），并可用 `subtitle` 加一行副标题。
 - `fixed` 把栏留在原位之外的视口顶部，`placeholder` 在文档流里补一个等高占位元素，页面内容不会被抽走。
 
 ## small 应用栏
@@ -90,12 +91,22 @@ const keyword = ref("");
 
 两侧插槽之间的 `gap` 是 4px，而 `IconButton` 自身有 8px 内边距，所以相邻图标的字形间距是 20px；直接放裸 `<Icon>` 会贴在一起。
 
-## medium / large 应用栏
+## medium-flexible / large-flexible 应用栏
 
-`variant="medium"`、`variant="large"` 把标题移到单独一行（材质 3 的 flexible 排版）：第一行只有两侧操作区，第二行是标题，高度分别为 112px 与 160px。
+`variant="medium-flexible"`、`variant="large-flexible"` 把标题移到单独一行（材质 3 的 flexible 排版）：
+第一行只有两侧操作区，第二行是标题（`large-flexible` 字号 36px，`medium-flexible` 28px）。
+
+高度按是否有副标题分两档：
+
+| variant           | 无副标题 | 有副标题 |
+| ----------------- | -------- | -------- |
+| `medium-flexible` | 112px    | 136px    |
+| `large-flexible`  | 120px    | 152px    |
+
+副标题用 `subtitle`，或用 `#subtitle` 插槽给自定义内容；`small` 变体忽略 `subtitle`。
 
 <div class="demo-row">
-  <AppBar title="Medium flexible" variant="medium">
+  <AppBar title="Medium flexible" variant="medium-flexible">
     <template #left>
       <IconButton :icon="arrowBack" label="返回" />
     </template>
@@ -107,7 +118,7 @@ const keyword = ref("");
 </div>
 
 <div class="demo-row">
-  <AppBar title="Large flexible" variant="large">
+  <AppBar title="Large flexible" variant="large-flexible" subtitle="With subtitle">
     <template #left>
       <IconButton :icon="arrowBack" label="返回" />
     </template>
@@ -119,7 +130,7 @@ const keyword = ref("");
 </div>
 
 ```vue
-<AppBar title="Medium flexible" variant="medium">
+<AppBar title="Medium flexible" variant="medium-flexible">
   <template #left>
     <IconButton :icon="arrowBack" label="返回" />
   </template>
@@ -129,12 +140,13 @@ const keyword = ref("");
   </template>
 </AppBar>
 
-<AppBar title="Large flexible" variant="large">
+<AppBar title="Large flexible" variant="large-flexible" subtitle="With subtitle">
   <!-- 同样的插槽 -->
 </AppBar>
 ```
 
-默认插槽在 `medium` / `large` 下渲染在标题那一行，同样优先于 `title`。
+默认插槽在 flexible 变体下渲染在标题那一行，同样优先于 `title`；`subtitle` 渲染在标题下方，
+文字颜色是 `--ds-muted`（`medium-flexible` 14px，`large-flexible` 16px）。
 
 ## 固定与占位
 
@@ -159,25 +171,28 @@ const keyword = ref("");
 
 ### AppBar
 
-| 属性        | 类型                             | 默认值    | 说明                                                      |
-| ----------- | -------------------------------- | --------- | --------------------------------------------------------- |
-| title       | `string`                         | —         | 标题纯文本；存在默认插槽时被插槽覆盖                      |
-| variant     | `"small" \| "medium" \| "large"` | `"small"` | 排版与高度：`small` 单行，`medium` / `large` 标题另起一行 |
-| fixed       | `boolean`                        | `false`   | 固定在视口顶部（`position: fixed`，横向铺满，`z-40`）     |
-| placeholder | `boolean`                        | `false`   | 仅 `fixed` 时生效：输出等高占位元素                       |
+| 属性        | 类型                                               | 默认值    | 说明                                                         |
+| ----------- | -------------------------------------------------- | --------- | ------------------------------------------------------------ |
+| title       | `string`                                           | —         | 标题纯文本；存在默认插槽时被插槽覆盖                         |
+| variant     | `"small" \| "medium-flexible" \| "large-flexible"` | `"small"` | 排版与高度：`small` 单行，flexible 变体标题另起一行          |
+| subtitle    | `string`                                           | —         | 副标题纯文本，仅 flexible 变体；存在 `subtitle` 插槽时被覆盖 |
+| fixed       | `boolean`                                          | `false`   | 固定在视口顶部（`position: fixed`，横向铺满，`z-40`）        |
+| placeholder | `boolean`                                          | `false`   | 仅 `fixed` 时生效：输出等高占位元素                          |
 
 - 根元素是 `<header>`，其余属性与事件透传到该元素。
 - 三段结构：`#left` 操作区、默认插槽（标题区）、`#right` 操作区；两侧插槽为空时不占位。
 - 两侧插槽默认字号 `1.5rem`、间距 4px，配合 `IconButton` 得到 24px 图标与约 20px 的字形间距。
+- 高度：`small` 64px；`medium-flexible` 112px / 有副标题 136px；`large-flexible` 120px / 有副标题 152px。
 - `title` 超过可用宽度时截断；默认插槽的内容由使用方自己控制溢出。
 
 ### 插槽
 
-| 插槽    | 说明                                                        |
-| ------- | ----------------------------------------------------------- |
-| default | 标题区内容，优先于 `title`；`medium` / `large` 下位于第二行 |
-| left    | 左侧操作区，标题之前                                        |
-| right   | 右侧操作区                                                  |
+| 插槽     | 说明                                                  |
+| -------- | ----------------------------------------------------- |
+| default  | 标题区内容，优先于 `title`；flexible 变体下位于第二行 |
+| subtitle | 副标题内容，优先于 `subtitle`；仅 flexible 变体渲染   |
+| left     | 左侧操作区，标题之前                                  |
+| right    | 右侧操作区                                            |
 
 ### 可访问性
 

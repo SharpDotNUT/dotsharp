@@ -15,8 +15,10 @@ interface RangeSliderProps {
   /** 数值气泡的显示时机；拖动时只显示当前手柄的气泡。 */
   showValue?: SliderValueDisplay;
   format?: (value: number) => string;
-  /** 无障碍名称（`aria-label`），两个手柄共用。 */
+  /** 无障碍名称（`aria-label`），两个手柄共用；用 `labels` 可分别命名。 */
   label?: string;
+  /** 两个手柄各自的无障碍名称，顺序为 `[低位, 高位]`。 */
+  labels?: [string, string];
 }
 
 withDefaults(defineProps<RangeSliderProps>(), {
@@ -29,6 +31,7 @@ withDefaults(defineProps<RangeSliderProps>(), {
   showValue: "drag",
   format: undefined,
   label: undefined,
+  labels: undefined,
 });
 
 const model = defineModel<SliderRangeValue>({ default: () => [0, 100] });
@@ -52,6 +55,7 @@ function onUpdate(next: number[]) {
     :show-value="showValue"
     :format="format"
     :label="label"
+    :labels="labels"
     @update="onUpdate"
   >
     <template #start><slot name="start" /></template>

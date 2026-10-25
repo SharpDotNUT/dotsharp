@@ -5,26 +5,35 @@ import {
   createVNode,
   Fragment,
   provide,
+  ref,
   toRef,
+  useId,
   useSlots,
   type VNode,
 } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
 import NavigationRailItem from "./NavigationRailItem.vue";
+import { useOverlayPanel } from "../../composables/useOverlayPanel";
 import {
   navigationRailContextKey,
+  type NavigationRailPresentation,
   type NavigationRailValue,
-  type NavigationRailVariant,
 } from "./context";
 
 defineOptions({ inheritAttrs: false });
 
+/** M3 Expressive 展开态宽度区间（dp ≈ px）。 */
+const MIN_EXPANDED_WIDTH = 220;
+const MAX_EXPANDED_WIDTH = 360;
+
 interface NavigationRailProps {
-  /** `static`：图标+文字常显、不可展开；`expandable`：折叠只留图标，展开时文字出现在右侧。 */
-  variant?: NavigationRailVariant;
-  /** 仅 `expandable`：展开时在最近的定位容器内覆盖内容，而不是挤开内容。 */
-  overlay?: boolean;
+  /** 允许由菜单按钮展开：折叠 96px，展开 220–360px。 */
+  expandable?: boolean;
+  /** `standard`：展开时挤开内容；`modal`：展开时覆盖最近定位容器内的内容并带遮罩。 */
+  presentation?: NavigationRailPresentation;
+  /** 展开态宽度，夹在 220–360px 之间。 */
+  expandedWidth?: number;
   /** 是否显示内置的菜单按钮；没有图标也没有 `menu` 插槽时不渲染。 */
   menu?: boolean;
   /** 内置菜单按钮的无障碍名称。 */
@@ -38,8 +47,9 @@ interface NavigationRailProps {
 }
 
 const props = withDefaults(defineProps<NavigationRailProps>(), {
-  variant: "static",
-  overlay: false,
+  expandable: false,
+  presentation: "standard",
+  expandedWidth: 256,
   menu: true,
   menuLabel: "Toggle navigation",
   menuIcon: undefined,
@@ -57,15 +67,39 @@ const slots = useSlots();
 provide(navigationRailContextKey, {
   model,
   expanded,
-  variant: toRef(props, "variant"),
+  expandable: toRef(props, "expandable"),
 });
 
-const isExpandable = computed(() => props.variant === "expandable");
-const isOverlay = computed(() => isExpandable.value && props.overlay && expanded.value);
+const listId = useId();
+const railRef = ref<HTMLElement | null>(null);
 
-/** 静态变体的菜单按钮不改变自身宽度，只通知使用方（例如打开 modal drawer）。 */
+const railWidth = computed(() =>
+  Math.min(Math.max(props.expandedWidth ?? 256, MIN_EXPANDED_WIDTH), MAX_EXPANDED_WIDTH),
+);
+
+const isExpanded = computed(() => props.expandable && expanded.value);
+const isModal = computed(
+  () => props.expandable && props.presentation === "modal" && expanded.value,
+);
+
+const railStyle = computed(() =>
+  isExpanded.value ? { width: `${railWidth.value}px` } : undefined,
+);
+
+function close(): void {
+  expanded.value = false;
+}
+
+useOverlayPanel({
+  active: isModal,
+  panel: railRef,
+  initialFocus: '[aria-current="page"]',
+  onDismiss: close,
+});
+
+/** 不可展开时菜单按钮不改变宽度，只通知使用方（例如打开 modal drawer）。 */
 function onMenuClick(): void {
-  if (isExpandable.value) expanded.value = !expanded.value;
+  if (props.expandable) expanded.value = !expanded.value;
   else emit("menu");
 }
 
@@ -94,38 +128,56 @@ const RailNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, pro
 </script>
 
 <template>
+  <Transition
+    enter-from-class="opacity-0"
+    enter-active-class="transition-opacity duration-200 ease-out"
+    leave-to-class="opacity-0"
+    leave-active-class="transition-opacity duration-150 ease-in"
+  >
+    <div
+      v-if="isModal"
+      aria-hidden="true"
+      class="ds-navigation-rail__scrim absolute inset-0 z-10 bg-ds-scrim"
+      @click="close"
+    />
+  </Transition>
+
   <nav
+    ref="railRef"
     v-bind="$attrs"
     :aria-label="label"
+    :role="isModal ? 'dialog' : undefined"
+    :aria-modal="isModal ? 'true' : undefined"
+    :tabindex="isModal ? -1 : undefined"
+    :style="railStyle"
     :class="[
       'ds-navigation-rail flex h-full flex-col bg-ds-surface font-ds',
-      isOverlay
-        ? 'absolute inset-y-0 left-0 z-20 w-64 overflow-y-auto rounded-r-ds-lg shadow-xl'
-        : [
-            'relative shrink-0 overflow-y-auto transition-[width] duration-200 ease-out',
-            expanded && isExpandable ? 'w-64' : 'w-20',
-          ],
+      isModal
+        ? 'absolute inset-y-0 left-0 z-20 overflow-y-auto rounded-r-ds-lg shadow-xl'
+        : 'relative shrink-0 transition-[width] duration-200 ease-out',
+      isExpanded ? undefined : 'w-24',
     ]"
   >
-    <div v-if="menu && (menuIcon || $slots.menu)" class="flex w-20 shrink-0 justify-center pt-3">
+    <div v-if="menu && (menuIcon || $slots.menu)" class="flex w-24 shrink-0 justify-center pt-3">
       <button
         type="button"
         :aria-label="menuLabel"
-        :aria-expanded="isExpandable ? expanded : undefined"
+        :aria-expanded="expandable ? expanded : undefined"
+        :aria-controls="expandable ? listId : undefined"
         class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ds-muted transition-colors hover:bg-ds-surface-hover hover:text-ds-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ds-focus"
         @click="onMenuClick"
       >
         <slot name="menu" :expanded="expanded">
           <Icon
             v-if="menuIcon"
-            :icon="expanded && isExpandable && menuExpandedIcon ? menuExpandedIcon : menuIcon"
+            :icon="isExpanded && menuExpandedIcon ? menuExpandedIcon : menuIcon"
             size="24"
           />
         </slot>
       </button>
     </div>
 
-    <div class="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto px-2 py-2">
+    <div :id="listId" class="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto px-2 py-1">
       <RailNodes :nodes="items" />
     </div>
   </nav>

@@ -31,6 +31,7 @@
   --ds-tonal: #edddf6;
   --ds-tonal-hover: #dfcfe8;
   --ds-on-tonal: #211829;
+  --ds-secondary: #665a6f;
   --ds-border: #dbd1dc;
   --ds-outline: #7c757e;
   --ds-text: #1e1a20;
@@ -66,6 +67,7 @@
   --color-ds-tonal: var(--ds-tonal);
   --color-ds-tonal-hover: var(--ds-tonal-hover);
   --color-ds-on-tonal: var(--ds-on-tonal);
+  --color-ds-secondary: var(--ds-secondary);
   --color-ds-line: var(--ds-border);
   --color-ds-outline: var(--ds-outline);
   --color-ds-fg: var(--ds-text);
@@ -98,6 +100,7 @@
     --ds-tonal: #4d4356;
     --ds-tonal-hover: #594e62;
     --ds-on-tonal: #edddf6;
+    --ds-secondary: #d0c1d9;
     --ds-border: #4a454e;
     --ds-outline: #968e98;
     --ds-text: #e8e0e8;
@@ -124,6 +127,7 @@
   --ds-tonal: #4d4356;
   --ds-tonal-hover: #594e62;
   --ds-on-tonal: #edddf6;
+  --ds-secondary: #d0c1d9;
   --ds-border: #4a454e;
   --ds-outline: #968e98;
   --ds-text: #e8e0e8;

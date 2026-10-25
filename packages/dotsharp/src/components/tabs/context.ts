@@ -10,6 +10,10 @@ export interface TabsContext {
   variant: Ref<boolean>;
   /** 子项挂载/卸载时把自己的根元素交给 Tabs，指示条据此定位；传 `null` 表示注销。 */
   register: (value: TabsValue, el: HTMLElement | null) => void;
+  /** 当前获得焦点的标签标识，决定 roving tabindex 的 `0` / `-1`。 */
+  focusValue: Ref<TabsValue>;
+  /** 子项获得焦点时由 Tab 调用，同步 `focusValue`。 */
+  setFocus: (value: TabsValue) => void;
 }
 
 export const tabsContextKey: InjectionKey<TabsContext> = Symbol("dotsharp-tabs");

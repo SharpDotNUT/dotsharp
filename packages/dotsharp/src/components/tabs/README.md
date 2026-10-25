@@ -18,6 +18,7 @@ const variantTab = ref("overview");
 - 所有 `Tab` 平分 `Tabs` 的宽度，与文字长短无关。
 - `Tab` 的标识默认为自身索引，也可以用 `value` 指定。
 - `Tab` 的文字用 `label`，图标用 `icon`（直接传图标数据），其它自定义内容用默认插槽。
+- 键盘遵循 ARIA tabs 模式：roving tabindex，方向键 / `Home` / `End` 在标签间移动焦点。
 
 ## 子项约定
 
@@ -158,24 +159,54 @@ const content = ref("flights");
 
 切换时指示条水平平移、宽度一并补间（200ms，纯 CSS `transition`），不会瞬间跳变；首次渲染不播放动画，也不会在挂载时滑入。
 
+## 键盘操作与禁用
+
+按 ARIA tabs 模式实现 roving tabindex：整组只有一个标签是 `tabindex="0"`，其余为 `-1`。
+
+- `←` / `→`：在标签之间移动焦点，首尾循环；RTL 方向自动对调。
+- `Home` / `End`：跳到第一个 / 最后一个可用标签。
+- 焦点移动默认**不**切换选中项，按回车 / 空格才激活——与 material-web 一致。
+
+`autoActivate` 打开后，焦点移动即切换选中项：
+
+<div class="demo-row">
+  <Tabs v-model:value="tab" auto-activate class="w-full max-w-md">
+    <Tab label="概览" value="overview" />
+    <Tab label="规格" value="specs" />
+    <Tab label="评价" value="reviews" disabled />
+  </Tabs>
+</div>
+
+```vue
+<Tabs v-model:value="tab" auto-activate>
+  <Tab label="概览" value="overview" />
+  <Tab label="规格" value="specs" />
+  <Tab label="评价" value="reviews" disabled />
+</Tabs>
+```
+
+禁用的标签保留在渲染顺序里，但不可聚焦、不参与方向键移动，点击也不会改写选中值。
+
 ## API
 
 ### Tabs
 
-| 属性          | 类型               | 默认值  | 说明                                     |
-| ------------- | ------------------ | ------- | ---------------------------------------- |
-| v-model:value | `string \| number` | `0`     | 当前选中值，对应子项的 `value` 或索引    |
-| variant       | `boolean`          | `false` | 为 `true` 时使用单行排版与整条下划线标识 |
+| 属性          | 类型               | 默认值  | 说明                                                    |
+| ------------- | ------------------ | ------- | ------------------------------------------------------- |
+| v-model:value | `string \| number` | `0`     | 当前选中值，对应子项的 `value` 或索引                   |
+| variant       | `boolean`          | `false` | 为 `true` 时使用单行排版与整条下划线标识                |
+| autoActivate  | `boolean`          | `false` | 键盘移动焦点时是否立即切换选中项；默认需回车 / 空格激活 |
 
 根元素是 `role="tablist"` 的 `div`，其余属性与事件透传到该元素。
 
 ### Tab
 
-| 属性  | 类型                    | 默认值       | 说明                                              |
-| ----- | ----------------------- | ------------ | ------------------------------------------------- |
-| label | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖              |
-| icon  | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.25em` 跟随字号 |
-| value | `string \| number`      | 所在位置索引 | 子项标识                                          |
+| 属性     | 类型                    | 默认值       | 说明                                              |
+| -------- | ----------------------- | ------------ | ------------------------------------------------- |
+| label    | `string`                | —            | 纯文本内容；存在默认插槽时被插槽覆盖              |
+| icon     | `IconifyIcon \| string` | —            | 图标，渲染在文字/插槽之前，尺寸 `1.25em` 跟随字号 |
+| value    | `string \| number`      | 所在位置索引 | 子项标识                                          |
+| disabled | `boolean`               | `false`      | 禁用：不可聚焦、不参与方向键移动、点击不切换      |
 
 - 默认插槽：标签内容，优先于 `label`；与 `icon` 同时使用时插槽内容排在图标之后。
 - 需要不受 `1.25em` 限制的图标时，改用插槽放 `<Icon :icon="…" :size="…" />`。
@@ -184,4 +215,6 @@ const content = ref("flights");
 
 ### 可访问性
 
-`Tabs` 输出 `role="tablist"`，`Tab` 输出 `role="tab"` 并同步 `aria-selected`；标签是原生 `button`，可聚焦、可用回车/空格激活，焦点样式走 `outline-ds-focus`。面板（`role="tabpanel"`）不在本组件内，由使用方自行组织。
+`Tabs` 输出 `role="tablist"`，`Tab` 输出 `role="tab"` 并同步 `aria-selected`；标签是原生 `button`，可聚焦、可用回车/空格激活，焦点样式走 `outline-ds-focus`。
+键盘用 roving tabindex：只有当前焦点标签是 `tabindex="0"`，方向键在 `[role="tab"]:not([disabled])` 之间移动并循环，
+`Home` / `End` 跳到两端，`Tab` 键仍按文档顺序离开整组。面板（`role="tabpanel"`）不在本组件内，由使用方自行组织。

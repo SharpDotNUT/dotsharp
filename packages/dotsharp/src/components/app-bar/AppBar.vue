@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, useSlots, watch } from "vue";
 
 defineOptions({ inheritAttrs: false });
 
-type AppBarVariant = "small" | "medium" | "large";
+type AppBarVariant = "small" | "medium-flexible" | "large-flexible";
 
 interface AppBarProps {
   /** 标题纯文本；存在默认插槽时被插槽覆盖。 */
   title?: string;
-  /** `small` 单行；`medium` / `large` 的标题另起一行，字号逐级变大。 */
+  /** `small` 单行；`medium-flexible` / `large-flexible` 的标题另起一行，字号逐级变大。 */
   variant?: AppBarVariant;
+  /** 副标题纯文本（仅 flexible 变体使用）；存在 `subtitle` 插槽时被插槽覆盖。 */
+  subtitle?: string;
   /** 脱离文档流，固定在视口顶部（`position: fixed`）。 */
   fixed?: boolean;
   /** 与 `fixed` 搭配：在文档流里输出一个等高占位元素，内容不会被抽走。 */
@@ -19,9 +21,12 @@ interface AppBarProps {
 const props = withDefaults(defineProps<AppBarProps>(), {
   title: undefined,
   variant: "small",
+  subtitle: undefined,
   fixed: false,
   placeholder: false,
 });
+
+const slots = useSlots();
 
 const barRef = ref<HTMLElement | null>(null);
 
@@ -32,9 +37,24 @@ let observer: ResizeObserver | null = null;
 
 const showPlaceholder = computed(() => props.fixed && props.placeholder);
 
-const placeholderFallbackClass = computed(() =>
-  props.variant === "small" ? "h-16" : props.variant === "medium" ? "h-28" : "h-40",
+const isFlexible = computed(() => props.variant !== "small");
+
+const hasSubtitle = computed(
+  () => isFlexible.value && (props.subtitle !== undefined || !!slots.subtitle),
 );
+
+/** M3 flexible app bar：有副标题时高度再长一档。 */
+const barHeightClass = computed(() => {
+  if (props.variant === "medium-flexible") return hasSubtitle.value ? "min-h-[8.5rem]" : "min-h-28";
+  if (props.variant === "large-flexible") return hasSubtitle.value ? "min-h-38" : "min-h-30";
+  return "min-h-16";
+});
+
+const placeholderFallbackClass = computed(() => {
+  if (props.variant === "medium-flexible") return hasSubtitle.value ? "h-[8.5rem]" : "h-28";
+  if (props.variant === "large-flexible") return hasSubtitle.value ? "h-38" : "h-30";
+  return "h-16";
+});
 
 const placeholderStyle = computed(() =>
   barHeight.value === null ? undefined : { height: `${barHeight.value}px` },
@@ -42,11 +62,16 @@ const placeholderStyle = computed(() =>
 
 const titleClass = computed(() => [
   "block truncate leading-tight",
-  props.variant === "small"
-    ? "text-[1.375rem]"
-    : props.variant === "medium"
+  props.variant === "large-flexible"
+    ? "text-[2.25rem]"
+    : props.variant === "medium-flexible"
       ? "text-[1.75rem]"
-      : "text-[2rem]",
+      : "text-[1.375rem]",
+]);
+
+const subtitleClass = computed(() => [
+  "block truncate leading-tight text-ds-muted",
+  props.variant === "large-flexible" ? "text-base" : "text-sm",
 ]);
 
 function disconnect(): void {
@@ -91,12 +116,9 @@ onBeforeUnmount(disconnect);
     ref="barRef"
     v-bind="$attrs"
     class="ds-app-bar flex w-full flex-col bg-ds-surface px-4 font-ds text-ds-fg"
-    :class="[
-      fixed ? 'fixed inset-x-0 top-0 z-40' : 'relative',
-      variant === 'small' ? 'min-h-16' : variant === 'medium' ? 'min-h-28' : 'min-h-40',
-    ]"
+    :class="[fixed ? 'fixed inset-x-0 top-0 z-40' : 'relative', barHeightClass]"
   >
-    <template v-if="variant === 'small'">
+    <template v-if="!isFlexible">
       <div class="flex min-h-16 items-center gap-2">
         <div v-if="$slots.left" class="flex shrink-0 items-center gap-1 text-[1.5rem]">
           <slot name="left" />
@@ -122,13 +144,15 @@ onBeforeUnmount(disconnect);
           <slot name="right" />
         </div>
       </div>
-      <div
-        class="flex min-w-0 flex-1 flex-col justify-end"
-        :class="variant === 'medium' ? 'pb-4' : 'pb-6'"
-      >
+      <div class="flex min-w-0 flex-1 flex-col justify-end pb-4">
         <slot>
           <span :class="titleClass">{{ title }}</span>
         </slot>
+        <template v-if="hasSubtitle">
+          <slot name="subtitle">
+            <span :class="subtitleClass">{{ subtitle }}</span>
+          </slot>
+        </template>
       </div>
     </template>
   </header>

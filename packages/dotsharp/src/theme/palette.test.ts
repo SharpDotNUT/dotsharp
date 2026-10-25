@@ -91,6 +91,7 @@ describe("generateTokens", () => {
         expect(ratio(tokens["text-muted"], tokens.surface)).toBeGreaterThanOrEqual(4.5);
         expect(ratio(tokens["on-primary"], tokens.primary)).toBeGreaterThanOrEqual(4.5);
         expect(ratio(tokens["on-tonal"], tokens.tonal)).toBeGreaterThanOrEqual(4.5);
+        expect(ratio(tokens.secondary, tokens.surface)).toBeGreaterThanOrEqual(4.5);
         expect(ratio(tokens.error, tokens.bg)).toBeGreaterThanOrEqual(4.5);
       }
     }

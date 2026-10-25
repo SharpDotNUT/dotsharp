@@ -98,7 +98,8 @@ library's own components.
   keeps dark mode working because utilities then reference `var(--ds-…)` directly. Token names used by classes:
   `bg-ds-bg`, `bg-ds-surface`, `bg-ds-surface-hover`, `bg-ds-elevated`, `bg-ds-elevated-hover`, `bg-ds-tonal`,
   `bg-ds-tonal-hover`, `bg-ds-primary`, `bg-ds-primary-hover`, `text-ds-fg`, `text-ds-muted`, `text-ds-on-primary`,
-  `text-ds-primary-strong`, `text-ds-on-tonal`, `text-ds-error`, `text-ds-success`, `border-ds-line`,
+  `text-ds-primary-strong`, `text-ds-on-tonal`, `text-ds-secondary`, `text-ds-error`, `text-ds-success`,
+  `border-ds-line`,
   `border-ds-outline`, `border-ds-primary-strong`,
   `outline-ds-focus`, `rounded-ds-sm`, `rounded-ds`, `rounded-ds-lg`, `rounded-ds-xl`, `font-ds`.
 - Class names must stay statically greppable: keep them as literal strings (object maps are fine), never build them

@@ -22,13 +22,23 @@ defineOptions({ inheritAttrs: false });
 
 interface TabsProps {
   variant?: boolean;
+  /** 键盘移动焦点时是否立即切换选中项；`false` 时需回车/空格激活。 */
+  autoActivate?: boolean;
 }
 
 const props = withDefaults(defineProps<TabsProps>(), {
   variant: false,
+  autoActivate: false,
 });
 
 const model = defineModel<TabsValue>("value", { default: 0 });
+
+/** 当前获得焦点的标签；决定 roving tabindex，并在 `autoActivate` 时驱动选中值。 */
+const focusValue = ref<TabsValue>(model.value);
+
+function setFocus(value: TabsValue): void {
+  focusValue.value = value;
+}
 
 const slots = useSlots();
 
@@ -84,13 +94,57 @@ function measure(): void {
 
 function register(value: TabsValue, el: HTMLElement | null): void {
   if (el) elements.set(value, el);
-  else elements.delete(value);
+  else {
+    elements.delete(value);
+    // 获得焦点的标签被移除后，焦点退回选中项，避免整组变成 `-1`。
+    if (focusValue.value === value) focusValue.value = model.value;
+  }
   scheduleMeasure();
 }
 
-provide(tabsContextKey, { model, variant: toRef(props, "variant"), register });
+provide(tabsContextKey, {
+  model,
+  variant: toRef(props, "variant"),
+  register,
+  focusValue,
+  setFocus,
+});
 
-watch([() => model.value, () => props.variant], () => nextTick(measure));
+watch([() => model.value, () => props.variant], () => {
+  focusValue.value = model.value;
+  void nextTick(measure);
+});
+
+/** 方向键 / Home / End 在标签之间移动焦点，不改变选中值（除非 `autoActivate`）。 */
+function onKeydown(event: KeyboardEvent): void {
+  if (event.defaultPrevented) return;
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+
+  const list = listRef.value;
+  const tabs = list?.querySelectorAll<HTMLElement>('[role="tab"]:not([disabled])');
+  if (!list || !tabs || tabs.length < 2) return;
+
+  event.preventDefault();
+
+  const rtl = getComputedStyle(list).direction === "rtl";
+  const focused =
+    document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : (event.target as HTMLElement | null);
+  const current = focused ? Array.from(tabs).indexOf(focused) : -1;
+
+  let nextIndex = 0;
+  if (event.key === "End") nextIndex = tabs.length - 1;
+  else if (event.key !== "Home") {
+    const step = event.key === "ArrowRight" ? 1 : -1;
+    const direction = rtl ? -step : step;
+    nextIndex = current === -1 ? 0 : (current + direction + tabs.length) % tabs.length;
+  }
+
+  tabs[nextIndex]?.focus();
+
+  if (props.autoActivate) model.value = focusValue.value;
+}
 
 function flatten(nodes: VNode[]): VNode[] {
   return nodes.flatMap((node) =>
@@ -139,6 +193,7 @@ onBeforeUnmount(() => {
     ref="listRef"
     role="tablist"
     v-bind="$attrs"
+    @keydown="onKeydown"
     class="ds-tabs relative flex items-stretch overflow-hidden border-b border-ds-line font-ds"
   >
     <TabNodes :nodes="items" />

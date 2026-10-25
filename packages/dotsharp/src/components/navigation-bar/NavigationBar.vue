@@ -19,11 +19,14 @@ interface NavigationBarProps {
   variant?: NavigationVariant;
   /** 导航栏最大宽度，数字按 px 处理；超出部分居中留白。 */
   maxWidth?: string | number;
+  /** 无障碍名称，写入 `<nav>` 的 `aria-label`。 */
+  label?: string;
 }
 
 const props = withDefaults(defineProps<NavigationBarProps>(), {
   variant: "compact",
   maxWidth: undefined,
+  label: undefined,
 });
 
 const model = defineModel<NavigationValue>("value", { default: 0 });
@@ -66,6 +69,7 @@ const NavigationNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, nul
 <template>
   <nav
     v-bind="$attrs"
+    :aria-label="label"
     class="ds-navigation-bar mx-auto flex w-full items-stretch bg-ds-surface font-ds"
     :class="variant === 'medium' ? 'px-2 py-2' : 'px-1 py-1'"
     :style="maxWidthStyle"

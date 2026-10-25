@@ -92,8 +92,11 @@ const centered = ref(20);
 `RangeSlider` 的 `v-model` 是 `[低位, 高位]`，两个手柄不会交叉；拖动 / 点击时命中的是离指针更近的手柄。
 数值气泡一次只显示正在操作的那一个手柄。
 
+两个手柄是两个独立的 `role="slider"`，只传 `label` 会让它们共用同一个名字；用 `labels` 分别命名：
+`labels[0]` 是低位、`labels[1]` 是高位。
+
 <div class="demo-row">
-  <RangeSlider v-model="range" label="价格区间" class="w-full max-w-lg" />
+  <RangeSlider v-model="range" :labels="['最低价', '最高价']" class="w-full max-w-lg" />
 </div>
 
 当前区间：{{ range[0] }} – {{ range[1] }}
@@ -107,7 +110,7 @@ const range = ref<[number, number]>([30, 70]);
 </script>
 
 <template>
-  <RangeSlider v-model="range" />
+  <RangeSlider v-model="range" :labels="['最低价', '最高价']" />
 </template>
 ```
 
@@ -275,12 +278,13 @@ function increaseBrightness() {
 
 与 `Slider` 相同，区别是 `v-model` 为 `[number, number]`，且没有 `centered`（范围滑块固定填充两个手柄之间）。
 
-| 属性      | 类型                                | 默认值     | 说明                             |
-| --------- | ----------------------------------- | ---------- | -------------------------------- |
-| v-model   | `[number, number]`                  | `[0, 100]` | 低位与高位，顺序自动归一         |
-| size      | `"xs" \| "s" \| "m" \| "l" \| "xl"` | `"xs"`     | 轨道厚度                         |
-| ticks     | `boolean`                           | `false`    | 显示刻度点（超过 20 个自动省略） |
-| showValue | `"drag" \| "always" \| "never"`     | `"drag"`   | 数值气泡的显示时机               |
+| 属性      | 类型                                | 默认值     | 说明                                    |
+| --------- | ----------------------------------- | ---------- | --------------------------------------- |
+| v-model   | `[number, number]`                  | `[0, 100]` | 低位与高位，顺序自动归一                |
+| size      | `"xs" \| "s" \| "m" \| "l" \| "xl"` | `"xs"`     | 轨道厚度                                |
+| ticks     | `boolean`                           | `false`    | 显示刻度点（超过 20 个自动省略）        |
+| showValue | `"drag" \| "always" \| "never"`     | `"drag"`   | 数值气泡的显示时机                      |
+| labels    | `[string, string]`                  | —          | 两个手柄各自的无障碍名称（低位 / 高位） |
 
 `min`、`max`、`step`、`format`、`label`、`disabled` 与 `Slider` 一致。
 
@@ -300,7 +304,7 @@ function increaseBrightness() {
 ### 可访问性
 
 - 每个手柄是 `role="slider"` 的可聚焦元素，带 `aria-valuemin` / `aria-valuemax` / `aria-valuenow` /
-  `aria-valuetext`；`label` 会写成它的 `aria-label`。
+  `aria-valuetext`；`label` 会写成它的 `aria-label`，`RangeSlider` 用 `labels` 给两个手柄各自命名。
 - 键盘：左右 / 上下方向键按步长增减，`PageUp` / `PageDown` 按 10 倍步长，`Home` / `End` 跳到两端。
 - 拖动时使用指针捕获，指针离开组件也不会中断；轨道设置 `touch-action: none`，触屏上不会与页面滚动冲突。
 - 范围滑块的两个手柄各自独立聚焦；低位不会超过高位，反之亦然。
