@@ -147,20 +147,26 @@ const noPaste = ref("");
 - `←` / `→` / `Home` / `End` 在格子之间移动焦点；聚焦时自动全选当前格，直接输入即替换。
 - 点击空格子时会跳到第一个空位，保证值始终连续，不会留下空洞。
 
+## 表单校验
+
+`validator` 接收当前值，返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在输入与失焦时各校验一次，用 `validateOn` 调整；也暴露 `validate()` / `clearValidate()`。完整约定见[表单指南](/guide/form)。
+
 ## API
 
 ### 属性
 
-| 属性       | 类型                                              | 默认值      | 说明                                           |
-| ---------- | ------------------------------------------------- | ----------- | ---------------------------------------------- |
-| v-model    | `string`                                          | `""`        | 各格从左到右拼接的值；外部写入同样会过滤并截断 |
-| length     | `number`                                          | `6`         | 输入格数量                                     |
-| accept     | `"numeric" \| "alpha" \| "alphanumeric" \| "any"` | `"numeric"` | 允许的字符集                                   |
-| letterCase | `"none" \| "uppercase" \| "lowercase"`            | `"none"`    | 字母大小写转换                                 |
-| mask       | `boolean`                                         | `false`     | 掩码显示，输入内容以圆点呈现                   |
-| allowPaste | `boolean`                                         | `true`      | 是否允许剪贴板粘贴；关闭后粘贴被阻止           |
-| disabled   | `boolean`                                         | `false`     | 禁用整组输入                                   |
-| label      | `string`                                          | —           | 分组标签，同时作为每一格的可访问名称           |
+| 属性       | 类型                                              | 默认值              | 说明                                           |
+| ---------- | ------------------------------------------------- | ------------------- | ---------------------------------------------- |
+| v-model    | `string`                                          | `""`                | 各格从左到右拼接的值；外部写入同样会过滤并截断 |
+| length     | `number`                                          | `6`                 | 输入格数量                                     |
+| accept     | `"numeric" \| "alpha" \| "alphanumeric" \| "any"` | `"numeric"`         | 允许的字符集                                   |
+| letterCase | `"none" \| "uppercase" \| "lowercase"`            | `"none"`            | 字母大小写转换                                 |
+| mask       | `boolean`                                         | `false`             | 掩码显示，输入内容以圆点呈现                   |
+| allowPaste | `boolean`                                         | `true`              | 是否允许剪贴板粘贴；关闭后粘贴被阻止           |
+| disabled   | `boolean`                                         | `false`             | 禁用整组输入                                   |
+| label      | `string`                                          | —                   | 分组标签，同时作为每一格的可访问名称           |
+| validator  | `(value: string) => boolean \| string`            | —                   | 验证函数：`false` 通过，`true` / 字符串不通过  |
+| validateOn | `"input" \| "blur" \| ("input" \| "blur")[]`      | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验             |
 
 ### 事件
 

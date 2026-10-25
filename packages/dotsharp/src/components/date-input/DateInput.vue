@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useId, watch } from "vue";
+import { computed, nextTick, ref, useId, watch } from "vue";
 import calendarIcon from "@iconify-icons/material-symbols/calendar-today";
 import Icon from "../icon/Icon.vue";
 import Input from "../input/Input.vue";
@@ -7,23 +7,19 @@ import DatePicker from "../date-picker/DatePicker.vue";
 import { datePlaceholder, formatDateInput, parseDateInput } from "../date-picker/date";
 import type { DatePickerMode } from "../date-picker/types";
 import { useAnchoredPopup } from "../../composables/useAnchoredPopup";
+import { useFieldValidation } from "../../composables/useFieldValidation";
+import type { FormValidateTrigger, FormValidator } from "../form/context";
 import { useI18n } from "../../i18n";
-
-type DateInputState = "default" | "success" | "error";
 
 interface DateInputProps {
   /** 浮动标签；默认取当前语言的「日期」。 */
   label?: string;
   /** 容器样式，与 `Input` 一致。 */
   variant?: "outlined" | "filled";
-  /** 外部校验状态；内部解析失败时始终显示 error。 */
-  state?: DateInputState;
   disabled?: boolean;
   readonly?: boolean;
   /** 字段下方的辅助文字；默认显示数字顺序（如 `MM/DD/YYYY`）。 */
   description?: string;
-  /** `state="error"` 时替换辅助文字。 */
-  errorMessage?: string;
   /** 是否显示日历按钮；`false` 时只是一个可输入的日期字段。 */
   picker?: boolean;
   /** 日历以模态对话框打开，而不是贴着输入框的弹出层。 */
@@ -32,20 +28,27 @@ interface DateInputProps {
   pickerMode?: DatePickerMode;
   /** 模态选择器的标题。 */
   title?: string;
+  /**
+   * 验证函数：接收当前值（`Date | null`），返回 `false` 表示通过，
+   * 返回 `true` 或错误文案表示不通过。
+   */
+  validator?: FormValidator<Date | null>;
+  /** 自动校验时机，默认 `["input", "blur"]`；传 `[]` 关闭自动校验。 */
+  validateOn?: FormValidateTrigger | FormValidateTrigger[];
 }
 
 const props = withDefaults(defineProps<DateInputProps>(), {
   label: undefined,
   variant: "outlined",
-  state: "default",
   disabled: false,
   readonly: false,
   description: undefined,
-  errorMessage: undefined,
   picker: true,
   modal: false,
   pickerMode: "calendar",
   title: undefined,
+  validator: undefined,
+  validateOn: undefined,
 });
 
 const value = defineModel<Date | null>({ default: null });
@@ -57,6 +60,47 @@ const uid = useId();
 const text = ref(value.value ? formatDateInput(value.value, order.value) : "");
 const invalid = ref(false);
 
+const {
+  invalid: isInvalid,
+  message: validationMessage,
+  trigger: triggerValidation,
+  validate: validateField,
+  clearValidate: clearField,
+} = useFieldValidation({
+  value: () => value.value,
+  validator: () => props.validator,
+  triggers: () => props.validateOn,
+});
+
+const inputRef = ref<{ validate: () => boolean; clearValidate: () => void } | null>(null);
+
+/**
+ * 内部 `Input` 只负责显示：解析失败与字段校验结果都映射成它的一次校验。
+ * 它不自动触发，显示由下面的 watch 跟随字段状态同步。
+ */
+const inputValidator = (): boolean | string => {
+  if (invalid.value) return i18n.t("invalidDate");
+  if (!isInvalid.value) return false;
+  return validationMessage.value ?? true;
+};
+
+watch([isInvalid, validationMessage, invalid], () => {
+  void nextTick(() => inputRef.value?.validate());
+});
+
+function validate(): boolean {
+  const valid = validateField();
+  inputRef.value?.validate();
+  return valid;
+}
+
+function clearValidate(): void {
+  clearField();
+  inputRef.value?.clearValidate();
+}
+
+defineExpose({ validate, clearValidate });
+
 const rootRef = ref<HTMLElement | null>(null);
 const popupRef = ref<HTMLElement | null>(null);
 const popupId = `ds-date-input-popup-${uid}`;
@@ -66,8 +110,6 @@ const pickerOpen = ref(false);
 const resolvedLabel = computed(() => props.label ?? i18n.t("date"));
 const placeholder = computed(() => datePlaceholder(order.value));
 const hint = computed(() => props.description ?? datePlaceholder(order.value, true));
-const resolvedState = computed<DateInputState>(() => (invalid.value ? "error" : props.state));
-const errorMessage = computed(() => (invalid.value ? i18n.t("invalidDate") : props.errorMessage));
 const canPick = computed(() => props.picker && !props.disabled && !props.readonly);
 
 watch(value, (next) => {
@@ -81,25 +123,35 @@ watch(order, () => {
 });
 
 /** 失焦/回车时把输入的数字日期写回模型；非法输入保持文本并显示错误。 */
-function commitText(): void {
-  if (props.disabled || props.readonly) return;
+function commitText(): Date | null {
+  if (props.disabled || props.readonly) return value.value;
 
   const raw = text.value.trim();
   if (!raw) {
     invalid.value = false;
     if (value.value) value.value = null;
-    return;
+    return null;
   }
 
   const parsed = parseDateInput(raw, order.value);
   if (!parsed) {
     invalid.value = true;
-    return;
+    return value.value;
   }
 
   invalid.value = false;
   value.value = parsed;
   text.value = formatDateInput(parsed, order.value);
+  return parsed;
+}
+
+function onBlur(): void {
+  const next = commitText();
+  triggerValidation("blur", next);
+}
+
+function onPickerChange(next: Date | null): void {
+  triggerValidation("input", next);
 }
 
 const { panelStyle, show, hide } = useAnchoredPopup({
@@ -122,17 +174,18 @@ function togglePicker(): void {
 <template>
   <div ref="rootRef" class="ds-date-input relative font-ds">
     <Input
+      ref="inputRef"
       v-model="text"
       :label="resolvedLabel"
       float-label
       :variant="variant"
-      :state="resolvedState"
       :disabled="disabled"
       :readonly="readonly"
       :description="hint"
-      :error-message="errorMessage"
       :placeholder="placeholder"
-      @blur="commitText"
+      :validator="inputValidator"
+      :validate-on="[]"
+      @blur="onBlur"
       @keydown.enter.prevent="commitText"
     >
       <template v-if="canPick" #trailing>
@@ -157,6 +210,7 @@ function togglePicker(): void {
       modal
       :mode="pickerMode"
       :title="title ?? i18n.t('selectDate')"
+      @update:model-value="onPickerChange"
     />
 
     <Teleport to="body">
@@ -175,7 +229,13 @@ function togglePicker(): void {
           :style="panelStyle"
           class="ds-date-input__popup fixed z-50"
         >
-          <DatePicker v-model="value" :header="false" @confirm="hide(true)" @cancel="hide(true)" />
+          <DatePicker
+            v-model="value"
+            :header="false"
+            @confirm="hide(true)"
+            @cancel="hide(true)"
+            @update:model-value="onPickerChange"
+          />
         </div>
       </Transition>
     </Teleport>

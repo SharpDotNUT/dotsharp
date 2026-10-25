@@ -24,6 +24,13 @@ export type { DividerInset } from "./components/divider/types";
 export { default as Fab } from "./components/fab/Fab.vue";
 export { default as FabMenu } from "./components/fab/FabMenu.vue";
 export type { FabSize, FabVariant } from "./components/fab/shared";
+export { default as Form } from "./components/form/Form.vue";
+export { default as FormItem } from "./components/form/FormItem.vue";
+export type {
+  FormValidateResult,
+  FormValidateTrigger,
+  FormValidator,
+} from "./components/form/context";
 export { default as Icon } from "./components/icon/Icon.vue";
 export { default as IconButton } from "./components/icon-button/IconButton.vue";
 export { default as Input } from "./components/input/Input.vue";

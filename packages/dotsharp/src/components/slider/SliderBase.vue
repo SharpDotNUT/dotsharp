@@ -34,10 +34,12 @@ interface SliderBaseProps {
   label?: string;
   /** 逐个手柄的无障碍名称；优先于 `label`。 */
   labels?: string[];
+  /** 校验未通过时为手柄设置 `aria-invalid`。 */
+  invalid?: boolean;
 }
 
 const props = defineProps<SliderBaseProps>();
-const emit = defineEmits<{ update: [values: number[]] }>();
+const emit = defineEmits<{ update: [values: number[]]; blur: [] }>();
 
 const values = computed(() => {
   const next = props.values.map((value) =>
@@ -312,8 +314,10 @@ function onKeydown(event: KeyboardEvent, index: number) {
         :aria-valuenow="value"
         :aria-valuetext="formatValue(value)"
         :aria-disabled="disabled ? 'true' : undefined"
+        :aria-invalid="invalid || undefined"
         @keydown="onKeydown($event, index)"
         @focus="activeIndex = index"
+        @blur="emit('blur')"
       >
         <span
           class="block h-full rounded-full bg-ds-primary-strong transition-[width] duration-150 ease-out"

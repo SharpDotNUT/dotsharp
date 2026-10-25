@@ -130,21 +130,25 @@ const time = ref<TimeValue | null>({ hour: 7, minute: 0 });
 </template>
 ```
 
+## 表单校验
+
+`validator` 接收当前值（`TimeValue | null`），返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在失焦与选择时间后校验，用 `validateOn` 调整；也暴露 `validate()` / `clearValidate()`。输入无法解析时仍然按内部解析错误显示，优先于验证函数。完整约定见[表单指南](/guide/form)。
+
 ## API
 
-| 属性           | 类型                                | 默认值             | 说明                         |
-| -------------- | ----------------------------------- | ------------------ | ---------------------------- |
-| `v-model`      | `TimeValue \| null`                 | `null`             | 选中的时间                   |
-| `label`        | `string`                            | 当前语言的「时间」 | 浮动标签                     |
-| `format`       | `"12h" \| "24h"`                    | 当前语言           | 时钟格式                     |
-| `variant`      | `"outlined" \| "filled"`            | `"outlined"`       | 容器样式，与 `Input` 一致    |
-| `state`        | `"default" \| "success" \| "error"` | `"default"`        | 外部校验状态                 |
-| `disabled`     | `boolean`                           | `false`            | 禁用                         |
-| `readonly`     | `boolean`                           | `false`            | 只读                         |
-| `description`  | `string`                            | 时钟格式提示       | 字段下方的辅助文字           |
-| `errorMessage` | `string`                            | 当前语言           | `state="error"` 时的错误信息 |
-| `picker`       | `boolean`                           | `true`             | 是否显示时钟按钮             |
-| `modal`        | `boolean`                           | `false`            | 选择器以模态对话框打开       |
-| `seconds`      | `boolean`                           | `false`            | 是否显示秒                   |
-| `layout`       | `"vertical" \| "horizontal"`        | `"vertical"`       | 选择器的排布                 |
-| `title`        | `string`                            | 当前语言           | 模态选择器的标题             |
+| 属性          | 类型                                              | 默认值              | 说明                                          |
+| ------------- | ------------------------------------------------- | ------------------- | --------------------------------------------- |
+| `v-model`     | `TimeValue \| null`                               | `null`              | 选中的时间                                    |
+| `label`       | `string`                                          | 当前语言的「时间」  | 浮动标签                                      |
+| `format`      | `"12h" \| "24h"`                                  | 当前语言            | 时钟格式                                      |
+| `variant`     | `"outlined" \| "filled"`                          | `"outlined"`        | 容器样式，与 `Input` 一致                     |
+| `disabled`    | `boolean`                                         | `false`             | 禁用                                          |
+| `readonly`    | `boolean`                                         | `false`             | 只读                                          |
+| `description` | `string`                                          | 时钟格式提示        | 字段下方的辅助文字                            |
+| `picker`      | `boolean`                                         | `true`              | 是否显示时钟按钮                              |
+| `modal`       | `boolean`                                         | `false`             | 选择器以模态对话框打开                        |
+| `seconds`     | `boolean`                                         | `false`             | 是否显示秒                                    |
+| `layout`      | `"vertical" \| "horizontal"`                      | `"vertical"`        | 选择器的排布                                  |
+| `title`       | `string`                                          | 当前语言            | 模态选择器的标题                              |
+| `validator`   | `(value: TimeValue \| null) => boolean \| string` | —                   | 验证函数：`false` 通过，`true` / 字符串不通过 |
+| `validateOn`  | `"input" \| "blur" \| ("input" \| "blur")[]`      | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验            |

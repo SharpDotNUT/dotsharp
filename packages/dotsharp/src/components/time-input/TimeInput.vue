@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useId, watch } from "vue";
+import { computed, nextTick, ref, useId, watch } from "vue";
 import scheduleIcon from "@iconify-icons/material-symbols/schedule";
 import Icon from "../icon/Icon.vue";
 import Input from "../input/Input.vue";
@@ -12,23 +12,19 @@ import {
 } from "../time-picker/time";
 import type { TimeFormat, TimeValue } from "../time-picker/types";
 import { useAnchoredPopup } from "../../composables/useAnchoredPopup";
+import { useFieldValidation } from "../../composables/useFieldValidation";
+import type { FormValidateTrigger, FormValidator } from "../form/context";
 import { useI18n } from "../../i18n";
-
-type TimeInputState = "default" | "success" | "error";
 
 interface TimeInputProps {
   /** 浮动标签；默认取当前语言的「时间」。 */
   label?: string;
   /** 容器样式，与 `Input` 一致。 */
   variant?: "outlined" | "filled";
-  /** 外部校验状态；内部解析失败时始终显示 error。 */
-  state?: TimeInputState;
   disabled?: boolean;
   readonly?: boolean;
   /** 字段下方的辅助文字；默认显示时钟格式（如 `hh:mm AM`）。 */
   description?: string;
-  /** `state="error"` 时替换辅助文字。 */
-  errorMessage?: string;
   /** 是否显示时钟按钮；`false` 时只是一个可输入的时间字段。 */
   picker?: boolean;
   /** 选择器以模态对话框打开，而不是贴着输入框的弹出层。 */
@@ -41,22 +37,29 @@ interface TimeInputProps {
   layout?: "vertical" | "horizontal";
   /** 是否显示秒。 */
   seconds?: boolean;
+  /**
+   * 验证函数：接收当前值（`TimeValue | null`），返回 `false` 表示通过，
+   * 返回 `true` 或错误文案表示不通过。
+   */
+  validator?: FormValidator<TimeValue | null>;
+  /** 自动校验时机，默认 `["input", "blur"]`；传 `[]` 关闭自动校验。 */
+  validateOn?: FormValidateTrigger | FormValidateTrigger[];
 }
 
 const props = withDefaults(defineProps<TimeInputProps>(), {
   label: undefined,
   variant: "outlined",
-  state: "default",
   disabled: false,
   readonly: false,
   description: undefined,
-  errorMessage: undefined,
   picker: true,
   modal: false,
   title: undefined,
   format: undefined,
   layout: "vertical",
   seconds: false,
+  validator: undefined,
+  validateOn: undefined,
 });
 
 const value = defineModel<TimeValue | null>({ default: null });
@@ -73,6 +76,47 @@ function textOf(next: TimeValue | null): string {
 const text = ref(textOf(normalizeTime(value.value)));
 const invalid = ref(false);
 
+const {
+  invalid: isInvalid,
+  message: validationMessage,
+  trigger: triggerValidation,
+  validate: validateField,
+  clearValidate: clearField,
+} = useFieldValidation({
+  value: () => value.value,
+  validator: () => props.validator,
+  triggers: () => props.validateOn,
+});
+
+const inputRef = ref<{ validate: () => boolean; clearValidate: () => void } | null>(null);
+
+/**
+ * 内部 `Input` 只负责显示：解析失败与字段校验结果都映射成它的一次校验。
+ * 它不自动触发，显示由下面的 watch 跟随字段状态同步。
+ */
+const inputValidator = (): boolean | string => {
+  if (invalid.value) return i18n.t("invalidTime");
+  if (!isInvalid.value) return false;
+  return validationMessage.value ?? true;
+};
+
+watch([isInvalid, validationMessage, invalid], () => {
+  void nextTick(() => inputRef.value?.validate());
+});
+
+function validate(): boolean {
+  const valid = validateField();
+  inputRef.value?.validate();
+  return valid;
+}
+
+function clearValidate(): void {
+  clearField();
+  inputRef.value?.clearValidate();
+}
+
+defineExpose({ validate, clearValidate });
+
 const rootRef = ref<HTMLElement | null>(null);
 const popupRef = ref<HTMLElement | null>(null);
 const popupId = `ds-time-input-popup-${uid}`;
@@ -84,8 +128,6 @@ const placeholder = computed(() => timePlaceholder(format.value, false, props.se
 const hint = computed(
   () => props.description ?? timePlaceholder(format.value, true, props.seconds),
 );
-const resolvedState = computed<TimeInputState>(() => (invalid.value ? "error" : props.state));
-const errorMessage = computed(() => (invalid.value ? i18n.t("invalidTime") : props.errorMessage));
 const canPick = computed(() => props.picker && !props.disabled && !props.readonly);
 
 watch(value, (next) => {
@@ -99,25 +141,35 @@ watch([format, () => props.seconds], () => {
 });
 
 /** 失焦/回车时把输入的时钟写回模型；非法输入保持文本并显示错误。 */
-function commitText(): void {
-  if (props.disabled || props.readonly) return;
+function commitText(): TimeValue | null {
+  if (props.disabled || props.readonly) return value.value;
 
   const raw = text.value.trim();
   if (!raw) {
     invalid.value = false;
     if (value.value) value.value = null;
-    return;
+    return null;
   }
 
   const parsed = parseTimeInput(raw, format.value, props.seconds);
   if (!parsed) {
     invalid.value = true;
-    return;
+    return value.value;
   }
 
   invalid.value = false;
   value.value = props.seconds ? { ...parsed, second: parsed.second ?? 0 } : parsed;
   text.value = textOf(value.value);
+  return value.value;
+}
+
+function onBlur(): void {
+  const next = commitText();
+  triggerValidation("blur", next);
+}
+
+function onPickerChange(next: TimeValue | null): void {
+  triggerValidation("input", next);
 }
 
 const { panelStyle, show, hide } = useAnchoredPopup({
@@ -139,17 +191,18 @@ function togglePicker(): void {
 <template>
   <div ref="rootRef" class="ds-time-input relative font-ds">
     <Input
+      ref="inputRef"
       v-model="text"
       :label="resolvedLabel"
       float-label
       :variant="variant"
-      :state="resolvedState"
       :disabled="disabled"
       :readonly="readonly"
       :description="hint"
-      :error-message="errorMessage"
       :placeholder="placeholder"
-      @blur="commitText"
+      :validator="inputValidator"
+      :validate-on="[]"
+      @blur="onBlur"
       @keydown.enter.prevent="commitText"
     >
       <template v-if="canPick" #trailing>
@@ -176,6 +229,7 @@ function togglePicker(): void {
       :layout="layout"
       :seconds="seconds"
       :title="title ?? i18n.t('selectTime')"
+      @update:model-value="onPickerChange"
     />
 
     <Teleport to="body">
@@ -202,6 +256,7 @@ function togglePicker(): void {
             :seconds="seconds"
             @confirm="hide(true)"
             @cancel="hide(true)"
+            @update:model-value="onPickerChange"
           />
         </div>
       </Transition>

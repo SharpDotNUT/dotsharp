@@ -83,7 +83,7 @@
   background-color: var(--vp-c-bg-alt);
 }
 
-.demo-row .ds-input {
+.demo-row > .ds-input {
   flex: 0 1 220px;
   width: auto;
   min-width: 0;

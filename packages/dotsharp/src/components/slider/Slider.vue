@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import SliderBase from "./SliderBase.vue";
+import { useFieldValidation } from "../../composables/useFieldValidation";
+import type { FormValidateTrigger, FormValidator } from "../form/context";
 import type { SliderSize, SliderValueDisplay } from "./shared";
 
 interface SliderProps {
@@ -21,9 +23,15 @@ interface SliderProps {
   format?: (value: number) => string;
   /** 无障碍名称（`aria-label`）。 */
   label?: string;
+  /**
+   * 验证函数：接收当前值，返回 `false` 表示通过，返回 `true` 或错误文案表示不通过。
+   */
+  validator?: FormValidator<number>;
+  /** 自动校验时机，默认 `["input", "blur"]`；传 `[]` 关闭自动校验。 */
+  validateOn?: FormValidateTrigger | FormValidateTrigger[];
 }
 
-withDefaults(defineProps<SliderProps>(), {
+const props = withDefaults(defineProps<SliderProps>(), {
   min: 0,
   max: 100,
   step: 1,
@@ -34,32 +42,56 @@ withDefaults(defineProps<SliderProps>(), {
   showValue: "drag",
   format: undefined,
   label: undefined,
+  validator: undefined,
+  validateOn: undefined,
 });
 
 const model = defineModel<number>({ default: 0 });
 const values = computed(() => [model.value]);
 
+const {
+  invalid: isInvalid,
+  message: validationMessage,
+  trigger: triggerValidation,
+  validate,
+  clearValidate,
+} = useFieldValidation({
+  value: () => model.value,
+  validator: () => props.validator,
+  triggers: () => props.validateOn,
+});
+
+defineExpose({ validate, clearValidate });
+
 function onUpdate(next: number[]) {
   model.value = next[0] ?? model.value;
+  triggerValidation("input", next[0] ?? model.value);
 }
 </script>
 
 <template>
-  <SliderBase
-    :values="values"
-    :min="min"
-    :max="max"
-    :step="step"
-    :size="size"
-    :disabled="disabled"
-    :centered="centered"
-    :ticks="ticks"
-    :show-value="showValue"
-    :format="format"
-    :label="label"
-    @update="onUpdate"
-  >
-    <template #start><slot name="start" /></template>
-    <template #end><slot name="end" /></template>
-  </SliderBase>
+  <div class="ds-slider-field flex w-full flex-col gap-1 font-ds">
+    <SliderBase
+      :values="values"
+      :min="min"
+      :max="max"
+      :step="step"
+      :size="size"
+      :disabled="disabled"
+      :centered="centered"
+      :ticks="ticks"
+      :show-value="showValue"
+      :format="format"
+      :label="label"
+      :invalid="isInvalid"
+      @update="onUpdate"
+      @blur="triggerValidation('blur')"
+    >
+      <template #start><slot name="start" /></template>
+      <template #end><slot name="end" /></template>
+    </SliderBase>
+    <p v-if="validationMessage" class="text-xs leading-4 text-ds-error">
+      {{ validationMessage }}
+    </p>
+  </div>
 </template>

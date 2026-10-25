@@ -44,6 +44,7 @@ const controlAttrs = computed(() => {
 function choose(): void {
   if (!group || disabled.value) return;
   group.model.value = resolvedValue.value;
+  group.notify("input", resolvedValue.value);
 }
 </script>
 
@@ -70,6 +71,7 @@ function choose(): void {
         :disabled="disabled"
         class="peer absolute inset-0 z-10 m-0 h-full w-full cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed"
         @change="choose"
+        @blur="group?.notify('blur')"
       />
       <span
         aria-hidden="true"

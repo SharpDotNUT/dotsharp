@@ -83,27 +83,30 @@ const date = ref<Date | null>(new Date(2025, 7, 17));
 
 ## 样式
 
-`variant` 与 `Input` 一致（`outlined` / `filled`）；`state`、`errorMessage`、`disabled`、`readonly` 也直接透传给
-内部的 `Input`，内部解析失败时组件会自行切到 error。
+`variant` 与 `Input` 一致（`outlined` / `filled`）；`disabled`、`readonly` 直接透传给内部的 `Input`。不通过时与 `Input` 使用同一套错误样式；输入无法解析时同样按不通过显示。
 
 <div class="demo-row">
   <DateInput v-model="date" variant="filled" label="填充样式" class="w-full max-w-sm" />
   <DateInput :model-value="null" label="禁用" disabled class="w-full max-w-sm" />
 </div>
 
+## 表单校验
+
+`validator` 接收当前值（`Date | null`），返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在失焦与选择日期后校验，用 `validateOn` 调整；也暴露 `validate()` / `clearValidate()`。输入无法解析时仍然按内部解析错误显示，优先于验证函数。完整约定见[表单指南](/guide/form)。
+
 ## API
 
-| 属性           | 类型                                | 默认值         | 说明                         |
-| -------------- | ----------------------------------- | -------------- | ---------------------------- |
-| `v-model`      | `Date \| null`                      | `null`         | 选中日期                     |
-| `label`        | `string`                            | 当前语言的日期 | 浮动标签                     |
-| `variant`      | `"outlined" \| "filled"`            | `"outlined"`   | 容器样式                     |
-| `state`        | `"default" \| "success" \| "error"` | `"default"`    | 外部校验状态                 |
-| `disabled`     | `boolean`                           | `false`        | 禁用                         |
-| `readonly`     | `boolean`                           | `false`        | 只读                         |
-| `description`  | `string`                            | 数字顺序提示   | 辅助文字                     |
-| `errorMessage` | `string`                            | —              | `state="error"` 时的错误信息 |
-| `picker`       | `boolean`                           | `true`         | 是否显示日历按钮             |
-| `modal`        | `boolean`                           | `false`        | 选择器以模态对话框打开       |
-| `pickerMode`   | `"calendar" \| "input"`             | `"calendar"`   | 模态选择器的初始模式         |
-| `title`        | `string`                            | 当前语言       | 模态选择器的标题             |
+| 属性          | 类型                                         | 默认值              | 说明                                          |
+| ------------- | -------------------------------------------- | ------------------- | --------------------------------------------- |
+| `v-model`     | `Date \| null`                               | `null`              | 选中日期                                      |
+| `label`       | `string`                                     | 当前语言的日期      | 浮动标签                                      |
+| `variant`     | `"outlined" \| "filled"`                     | `"outlined"`        | 容器样式                                      |
+| `disabled`    | `boolean`                                    | `false`             | 禁用                                          |
+| `readonly`    | `boolean`                                    | `false`             | 只读                                          |
+| `description` | `string`                                     | 数字顺序提示        | 辅助文字                                      |
+| `picker`      | `boolean`                                    | `true`              | 是否显示日历按钮                              |
+| `modal`       | `boolean`                                    | `false`             | 选择器以模态对话框打开                        |
+| `pickerMode`  | `"calendar" \| "input"`                      | `"calendar"`        | 模态选择器的初始模式                          |
+| `title`       | `string`                                     | 当前语言            | 模态选择器的标题                              |
+| `validator`   | `(value: Date \| null) => boolean \| string` | —                   | 验证函数：`false` 通过，`true` / 字符串不通过 |
+| `validateOn`  | `"input" \| "blur" \| ("input" \| "blur")[]` | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验            |

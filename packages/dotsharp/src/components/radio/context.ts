@@ -1,4 +1,5 @@
 import type { InjectionKey, Ref } from "vue";
+import type { FormValidateTrigger } from "../form/context";
 
 /** 子项的标识值：显式 value，或省略时由 RadioGroup 注入的索引。 */
 export type RadioValue = string | number;
@@ -10,6 +11,8 @@ export interface RadioContext {
   name: Ref<string>;
   /** RadioGroup 的 `disabled`，会叠加到每个子项上。 */
   disabled: Ref<boolean>;
+  /** 子项在用户选择（`input`）或失焦（`blur`）时通知 RadioGroup 触发校验。 */
+  notify: (when: FormValidateTrigger, value?: unknown) => void;
 }
 
 export const radioContextKey: InjectionKey<RadioContext> = Symbol("dotsharp-radio-group");

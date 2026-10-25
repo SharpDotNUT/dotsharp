@@ -4,6 +4,7 @@ import {
   computed,
   createVNode,
   Fragment,
+  inject,
   nextTick,
   onBeforeUnmount,
   provide,
@@ -18,6 +19,8 @@ import {
 import chevronIcon from "@iconify-icons/material-symbols/arrow-drop-down";
 import Icon from "../icon/Icon.vue";
 import { vRipple } from "../../directives/ripple";
+import { useFieldValidation } from "../../composables/useFieldValidation";
+import { formItemContextKey, type FormValidateTrigger, type FormValidator } from "../form/context";
 import Option from "./Option.vue";
 import { selectContextKey, type SelectValue } from "./context";
 
@@ -27,11 +30,19 @@ interface SelectProps {
   /** 没有可显示的选中项文本时显示的文字。 */
   placeholder?: string;
   disabled?: boolean;
+  /**
+   * 验证函数：接收当前值，返回 `false` 表示通过，返回 `true` 或错误文案表示不通过。
+   */
+  validator?: FormValidator<SelectValue>;
+  /** 自动校验时机，默认 `["input", "blur"]`；传 `[]` 关闭自动校验。 */
+  validateOn?: FormValidateTrigger | FormValidateTrigger[];
 }
 
 const props = withDefaults(defineProps<SelectProps>(), {
   placeholder: "",
   disabled: false,
+  validator: undefined,
+  validateOn: undefined,
 });
 
 const model = defineModel<SelectValue>("value", { default: 0 });
@@ -55,6 +66,31 @@ const triggerAttrs = computed(() => {
 
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
+
+const formItem = inject(formItemContextKey, null);
+
+const {
+  invalid: isInvalid,
+  message: validationMessage,
+  trigger: triggerValidation,
+  validate,
+  clearValidate,
+} = useFieldValidation({
+  value: () => model.value,
+  validator: () => props.validator,
+  triggers: () => props.validateOn,
+});
+
+defineExpose({ validate, clearValidate });
+
+const messageId = `ds-select-message-${uid}`;
+
+/** `FormItem` 的标签在没有显式无障碍名称时充当控件的可访问名称。 */
+const itemLabelAttrs = computed(() => {
+  const labelId = formItem?.labelId.value;
+  if (!labelId || "aria-label" in attrs || "aria-labelledby" in attrs) return {};
+  return { "aria-labelledby": labelId };
+});
 
 const open = ref(false);
 const activeEl = shallowRef<HTMLElement | null>(null);
@@ -205,7 +241,10 @@ function toggle(): void {
 }
 
 function select(value: SelectValue): void {
-  if (value !== model.value) model.value = value;
+  if (value !== model.value) {
+    model.value = value;
+    triggerValidation("input", value);
+  }
   closePanel();
   triggerRef.value?.focus();
 }
@@ -281,6 +320,7 @@ function onBlur(event: FocusEvent): void {
   const next = event.relatedTarget as Node | null;
   if (next && (triggerRef.value?.contains(next) || panelRef.value?.contains(next))) return;
   closePanel();
+  triggerValidation("blur");
 }
 
 watch(
@@ -301,7 +341,10 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
 </script>
 
 <template>
-  <div v-bind="rootAttrs" class="ds-select relative inline-block align-middle font-ds">
+  <div
+    v-bind="rootAttrs"
+    class="ds-select relative inline-flex flex-col gap-1 align-middle font-ds"
+  >
     <button
       ref="triggerRef"
       type="button"
@@ -312,11 +355,17 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
       :aria-expanded="open"
       :aria-controls="open ? panelId : undefined"
       :aria-activedescendant="open ? activeEl?.id : undefined"
+      :aria-invalid="isInvalid || undefined"
+      :aria-describedby="validationMessage ? messageId : undefined"
       :class="[
-        'ds-select__trigger box-border flex min-h-14 w-full min-w-40 cursor-pointer items-center justify-between gap-2 rounded-ds-sm border border-ds-outline bg-ds-surface px-4 text-base leading-6 text-ds-fg transition-colors hover:border-ds-fg focus-visible:border-2 focus-visible:border-ds-primary-strong disabled:cursor-not-allowed disabled:opacity-60',
-        open ? 'border-ds-primary-strong' : '',
+        'ds-select__trigger box-border flex min-h-14 w-full min-w-40 cursor-pointer items-center justify-between gap-2 rounded-ds-sm border bg-ds-surface px-4 text-base leading-6 text-ds-fg transition-colors focus-visible:border-2 focus-visible:border-ds-primary-strong disabled:cursor-not-allowed disabled:opacity-60',
+        isInvalid
+          ? 'border-ds-error hover:border-ds-error focus-visible:border-ds-error'
+          : open
+            ? 'border-ds-primary-strong hover:border-ds-primary-strong'
+            : 'border-ds-outline hover:border-ds-fg',
       ]"
-      v-bind="triggerAttrs"
+      v-bind="{ ...triggerAttrs, ...itemLabelAttrs }"
       @click="toggle"
       @keydown="onKeydown"
       @blur="onBlur"
@@ -330,6 +379,10 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
         <Icon :icon="chevronIcon" size="1.5em" />
       </span>
     </button>
+
+    <p v-if="validationMessage" :id="messageId" class="px-4 text-xs leading-4 text-ds-error">
+      {{ validationMessage }}
+    </p>
 
     <Teleport to="body">
       <Transition

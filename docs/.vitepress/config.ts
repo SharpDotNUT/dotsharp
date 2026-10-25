@@ -74,6 +74,7 @@ export default defineConfig({
           { text: "简介", link: "/guide/intro" },
           { text: "快速开始", link: "/guide/getting-started" },
           { text: "统一范式", link: "/guide/patterns" },
+          { text: "表单", link: "/guide/form" },
           { text: "涟漪 Ripple", link: "/guide/ripple" },
           { text: "主题", link: "/guide/theme" },
           { text: "国际化", link: "/guide/i18n" },
@@ -93,6 +94,7 @@ export default defineConfig({
       {
         text: "输入与选择",
         items: [
+          { text: "Form 表单", link: "/components/form" },
           { text: "Input 文本框", link: "/components/input" },
           { text: "OptInputs 分组输入框", link: "/components/opt-inputs" },
           { text: "DateInput 日期输入框", link: "/components/date-input" },

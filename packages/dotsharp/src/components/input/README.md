@@ -13,6 +13,24 @@ const password = ref("secret123");
 const username = ref("aurora");
 const note = ref("");
 const filled = ref("Aurora");
+const fruit = ref("Bl");
+const usernameValidator = (value: string | number) =>
+  String(value).trim().length >= 2 ? false : "用户名至少 2 个字符";
+const fruits = [
+  "Apple",
+  "Apricot",
+  "Banana",
+  "Blackberry",
+  "Blueberry",
+  "Cherry",
+  "Grape",
+  "Peach",
+];
+function suggestFruit(input: string): string[] {
+  const keyword = input.trim().toLowerCase();
+  if (!keyword) return fruits;
+  return fruits.filter((item) => item.toLowerCase().includes(keyword));
+}
 </script>
 
 # Input 文本框
@@ -23,7 +41,7 @@ const filled = ref("Aurora");
 - `variant="filled"` 切换为浅色填充 + 底边的样式。
 - `shape="pill"` 换成胶囊形搜索栏：无描边、浅色填充、40px 高、两端全圆角。
 - 前置 / 尾部内容用 `#leading` / `#trailing` 插槽，也可以用 `leadingIcon` / `trailingIcon` 直接传图标数据。
-- `type="password"` 自带明文切换，`clearable` 自带清除按钮，`state` 自带成功 / 错误图标。
+- `type="password"` 自带明文切换，`clearable` 自带清除按钮；传 `validator` 后，不通过时描边、标签、辅助文字与尾部图标一起切到错误样式。
 
 ## 基础用法
 
@@ -147,31 +165,40 @@ const password = ref("secret123");
 
 `type` 直通原生 `input`：`text`、`email`、`number`、`search`、`tel`、`url` 等都能用；`number` 下模型读到的仍是字符串。
 
-## 校验状态
+## 自动完成
 
-`state` 影响描边（聚焦时同色加粗）、浮动标签、辅助文字，并在尾部自动渲染状态图标：`success` 用 `check-circle`，`error` 用 `error`。
+`autocomplete` 是原生属性名，因此候选函数用 **`suggest`**：它接收当前输入文本，同步返回候选文本数组，渲染为与 `Select` / `Menu` 同一套规格的弹层（`elevated` 底色、4px 圆角、elevation 2 阴影、48px 行高）。
 
 <div class="demo-row">
-  <Input v-model="username" label="Username" state="error" error-message="用户名已被占用" class="max-w-md" />
-  <Input v-model="email" label="Email" state="success" description="邮箱可用" class="max-w-md" />
+  <Input v-model="fruit" label="Fruit" :suggest="suggestFruit" clearable class="max-w-md" />
 </div>
+
+当前值：{{ fruit || '（空）' }}
 
 ```vue
 <script setup lang="ts">
 import { ref } from "vue";
 import { Input } from "@sharpdotnut/dotsharp";
 
-const username = ref("aurora");
-const email = ref("user@gmail.com");
+const fruit = ref("Bl");
+const fruits = ["Apple", "Apricot", "Banana", "Blackberry", "Blueberry", "Cherry"];
+
+function suggestFruit(input: string): string[] {
+  const keyword = input.trim().toLowerCase();
+  if (!keyword) return fruits;
+  return fruits.filter((item) => item.toLowerCase().includes(keyword));
+}
 </script>
 
 <template>
-  <Input v-model="username" label="Username" state="error" error-message="用户名已被占用" />
-  <Input v-model="email" label="Email" state="success" description="邮箱可用" />
+  <Input v-model="fruit" label="Fruit" :suggest="suggestFruit" clearable />
 </template>
 ```
 
-`errorMessage` 只在 `state="error"` 时替换 `description`；`error` 状态同时输出 `aria-invalid`，辅助文字通过 `aria-describedby` 关联到控件。
+- 聚焦或输入时打开，函数返回空数组、`Escape`、`Tab` 或点击外部时收起；用代码改 `v-model` 不会弹出候选栏。
+- 键盘遵循 ARIA combobox 模式：`↓` / `↑` 移动高亮、`Enter` 采用高亮项、`Escape` 收起；没有高亮项时 `Enter` 仍按原生行为提交。
+- 选中后模型被替换为候选文本，并触发 `select` 事件；候选栏宽度与输入框一致，视口下方空间不足时向上展开。
+- 只对单行文本框生效（`textarea` 忽略）；`disabled` / `readonly` 下不弹出。原生 `autocomplete` 属性仍照常透传给 `<input>`。
 
 ## 多行文本
 
@@ -232,11 +259,10 @@ const filled = ref("Aurora");
 
 ## 胶囊搜索栏
 
-`shape="pill"` 换成材质 3 的搜索栏：去掉描边、改用 `--ds-surface-hover` 填充、高度 40px、两端全圆角；聚焦与校验状态用 `ring` 表示，不改变盒子尺寸。多行（`textarea`）时忽略该属性。
+`shape="pill"` 换成材质 3 的搜索栏：去掉描边、改用 `--ds-surface-hover` 填充、高度 40px、两端全圆角；聚焦与校验不通过用 `ring` 表示，不改变盒子尺寸。多行（`textarea`）时忽略该属性。
 
 <div class="demo-row">
   <Input v-model="searchText" shape="pill" type="search" placeholder="Search" class="max-w-md" />
-  <Input v-model="filled" shape="pill" state="error" placeholder="Error" class="max-w-md" />
 </div>
 
 ```vue
@@ -249,38 +275,63 @@ const searchText = ref("");
 
 <template>
   <Input v-model="searchText" shape="pill" type="search" placeholder="Search" />
-  <Input v-model="searchText" shape="pill" state="error" placeholder="Error" />
 </template>
 ```
 
 - 胶囊形没有标签缺口：`label` 不渲染成可见标签，只作为 `aria-label` 提供给读屏，视觉提示交给 `placeholder`。
 - 胶囊形下 `variant` 不生效（既不画描边，也不加底边）。
 
+## 表单校验
+
+`validator` 接收当前值，返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在输入与失焦时各校验一次，用 `validateOn` 调整；控件还暴露 `validate()` / `clearValidate()`。
+
+<div class="demo-row">
+  <Input v-model="username" label="Username" :validator="usernameValidator" class="max-w-md" />
+</div>
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Input } from "@sharpdotnut/dotsharp";
+
+const username = ref("aurora");
+const usernameValidator = (value: string | number) =>
+  String(value).trim().length >= 2 ? false : "用户名至少 2 个字符";
+</script>
+
+<template>
+  <Input v-model="username" label="Username" :validator="usernameValidator" />
+</template>
+```
+
+不通过时描边、标签、辅助文字与尾部错误图标一起切到错误样式，错误文案优先使用验证函数返回的字符串。放在 `Form` / `FormItem` 里时，`Form.validate()` 会一起校验；完整约定见[表单指南](/guide/form)。
+
 ## API
 
 ### 属性
 
-| 属性         | 类型                                | 默认值       | 说明                                              |
-| ------------ | ----------------------------------- | ------------ | ------------------------------------------------- |
-| v-model      | `string \| number`                  | `""`         | 绑定值                                            |
-| variant      | `"outlined" \| "filled"`            | `"outlined"` | 容器样式                                          |
-| shape        | `"default" \| "pill"`               | `"default"`  | 容器形状；`pill` 为 40px 胶囊形搜索栏（多行忽略） |
-| label        | `string`                            | —            | 浮动标签，同时作为控件的可访问名称                |
-| floatLabel   | `boolean`                           | `false`      | 标签始终上浮；默认仅在聚焦或有内容时上浮          |
-| type         | `string`                            | `"text"`     | 原生 `input` 类型                                 |
-| state        | `"default" \| "success" \| "error"` | `"default"`  | 校验状态，影响描边、标签、辅助文字与状态图标      |
-| disabled     | `boolean`                           | `false`      | 禁用                                              |
-| readonly     | `boolean`                           | `false`      | 只读                                              |
-| textarea     | `boolean`                           | `false`      | 渲染为多行 `<textarea>`                           |
-| rows         | `number`                            | `3`          | `textarea` 的初始行数                             |
-| clearable    | `boolean`                           | `false`      | 有内容时显示清除按钮                              |
-| revealable   | `boolean`                           | `true`       | `type="password"` 时显示明文切换按钮              |
-| leadingIcon  | `IconifyIcon \| string`             | —            | 前置图标；`#leading` 插槽优先                     |
-| trailingIcon | `IconifyIcon \| string`             | —            | 尾部图标；`#trailing` 插槽优先                    |
-| description  | `string`                            | —            | 辅助文字                                          |
-| errorMessage | `string`                            | —            | `state="error"` 时替换辅助文字                    |
-| maxlength    | `number`                            | —            | 最大长度，同时自动开启字数统计                    |
-| showCount    | `boolean`                           | `false`      | 只显示字数统计、不限制长度                        |
+| 属性         | 类型                                         | 默认值              | 说明                                              |
+| ------------ | -------------------------------------------- | ------------------- | ------------------------------------------------- |
+| v-model      | `string \| number`                           | `""`                | 绑定值                                            |
+| variant      | `"outlined" \| "filled"`                     | `"outlined"`        | 容器样式                                          |
+| shape        | `"default" \| "pill"`                        | `"default"`         | 容器形状；`pill` 为 40px 胶囊形搜索栏（多行忽略） |
+| label        | `string`                                     | —                   | 浮动标签，同时作为控件的可访问名称                |
+| floatLabel   | `boolean`                                    | `false`             | 标签始终上浮；默认仅在聚焦或有内容时上浮          |
+| type         | `string`                                     | `"text"`            | 原生 `input` 类型                                 |
+| disabled     | `boolean`                                    | `false`             | 禁用                                              |
+| readonly     | `boolean`                                    | `false`             | 只读                                              |
+| textarea     | `boolean`                                    | `false`             | 渲染为多行 `<textarea>`                           |
+| rows         | `number`                                     | `3`                 | `textarea` 的初始行数                             |
+| clearable    | `boolean`                                    | `false`             | 有内容时显示清除按钮                              |
+| revealable   | `boolean`                                    | `true`              | `type="password"` 时显示明文切换按钮              |
+| leadingIcon  | `IconifyIcon \| string`                      | —                   | 前置图标；`#leading` 插槽优先                     |
+| trailingIcon | `IconifyIcon \| string`                      | —                   | 尾部图标；`#trailing` 插槽优先                    |
+| description  | `string`                                     | —                   | 辅助文字                                          |
+| validator    | `(value) => boolean \| string`               | —                   | 验证函数：`false` 通过，`true` / 字符串不通过     |
+| validateOn   | `"input" \| "blur" \| ("input" \| "blur")[]` | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验                |
+| maxlength    | `number`                                     | —                   | 最大长度，同时自动开启字数统计                    |
+| showCount    | `boolean`                                    | `false`             | 只显示字数统计、不限制长度                        |
+| suggest      | `(input: string) => string[]`                | —                   | 自动完成候选函数；返回空数组时收起候选栏          |
 
 ### 插槽
 
@@ -291,14 +342,16 @@ const searchText = ref("");
 
 ### 事件
 
-| 事件                | 说明                                       |
-| ------------------- | ------------------------------------------ |
-| `update:modelValue` | 输入值变化                                 |
-| `clear`             | 点击清除按钮，模型已被重置为 `""` 之后触发 |
+| 事件                | 说明                                         |
+| ------------------- | -------------------------------------------- |
+| `update:modelValue` | 输入值变化                                   |
+| `clear`             | 点击清除按钮，模型已被重置为 `""` 之后触发   |
+| `select`            | 从自动完成候选栏选中一项，模型已更新之后触发 |
 
 ### 可访问性
 
-- `label` 通过 `for` 关联控件；`state="error"` 时控件带 `aria-invalid`。
+- `label` 通过 `for` 关联控件；校验不通过时控件带 `aria-invalid`。
 - 辅助文字 / 错误信息会被控件的 `aria-describedby` 引用。
 - 清除与明文切换是原生 `button`，带 `aria-label`；明文切换同时维护 `aria-pressed`。
+- 提供 `suggest` 时控件是 `role="combobox"` + `aria-autocomplete="list"`，通过 `aria-expanded` / `aria-controls` / `aria-activedescendant` 关联候选栏（`role="listbox"` 与 `role="option"`）。
 - 根元素是 `div`：`class` / `style` 作用在根元素上，其余属性与事件（`id`、`name`、`autocomplete`、`inputmode`、`@blur` 等）透传给内部 `input` / `textarea`。

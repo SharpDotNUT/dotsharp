@@ -224,6 +224,16 @@ function validateInput(): void {
   invalid.value = raw.length > 0 && !parseDateInput(raw, order.value);
 }
 
+const textInputRef = ref<{ validate: () => boolean } | null>(null);
+
+/** 文本模式的解析错误通过内部 `Input` 的验证通道显示。 */
+const textValidator = (): boolean | string => (invalid.value ? i18n.t("invalidDate") : false);
+
+/** 回车提交失败时不会失焦，主动同步一次，保证错误立即可见。 */
+watch(invalid, () => {
+  void nextTick(() => textInputRef.value?.validate());
+});
+
 function commit(): void {
   if (body.value === "input") {
     const raw = text.value.trim();
@@ -512,11 +522,12 @@ useOverlayPanel({
 
             <div v-else class="pb-2">
               <Input
+                ref="textInputRef"
                 v-model="text"
                 :label="i18n.t('date')"
                 float-label
-                :state="invalid ? 'error' : 'default'"
-                :error-message="i18n.t('invalidDate')"
+                :validator="textValidator"
+                :validate-on="'blur'"
                 :description="datePlaceholder(order, true)"
                 :placeholder="datePlaceholder(order)"
                 @keydown.enter.prevent="commit"

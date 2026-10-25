@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, useId, watch, type ComponentPublicInstance } from "vue";
+import { computed, inject, nextTick, ref, useId, watch, type ComponentPublicInstance } from "vue";
+import { useFieldValidation } from "../../composables/useFieldValidation";
+import { formItemContextKey, type FormValidateTrigger, type FormValidator } from "../form/context";
 import type { OptInputsAccept, OptInputsLetterCase } from "./shared";
 import { applyOptChars, normalizeOptValue, removeOptChar, sanitizeOptChars } from "./shared";
 
@@ -19,6 +21,12 @@ interface OptInputsProps {
   disabled?: boolean;
   /** 整组的可见标签，同时作为分组与每一格的可访问名称。 */
   label?: string;
+  /**
+   * 验证函数：接收当前值，返回 `false` 表示通过，返回 `true` 或错误文案表示不通过。
+   */
+  validator?: FormValidator<string>;
+  /** 自动校验时机，默认 `["input", "blur"]`；传 `[]` 关闭自动校验。 */
+  validateOn?: FormValidateTrigger | FormValidateTrigger[];
 }
 
 const props = withDefaults(defineProps<OptInputsProps>(), {
@@ -29,6 +37,8 @@ const props = withDefaults(defineProps<OptInputsProps>(), {
   allowPaste: true,
   disabled: false,
   label: undefined,
+  validator: undefined,
+  validateOn: undefined,
 });
 
 const model = defineModel<string>({ default: "" });
@@ -36,6 +46,23 @@ const emit = defineEmits<{ complete: [value: string] }>();
 
 const uid = useId();
 const labelId = `ds-opt-inputs-label-${uid}`;
+const messageId = `ds-opt-inputs-message-${uid}`;
+
+const formItem = inject(formItemContextKey, null);
+
+const {
+  invalid: isInvalid,
+  message: validationMessage,
+  trigger: triggerValidation,
+  validate,
+  clearValidate,
+} = useFieldValidation({
+  value: () => model.value,
+  validator: () => props.validator,
+  triggers: () => props.validateOn,
+});
+
+defineExpose({ validate, clearValidate });
 
 /** 过滤非法字符并截断后的值；外部写入也会先经过这里。 */
 const normalized = computed(() =>
@@ -89,6 +116,7 @@ function commit(value: string): void {
 
   model.value = next;
   completed.value = next.length === props.length && props.length > 0;
+  triggerValidation("input", next);
 
   if (!wasComplete && completed.value) emit("complete", next);
 }
@@ -193,7 +221,10 @@ function onPaste(event: ClipboardEvent): void {
     v-bind="$attrs"
     class="ds-opt-inputs inline-flex flex-col gap-1 font-ds"
     role="group"
-    :aria-labelledby="label ? labelId : undefined"
+    :aria-labelledby="label ? labelId : formItem?.labelId.value"
+    :aria-invalid="isInvalid || undefined"
+    :aria-required="formItem?.required.value || undefined"
+    :aria-describedby="validationMessage ? messageId : undefined"
   >
     <span v-if="label" :id="labelId" class="text-xs leading-4 text-ds-muted">{{ label }}</span>
 
@@ -207,15 +238,25 @@ function onPaste(event: ClipboardEvent): void {
         :inputmode="accept === 'numeric' ? 'numeric' : undefined"
         :maxlength="1"
         :disabled="disabled"
-        :autocomplete="mask ? 'new-password' : 'off'"
         :aria-label="cellLabel(index - 1)"
+        :autocomplete="mask ? 'new-password' : 'off'"
         spellcheck="false"
         :data-index="index - 1"
-        class="ds-opt-inputs__cell box-border h-12 w-12 min-w-0 rounded-ds-sm border border-ds-outline bg-transparent p-0 text-center font-ds text-xl leading-none text-ds-fg caret-ds-primary-strong outline-none transition-colors hover:border-ds-fg focus:border-ds-primary-strong focus:outline-2 focus:outline-offset-1 focus:outline-ds-focus disabled:cursor-not-allowed disabled:opacity-38"
+        class="ds-opt-inputs__cell box-border h-12 w-12 min-w-0 rounded-ds-sm border bg-transparent p-0 text-center font-ds text-xl leading-none text-ds-fg caret-ds-primary-strong outline-none transition-colors focus:border-ds-primary-strong focus:outline-2 focus:outline-offset-1 focus:outline-ds-focus disabled:cursor-not-allowed disabled:opacity-38"
+        :class="
+          isInvalid
+            ? 'border-ds-error hover:border-ds-error'
+            : 'border-ds-outline hover:border-ds-fg'
+        "
         @input="onInput(index - 1, $event)"
         @keydown="onKeydown(index - 1, $event)"
         @focus="onFocus(index - 1)"
+        @blur="triggerValidation('blur')"
       />
     </div>
+
+    <p v-if="validationMessage" :id="messageId" class="text-xs leading-4 text-ds-error">
+      {{ validationMessage }}
+    </p>
   </div>
 </template>

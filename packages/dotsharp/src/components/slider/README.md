@@ -256,23 +256,29 @@ function increaseBrightness() {
 
 禁用时手柄不可聚焦、不响应指针与键盘，整体降低不透明度。
 
+## 表单校验
+
+`validator` 接收当前值（`Slider` 是 `number`，`RangeSlider` 是 `[number, number]`），返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在拖动 / 键盘改变值与失焦时校验，用 `validateOn` 调整；也暴露 `validate()` / `clearValidate()`。完整约定见[表单指南](/guide/form)。
+
 ## API
 
 ### Slider 属性
 
-| 属性      | 类型                                | 默认值   | 说明                                         |
-| --------- | ----------------------------------- | -------- | -------------------------------------------- |
-| v-model   | `number`                            | `0`      | 当前值                                       |
-| min       | `number`                            | `0`      | 最小值                                       |
-| max       | `number`                            | `100`    | 最大值                                       |
-| step      | `number`                            | `1`      | 步长；值会吸附到 `min + n * step`            |
-| size      | `"xs" \| "s" \| "m" \| "l" \| "xl"` | `"xs"`   | 轨道厚度（16 / 24 / 40 / 56 / 96px）         |
-| centered  | `boolean`                           | `false`  | 以 0 值为填充原点                            |
-| ticks     | `boolean`                           | `false`  | 显示每个可选值的刻度点（超过 20 个自动省略） |
-| showValue | `"drag" \| "always" \| "never"`     | `"drag"` | 数值气泡的显示时机                           |
-| format    | `(value: number) => string`         | —        | 自定义数值文本（气泡与 `aria-valuetext`）    |
-| label     | `string`                            | —        | 无障碍名称                                   |
-| disabled  | `boolean`                           | `false`  | 禁用                                         |
+| 属性       | 类型                                         | 默认值              | 说明                                          |
+| ---------- | -------------------------------------------- | ------------------- | --------------------------------------------- |
+| v-model    | `number`                                     | `0`                 | 当前值                                        |
+| min        | `number`                                     | `0`                 | 最小值                                        |
+| max        | `number`                                     | `100`               | 最大值                                        |
+| step       | `number`                                     | `1`                 | 步长；值会吸附到 `min + n * step`             |
+| size       | `"xs" \| "s" \| "m" \| "l" \| "xl"`          | `"xs"`              | 轨道厚度（16 / 24 / 40 / 56 / 96px）          |
+| centered   | `boolean`                                    | `false`             | 以 0 值为填充原点                             |
+| ticks      | `boolean`                                    | `false`             | 显示每个可选值的刻度点（超过 20 个自动省略）  |
+| showValue  | `"drag" \| "always" \| "never"`              | `"drag"`            | 数值气泡的显示时机                            |
+| format     | `(value: number) => string`                  | —                   | 自定义数值文本（气泡与 `aria-valuetext`）     |
+| label      | `string`                                     | —                   | 无障碍名称                                    |
+| disabled   | `boolean`                                    | `false`             | 禁用                                          |
+| validator  | `(value) => boolean \| string`               | —                   | 验证函数：`false` 通过，`true` / 字符串不通过 |
+| validateOn | `"input" \| "blur" \| ("input" \| "blur")[]` | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验            |
 
 ### RangeSlider 属性
 

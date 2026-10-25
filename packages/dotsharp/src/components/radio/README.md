@@ -115,15 +115,21 @@ const index = ref(0);
 
 组件不拦截这些按键，也没有自定义 roving tabindex。
 
+## 表单校验
+
+`RadioGroup` 接收 `validator`：参数是当前选中值，返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在改变选择与失焦时各校验一次，用 `validateOn` 调整；也暴露 `validate()` / `clearValidate()`。完整约定见[表单指南](/guide/form)。
+
 ## API
 
 ### RadioGroup
 
-| 属性          | 类型               | 默认值  | 说明                                   |
-| ------------- | ------------------ | ------- | -------------------------------------- |
-| v-model:value | `string \| number` | `0`     | 当前选中值，对应子项的 `value` 或索引  |
-| name          | `string`           | 自动    | 原生 radio 的 `name`；省略时生成唯一值 |
-| disabled      | `boolean`          | `false` | 禁用整组                               |
+| 属性          | 类型                                         | 默认值              | 说明                                          |
+| ------------- | -------------------------------------------- | ------------------- | --------------------------------------------- |
+| v-model:value | `string \| number`                           | `0`                 | 当前选中值，对应子项的 `value` 或索引         |
+| name          | `string`                                     | 自动                | 原生 radio 的 `name`；省略时生成唯一值        |
+| disabled      | `boolean`                                    | `false`             | 禁用整组                                      |
+| validator     | `(value) => boolean \| string`               | —                   | 验证函数：`false` 通过，`true` / 字符串不通过 |
+| validateOn    | `"input" \| "blur" \| ("input" \| "blur")[]` | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验            |
 
 根元素是 `role="radiogroup"` 的 `div`，其余属性与事件透传到该元素。
 
@@ -141,4 +147,5 @@ const index = ref(0);
 ### 可访问性
 
 `RadioGroup` 输出 `role="radiogroup"`，组内是原生 `input[type="radio"]`，共享 `name` 后浏览器负责
-互斥、键盘与读屏语义。组没有内置标签：需要可读名称时给 `RadioGroup` 传 `aria-label` 或 `aria-labelledby`。
+互斥、键盘与读屏语义。组没有内置标签：放在 `FormItem` 里时用表单项的标签作为可访问名称，
+单独使用时给 `RadioGroup` 传 `aria-label` 或 `aria-labelledby`。

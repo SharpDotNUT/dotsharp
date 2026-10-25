@@ -167,17 +167,23 @@ const cabin = ref("economy");
 | `Esc`             | —      | 关闭，不改写选中值          |
 | `Tab`             | —      | 关闭并正常离开              |
 
+## 表单校验
+
+`validator` 接收当前选中值，返回 `false` 表示通过；返回 `true` 或错误文案表示不通过。默认在改变选择与失焦时各校验一次，用 `validateOn` 调整；控件还暴露 `validate()` / `clearValidate()`。完整约定见[表单指南](/guide/form)。
+
 ## API
 
 ### Select
 
-| 属性          | 类型               | 默认值 | 说明                                  |
-| ------------- | ------------------ | ------ | ------------------------------------- |
-| v-model:value | `string \| number` | `0`    | 当前选中值，对应子项的 `value` 或索引 |
-| placeholder   | `string`           | `""`   | 没有可显示的选中项文本时显示的文字    |
-| disabled      | `boolean`          | false  | 禁用触发器：不可展开、不可用键盘打开  |
+| 属性          | 类型                                         | 默认值              | 说明                                          |
+| ------------- | -------------------------------------------- | ------------------- | --------------------------------------------- |
+| v-model:value | `string \| number`                           | `0`                 | 当前选中值，对应子项的 `value` 或索引         |
+| placeholder   | `string`                                     | `""`                | 没有可显示的选中项文本时显示的文字            |
+| disabled      | `boolean`                                    | false               | 禁用触发器：不可展开、不可用键盘打开          |
+| validator     | `(value) => boolean \| string`               | —                   | 验证函数：`false` 通过，`true` / 字符串不通过 |
+| validateOn    | `"input" \| "blur" \| ("input" \| "blur")[]` | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验            |
 
-- 根元素是 `div`（`relative inline-block`），`class` / `style` 落在这里，其余属性与事件透传给触发器按钮。
+- 根元素是 `div`（`relative inline-flex flex-col`），`class` / `style` 落在这里，其余属性与事件透传给触发器按钮。
 - 触发器是 `role="combobox"` 的 `button`，带 `aria-haspopup="listbox"`、`aria-expanded`、`aria-controls`，
   展开时同步 `aria-activedescendant`。
 
