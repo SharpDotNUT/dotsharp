@@ -91,6 +91,7 @@ export default defineConfig({
         text: "输入与选择",
         items: [
           { text: "Input 文本框", link: "/components/input" },
+          { text: "OptInputs 分组输入框", link: "/components/opt-inputs" },
           { text: "DateInput 日期输入框", link: "/components/date-input" },
           { text: "DatePicker 日期选择器", link: "/components/date-picker" },
           { text: "Select 选择器", link: "/components/select" },

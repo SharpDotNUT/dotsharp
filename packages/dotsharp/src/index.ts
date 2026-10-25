@@ -28,6 +28,8 @@ export type {
   NavigationRailPresentation,
   NavigationRailValue,
 } from "./components/navigation-rail/context";
+export { default as OptInputs } from "./components/opt-inputs/OptInputs.vue";
+export type { OptInputsAccept } from "./components/opt-inputs/shared";
 export { default as RadioGroup } from "./components/radio/RadioGroup.vue";
 export { default as Radio } from "./components/radio/Radio.vue";
 export type { RadioValue } from "./components/radio/context";
