@@ -83,7 +83,7 @@ export default defineConfig({
           { text: "Button 按钮", link: "/components/button" },
           { text: "Dialog 对话框", link: "/components/dialog" },
           { text: "Icon 图标", link: "/components/icon" },
-          { text: "Input 输入框", link: "/components/input" },
+          { text: "Input 文本框", link: "/components/input" },
           { text: "Tabs 标签页", link: "/components/tabs" },
         ],
       },

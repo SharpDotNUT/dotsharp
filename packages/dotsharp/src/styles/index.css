@@ -15,10 +15,14 @@
    */
   --ds-hue-brand: 243;
   --ds-hue-neutral: 240;
+  --ds-hue-error: 4;
+  --ds-hue-success: 148;
   --ds-sat-brand: 75%;
   --ds-sat-neutral: 5%;
   --ds-sat-on-primary: 75%;
   --ds-sat-tonal: 60%;
+  --ds-sat-error: 72%;
+  --ds-sat-success: 52%;
   --ds-focus-alpha: 35%;
 
   /* Light-mode lightness scale. */
@@ -31,15 +35,19 @@
   --ds-lum-tonal-hover: 87%;
   --ds-lum-on-tonal: 24%;
   --ds-lum-border: 84%;
+  --ds-lum-outline: 52%;
   --ds-lum-text: 10%;
   --ds-lum-text-muted: 46%;
   --ds-lum-primary: 59%;
   --ds-lum-primary-hover: 51%;
   --ds-lum-on-primary: 100%;
+  --ds-lum-error: 44%;
+  --ds-lum-success: 33%;
 
   --ds-font:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
     sans-serif;
+  --ds-radius-sm: 4px;
   --ds-radius: 8px;
   --ds-radius-lg: 16px;
   --ds-radius-xl: 28px;
@@ -56,11 +64,14 @@
   --ds-tonal-hover: hsl(var(--ds-hue-brand) var(--ds-sat-tonal) var(--ds-lum-tonal-hover));
   --ds-on-tonal: hsl(var(--ds-hue-brand) var(--ds-sat-tonal) var(--ds-lum-on-tonal));
   --ds-border: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-border));
+  --ds-outline: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-outline));
   --ds-text: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-text));
   --ds-text-muted: hsl(var(--ds-hue-neutral) var(--ds-sat-neutral) var(--ds-lum-text-muted));
   --ds-primary: hsl(var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary));
   --ds-primary-hover: hsl(var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary-hover));
   --ds-on-primary: hsl(var(--ds-hue-brand) var(--ds-sat-on-primary) var(--ds-lum-on-primary));
+  --ds-error: hsl(var(--ds-hue-error) var(--ds-sat-error) var(--ds-lum-error));
+  --ds-success: hsl(var(--ds-hue-success) var(--ds-sat-success) var(--ds-lum-success));
   --ds-focus-ring: hsl(
     var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary) / var(--ds-focus-alpha)
   );
@@ -80,14 +91,18 @@
   --color-ds-tonal-hover: var(--ds-tonal-hover);
   --color-ds-on-tonal: var(--ds-on-tonal);
   --color-ds-line: var(--ds-border);
+  --color-ds-outline: var(--ds-outline);
   --color-ds-fg: var(--ds-text);
   --color-ds-muted: var(--ds-text-muted);
   --color-ds-primary: var(--ds-primary);
   --color-ds-primary-hover: var(--ds-primary-hover);
   --color-ds-on-primary: var(--ds-on-primary);
+  --color-ds-error: var(--ds-error);
+  --color-ds-success: var(--ds-success);
   --color-ds-focus: var(--ds-focus-ring);
   --color-ds-scrim: var(--ds-scrim);
 
+  --radius-ds-sm: var(--ds-radius-sm);
   --radius-ds: var(--ds-radius);
   --radius-ds-lg: var(--ds-radius-lg);
   --radius-ds-xl: var(--ds-radius-xl);
@@ -112,11 +127,14 @@
     --ds-lum-tonal-hover: 34%;
     --ds-lum-on-tonal: 88%;
     --ds-lum-border: 26%;
+    --ds-lum-outline: 58%;
     --ds-lum-text: 98%;
     --ds-lum-text-muted: 65%;
     --ds-lum-primary: 74%;
     --ds-lum-primary-hover: 82%;
     --ds-lum-on-primary: 20%;
+    --ds-lum-error: 74%;
+    --ds-lum-success: 68%;
   }
 }
 
@@ -137,9 +155,12 @@
   --ds-lum-tonal-hover: 34%;
   --ds-lum-on-tonal: 88%;
   --ds-lum-border: 26%;
+  --ds-lum-outline: 58%;
   --ds-lum-text: 98%;
   --ds-lum-text-muted: 65%;
   --ds-lum-primary: 74%;
   --ds-lum-primary-hover: 82%;
   --ds-lum-on-primary: 20%;
+  --ds-lum-error: 74%;
+  --ds-lum-success: 68%;
 }
