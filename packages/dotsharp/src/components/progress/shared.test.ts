@@ -1,6 +1,21 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { circularProgressArcs, progressFraction } from "./shared";
+import { circularProgressArcs, clampProgressValue, progressFraction } from "./shared";
+
+describe("clampProgressValue", () => {
+  it("夹在 0–max 之间", () => {
+    expect(clampProgressValue(40, 100)).toBe(40);
+    expect(clampProgressValue(130, 100)).toBe(100);
+    expect(clampProgressValue(-0.5, 100)).toBe(0);
+    expect(clampProgressValue(7.5, 10)).toBe(7.5);
+  });
+
+  it("非法值按 0 处理", () => {
+    expect(clampProgressValue(Number.NaN, 100)).toBe(0);
+    expect(clampProgressValue(Number.POSITIVE_INFINITY, 100)).toBe(0);
+    expect(clampProgressValue(5, 0)).toBe(0);
+  });
+});
 
 describe("progressFraction", () => {
   it("按上限换算成 0–1 的比例", () => {

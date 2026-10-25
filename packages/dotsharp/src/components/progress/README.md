@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { Progress } from "@sharpdotnut/dotsharp";
+import { Button, Progress } from "@sharpdotnut/dotsharp";
 
 const value = ref(32);
 const uploaded = ref(76);
 const playing = ref(48);
 const syncing = ref(64);
+const random = ref(20);
+const progress = ref<InstanceType<typeof Progress> | null>(null);
+const ring = ref<InstanceType<typeof Progress> | null>(null);
+
+function randomize() {
+  const next = Math.round(Math.random() * 100);
+  progress.value?.setValue(next);
+  ring.value?.setValue(next);
+}
 </script>
 
 # Progress 进度条
 
-`Progress` 展示一项任务的完成程度：线性进度条占满容器宽度，圆环按 `size` 固定直径。值只读，没有交互。
+`Progress` 展示一项任务的完成程度：线性进度条占满容器宽度，圆环按 `size` 固定直径。它不收用户输入，
+值只由数据驱动；父组件也可以调实例方法直接推动进度。
 
 ## 基础用法
 
@@ -96,11 +106,50 @@ import { Progress } from "@sharpdotnut/dotsharp";
 `animate-spin`（圆环）。两者都带 `motion-reduce` 退路：系统开启「减少动态效果」时，线性停成一段静止的实心段，
 圆环停成一段静止的弧，而不是停在轨道外或整圈空转。
 
+## 命令式更新
+
+组件实例暴露 `setValue(value)`：值先夹在 `0`–`max` 之间，再写回 `v-model:value`，显示进度沿既有的 300ms 过渡
+动到新位置。方法不分形状，线性与圆环是同一个入口；下例两个形状共用同一个绑定值，按钮只调实例方法。
+
+<div class="demo-row">
+  <Progress ref="progress" v-model:value="random" label="随机进度" class="min-w-0 flex-1" />
+  <Progress ref="ring" v-model:value="random" shape="circular" :size="64" label="随机进度" />
+  <Button @click="randomize">随机更新</Button>
+</div>
+
+当前值：{{ random }}
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Button, Progress } from "@sharpdotnut/dotsharp";
+
+const progress = ref<InstanceType<typeof Progress> | null>(null);
+const ring = ref<InstanceType<typeof Progress> | null>(null);
+const random = ref(20);
+
+function randomize() {
+  const next = Math.round(Math.random() * 100);
+  progress.value?.setValue(next);
+  ring.value?.setValue(next);
+}
+</script>
+
+<template>
+  <Progress ref="progress" v-model:value="random" />
+  <Progress ref="ring" v-model:value="random" shape="circular" :size="64" />
+  <Button @click="randomize">随机更新</Button>
+</template>
+```
+
+没有 `v-model:value` 时，`setValue()` 写下的值只留在组件内部；父组件传下的 `value` 再次变化会覆盖它。
+不确定态下调用只同步值，视觉不变。
+
 ## API
 
 | 属性          | 类型                         | 默认值       | 说明                                      |
 | ------------- | ---------------------------- | ------------ | ----------------------------------------- |
-| value         | `number`                     | `0`          | 当前进度，夹在 `0`–`max` 之间             |
+| v-model:value | `number`                     | `0`          | 当前进度，夹在 `0`–`max` 之间             |
 | max           | `number`                     | `100`        | 进度上限                                  |
 | shape         | `"linear" \| "circular"`     | `"linear"`   | 线性进度条或圆环                          |
 | variant       | `"detached" \| "continuous"` | `"detached"` | 两段留空 / 整条背景                       |
@@ -111,6 +160,18 @@ import { Progress } from "@sharpdotnut/dotsharp";
 - 根元素是 `role="progressbar"`，`class` / `style` 与其余属性都落在它上面。
 - 圆环按 `size` 固定尺寸；线性进度条总是占满容器宽度，用 `class="w-64"` 或父元素收窄。
 - `indeterminate` 是布尔开关，与 `value` 同时出现时以它为准。
+
+### 暴露的方法
+
+| 方法              | 说明                                      |
+| ----------------- | ----------------------------------------- |
+| `setValue(value)` | 夹取后写入 `value`，并发出 `update:value` |
+
+### 事件
+
+| 事件           | 说明                                                 |
+| -------------- | ---------------------------------------------------- |
+| `update:value` | 值变化（`setValue()` 写入时发出，供 `v-model` 同步） |
 
 ### 可访问性
 

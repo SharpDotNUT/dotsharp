@@ -2,14 +2,13 @@
 import { computed } from "vue";
 import {
   circularProgressArcs,
+  clampProgressValue,
   progressFraction,
   type ProgressShape,
   type ProgressVariant,
 } from "./shared";
 
 interface ProgressProps {
-  /** 当前进度，夹在 `0`–`max` 之间；`indeterminate` 时忽略。 */
-  value?: number;
   /** 进度上限。 */
   max?: number;
   /** 线形（占满宽度）或圆环。 */
@@ -29,7 +28,6 @@ interface ProgressProps {
 }
 
 const props = withDefaults(defineProps<ProgressProps>(), {
-  value: 0,
   max: 100,
   shape: "linear",
   variant: "detached",
@@ -38,15 +36,19 @@ const props = withDefaults(defineProps<ProgressProps>(), {
   label: undefined,
 });
 
+/**
+ * 当前进度，夹在 `0`–`max` 之间；`indeterminate` 时忽略。
+ * 用 `v-model:value` 双向绑定；没有监听者时，`setValue()` 写下的值留在组件内部。
+ */
+const model = defineModel<number>("value", { default: 0 });
+
 /** 线性轨道厚度与留空都是 4px；留空在进度点两侧各占一半。 */
 const LINEAR_GAP = 4;
 /** 不确定圆环的弧长占整圈的比例。 */
 const INDETERMINATE_ARC = 0.25;
 
-const current = computed(() =>
-  Math.min(props.max, Math.max(0, Number.isFinite(props.value) ? props.value : 0)),
-);
-const fraction = computed(() => progressFraction(props.value, props.max));
+const current = computed(() => clampProgressValue(model.value, props.max));
+const fraction = computed(() => progressFraction(model.value, props.max));
 const percent = computed(() => fraction.value * 100);
 
 /** 不确定态没有数值可报，`aria-valuenow` 缺席就是读屏的「不确定进度条」。 */
@@ -93,6 +95,16 @@ const ringFill = computed(() =>
 function dashArray(length: number) {
   return `${length} ${circumference.value - length}`;
 }
+
+/**
+ * 父组件可以直接推动进度：值先夹在 `0`–`max` 之间再写回 `value`，显示按既有的 CSS 过渡动到新位置。
+ * 不确定态下视觉不变，但仍会同步 `value`。
+ */
+function setValue(next: number) {
+  model.value = clampProgressValue(next, props.max);
+}
+
+defineExpose({ setValue });
 </script>
 
 <template>

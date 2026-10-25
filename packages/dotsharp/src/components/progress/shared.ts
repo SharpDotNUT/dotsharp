@@ -7,8 +7,14 @@ export type ProgressVariant = "detached" | "continuous";
 
 /** 把值与上限换算成 0–1 的比例；非法值（`NaN`、`max <= 0`）按 0 处理。 */
 export function progressFraction(value: number, max: number): number {
+  if (!Number.isFinite(max) || max <= 0) return 0;
+  return clampProgressValue(value, max) / max;
+}
+
+/** 夹在 `0`–`max` 之间的进度值；非法值（`NaN`、`max <= 0`）按 0 处理。 */
+export function clampProgressValue(value: number, max: number): number {
   if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return 0;
-  return Math.min(1, Math.max(0, value / max));
+  return Math.min(max, Math.max(0, value));
 }
 
 /** 一段圆弧的虚线参数：`length` 为可见线长，`offset` 为沿圆周的起点（取负值）。 */
