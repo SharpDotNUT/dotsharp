@@ -114,6 +114,7 @@ export default defineConfig({
           { text: "Progress 进度条", link: "/components/progress" },
           { text: "List 列表", link: "/components/list" },
           { text: "Dialog 对话框", link: "/components/dialog" },
+          { text: "Snackbar 消息条", link: "/components/snackbar" },
         ],
       },
       {
