@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
     <TabNodes :nodes="items" />
     <span
       aria-hidden="true"
-      class="ds-tabs__indicator pointer-events-none absolute left-0 bg-ds-primary"
+      class="ds-tabs__indicator pointer-events-none absolute left-0 bg-ds-primary-strong"
       :class="[
         variant ? 'bottom-0 h-0.5' : '-bottom-1 h-2 rounded-full',
         animated ? 'transition-[transform,width,opacity] duration-200 ease-out' : 'transition-none',

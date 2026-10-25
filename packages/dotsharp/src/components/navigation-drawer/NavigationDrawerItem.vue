@@ -44,7 +44,7 @@ function select(): void {
     :class="[
       'ds-navigation-drawer-item flex h-14 w-full cursor-pointer items-center gap-3 rounded-full border-0 px-4 text-left font-ds text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus',
       selected
-        ? 'bg-ds-primary/10 text-ds-fg'
+        ? 'bg-ds-primary-strong/10 text-ds-fg'
         : 'bg-transparent text-ds-muted hover:bg-ds-surface-hover hover:text-ds-fg',
     ]"
     @click="select"

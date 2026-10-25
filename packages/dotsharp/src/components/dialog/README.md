@@ -80,19 +80,19 @@ const open = ref(false);
     <hr class="my-4 border-0 border-t border-ds-line" />
     <ul class="space-y-3 text-ds-fg">
       <li class="flex items-center gap-3">
-        <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary/10 text-xs font-medium text-ds-primary">
+        <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary-strong/10 text-xs font-medium text-ds-primary-strong">
           LV
         </span>
         leevillanuevanotes@google.com
       </li>
       <li class="flex items-center gap-3">
-        <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary/10 text-xs font-medium text-ds-primary">
+        <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary-strong/10 text-xs font-medium text-ds-primary-strong">
           AA
         </span>
         alloalejandro@google.com
       </li>
       <li class="flex items-center gap-3">
-        <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary/10 text-xs font-medium text-ds-primary">
+        <span class="flex size-8 items-center justify-center rounded-full bg-ds-primary-strong/10 text-xs font-medium text-ds-primary-strong">
           OL
         </span>
         oliortega@google.com

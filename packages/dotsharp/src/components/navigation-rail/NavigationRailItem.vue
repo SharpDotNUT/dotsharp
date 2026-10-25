@@ -50,7 +50,7 @@ function select(): void {
         : 'flex-col gap-1 px-1 py-2 text-xs',
       expandedLayout
         ? selected
-          ? 'bg-ds-primary/10 text-ds-primary'
+          ? 'bg-ds-primary-strong/10 text-ds-primary-strong'
           : 'bg-transparent text-ds-muted hover:bg-ds-surface-hover hover:text-ds-fg'
         : selected
           ? 'text-ds-fg'
@@ -65,7 +65,7 @@ function select(): void {
           v-if="icon"
           :icon="icon"
           size="24"
-          :class="selected ? 'text-ds-primary' : undefined"
+          :class="selected ? 'text-ds-primary-strong' : undefined"
         />
       </span>
       <span v-if="$slots.default || label" class="min-w-0 truncate">
@@ -76,14 +76,14 @@ function select(): void {
       <span
         :class="[
           'inline-flex h-8 w-14 items-center justify-center rounded-full transition-colors',
-          selected ? 'bg-ds-primary/10' : 'group-hover:bg-ds-surface-hover',
+          selected ? 'bg-ds-primary-strong/10' : 'group-hover:bg-ds-surface-hover',
         ]"
       >
         <Icon
           v-if="icon"
           :icon="icon"
           size="24"
-          :class="selected ? 'text-ds-primary' : undefined"
+          :class="selected ? 'text-ds-primary-strong' : undefined"
         />
       </span>
       <span v-if="showLabel && ($slots.default || label)" class="max-w-full truncate">

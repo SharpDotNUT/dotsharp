@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 
+import { DEFAULT_SOURCE_COLOR, generateTokens } from "../theme/palette";
+
 const MEDIA_QUERY = "(prefers-color-scheme: dark)";
 const STORAGE_KEY = "dotsharp-theme";
+const SOURCE_KEY = "dotsharp-source-color";
 
 function mockMatchMedia(initial: boolean) {
   const listeners = new Set<(event: MediaQueryListEvent) => void>();
@@ -44,6 +47,7 @@ describe("useTheme", () => {
     vi.resetModules();
     localStorage.clear();
     document.documentElement.removeAttribute("data-theme");
+    document.documentElement.removeAttribute("style");
     mockMatchMedia(false);
   });
 
@@ -96,5 +100,72 @@ describe("useTheme", () => {
     media.set(false);
     expect(resolvedTheme.value).toBe("light");
     expect(document.documentElement.dataset.theme).toBe("light");
+  });
+
+  it("leaves the stylesheet palette in place for the default source colour", async () => {
+    const { useTheme } = await import("./useTheme");
+    const { sourceColor } = useTheme();
+
+    expect(sourceColor.value).toBe(DEFAULT_SOURCE_COLOR);
+    // Nothing inline: consumer CSS can still override the default tokens.
+    expect(document.documentElement.style.getPropertyValue("--ds-primary")).toBe("");
+  });
+
+  it("rebuilds the palette from a new source colour and persists it", async () => {
+    const { useTheme } = await import("./useTheme");
+    const { sourceColor, setSourceColor } = useTheme();
+
+    setSourceColor("#0e9f8f");
+
+    const expected = generateTokens("#0e9f8f", "light");
+    expect(sourceColor.value).toBe("#0e9f8f");
+    expect(localStorage.getItem(SOURCE_KEY)).toBe("#0e9f8f");
+    expect(document.documentElement.style.getPropertyValue("--ds-primary")).toBe(expected.primary);
+    expect(document.documentElement.style.getPropertyValue("--ds-bg")).toBe(expected.bg);
+  });
+
+  it("restores a persisted source colour", async () => {
+    localStorage.setItem(SOURCE_KEY, "#0e9f8f");
+
+    const { useTheme } = await import("./useTheme");
+    const { sourceColor } = useTheme();
+
+    expect(sourceColor.value).toBe("#0e9f8f");
+    expect(document.documentElement.style.getPropertyValue("--ds-primary")).toBe(
+      generateTokens("#0e9f8f", "light").primary,
+    );
+  });
+
+  it("regenerates the palette for the resolved mode", async () => {
+    const { useTheme } = await import("./useTheme");
+    const { setTheme, setSourceColor } = useTheme();
+
+    setSourceColor("#0e9f8f");
+    setTheme("dark");
+
+    const dark = generateTokens("#0e9f8f", "dark");
+    expect(document.documentElement.style.getPropertyValue("--ds-bg")).toBe(dark.bg);
+    expect(document.documentElement.style.getPropertyValue("--ds-text")).toBe(dark.text);
+  });
+
+  it("drops the inline tokens again when the default source colour returns", async () => {
+    const { useTheme } = await import("./useTheme");
+    const { setSourceColor } = useTheme();
+
+    setSourceColor("#0e9f8f");
+    expect(document.documentElement.style.getPropertyValue("--ds-bg")).not.toBe("");
+
+    setSourceColor(DEFAULT_SOURCE_COLOR);
+    expect(document.documentElement.style.getPropertyValue("--ds-bg")).toBe("");
+    expect(localStorage.getItem(SOURCE_KEY)).toBe(DEFAULT_SOURCE_COLOR);
+  });
+
+  it("rejects an invalid source colour without touching the current palette", async () => {
+    const { useTheme } = await import("./useTheme");
+    const { sourceColor, setSourceColor } = useTheme();
+
+    expect(() => setSourceColor("#12345")).toThrow(TypeError);
+    expect(sourceColor.value).toBe(DEFAULT_SOURCE_COLOR);
+    expect(localStorage.getItem(SOURCE_KEY)).toBeNull();
   });
 });

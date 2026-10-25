@@ -126,19 +126,21 @@ const labelOffsetClasses = computed(() => (hasLeading.value ? "left-12" : "left-
 const legendOffsetClasses = computed(() => (hasLeading.value ? "ml-11" : "ml-3"));
 
 const outlineStateClasses: Record<InputState, string> = {
-  default: "border-ds-outline group-focus-within:border-ds-primary group-focus-within:border-2",
+  default:
+    "border-ds-outline group-focus-within:border-ds-primary-strong group-focus-within:border-2",
   success: "border-ds-success group-focus-within:border-2",
   error: "border-ds-error group-focus-within:border-2",
 };
 
 const filledStateClasses: Record<InputState, string> = {
-  default: "border-ds-outline group-focus-within:border-ds-primary group-focus-within:border-b-2",
+  default:
+    "border-ds-outline group-focus-within:border-ds-primary-strong group-focus-within:border-b-2",
   success: "border-ds-success group-focus-within:border-b-2",
   error: "border-ds-error group-focus-within:border-b-2",
 };
 
 const labelStateClasses: Record<InputState, string> = {
-  default: "text-ds-muted group-focus-within:text-ds-primary",
+  default: "text-ds-muted group-focus-within:text-ds-primary-strong",
   success: "text-ds-success",
   error: "text-ds-error",
 };
@@ -209,7 +211,7 @@ const legendClasses = computed(() => [
 ]);
 
 const controlClasses =
-  "w-full min-w-0 flex-1 resize-none bg-transparent p-0 text-base leading-6 text-ds-fg caret-ds-primary outline-none placeholder:text-ds-muted/60 disabled:cursor-not-allowed";
+  "w-full min-w-0 flex-1 resize-none bg-transparent p-0 text-base leading-6 text-ds-fg caret-ds-primary-strong outline-none placeholder:text-ds-muted/60 disabled:cursor-not-allowed";
 
 const actionClasses =
   "inline-flex box-border h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded-full text-ds-muted transition-colors hover:bg-ds-fg/10 hover:text-ds-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ds-focus";

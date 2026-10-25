@@ -27,7 +27,9 @@ Per package: `pnpm --filter @sharpdotnut/dotsharp <script>`, `pnpm --filter @dot
 ```
 packages/dotsharp/
   src/index.ts                 # the single public entry: components + useTheme
-  src/styles/index.css         # Tailwind entry: HSL token anchors + @theme mapping
+  src/styles/index.css         # Tailwind entry: generated default tokens + @theme mapping
+  src/theme/palette.ts         # source colour -> M3 tonal palettes -> --ds-* tokens
+  src/theme/palette.test.ts    # generator + stylesheet drift guard
   src/components/<name>/
     <Name>.vue                 # component implementation
     README.md                  # the component's whole docs page (docs + live demo + snippets)
@@ -48,16 +50,27 @@ types/assets.d.ts              # module declarations for *.css and *.vue
 
 ### Theming
 
-- Colors are defined only in `packages/dotsharp/src/styles/index.css` and must derive from HSL anchors:
-  hue (`--ds-hue-*`), saturation (`--ds-sat-*`), lightness steps (`--ds-lum-*`). Tokens compose them with
-  `hsl(var(--ds-hue-brand) var(--ds-sat-brand) var(--ds-lum-primary))`. Do not add bare hex/rgb colors.
-- Dark mode has two anchor override blocks:
+- The palette is generated from **one source colour**, never hand-picked. `src/theme/palette.ts` owns the
+  pipeline: source colour → HCT → Material 3 tonal palettes (primary / secondary / neutral / neutral-variant /
+  error) → a fixed tone per `--ds-*` token, per light / dark mode. Success has no Material role and keeps a
+  fixed hue so states stay recognisable.
+- Components consume `--ds-*` tokens only. Never hardcode colours, radii, or fonts.
+- `src/styles/index.css` ships the generated output for `DEFAULT_SOURCE_COLOR` as plain CSS, so no-JS and SSR
+  first paint are correct. Those values must equal `generateTokens(DEFAULT_SOURCE_COLOR, mode)`;
+  `src/theme/palette.test.ts` fails when the stylesheet and the generator drift. After changing a tone mapping,
+  regenerate the blocks (see the test) to keep them identical.
+- Dark mode has two token override blocks:
   `@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { … } }` and
-  `:root[data-theme="dark"] { … }`. They must stay in sync and must override anchors only, never tokens.
-- `useTheme()` writes `document.documentElement.dataset.theme` (`light`/`dark`) only; it never sets a `.dark`
-  class. The docs theme mirrors the resolved value onto `.dark` for VitePress. Default mode is `system`;
-  the persistence key is `dotsharp-theme`.
-- Components consume `--ds-*` tokens only. Never hardcode colors, radii, or fonts.
+  `:root[data-theme="dark"] { … }`. They override tokens and must stay in sync with each other.
+- `useTheme()` writes `document.documentElement.dataset.theme` (`light`/`dark`) and, **only when the source colour
+  differs from the default**, the generated tokens as inline custom properties on `<html>` (cleared when the default
+  returns, so consumer CSS can still override the default palette). It never sets a `.dark` class.
+  `setSourceColor()` swaps the source colour at runtime and persists it (`dotsharp-source-color`). Default mode is
+  `system`; the theme persistence key is `dotsharp-theme`. The docs theme mirrors the resolved value onto `.dark`
+  for VitePress.
+- `@material/material-color-utilities` is pinned to `0.3.0`: `0.4.0` ships extension-less internal imports that
+  Node ESM cannot resolve. It stays external in the bundle (a normal runtime dependency, like `@iconify/vue`).
+- Do not add another colour system, a second palette generator, or extra `--ds-hue-*` / `--ds-lum-*` anchors.
 
 ### Styling with Tailwind
 
@@ -70,7 +83,8 @@ types/assets.d.ts              # module declarations for *.css and *.vue
   keeps dark mode working because utilities then reference `var(--ds-…)` directly. Token names used by classes:
   `bg-ds-bg`, `bg-ds-surface`, `bg-ds-surface-hover`, `bg-ds-elevated`, `bg-ds-elevated-hover`, `bg-ds-tonal`,
   `bg-ds-tonal-hover`, `bg-ds-primary`, `bg-ds-primary-hover`, `text-ds-fg`, `text-ds-muted`, `text-ds-on-primary`,
-  `text-ds-on-tonal`, `text-ds-error`, `text-ds-success`, `border-ds-line`, `border-ds-outline`,
+  `text-ds-primary-strong`, `text-ds-on-tonal`, `text-ds-error`, `text-ds-success`, `border-ds-line`,
+  `border-ds-outline`, `border-ds-primary-strong`,
   `outline-ds-focus`, `rounded-ds-sm`, `rounded-ds`, `rounded-ds-lg`, `rounded-ds-xl`, `font-ds`.
 - Class names must stay statically greppable: keep them as literal strings (object maps are fine), never build them
   by concatenation, or the utilities are not generated.

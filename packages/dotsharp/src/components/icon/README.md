@@ -36,19 +36,19 @@ import search from "@iconify-icons/material-symbols/search";
 
 ## 尺寸与颜色
 
-`size` 默认 `1em`，即图标跟随所在文字的字号；传数字按像素处理。颜色默认 `currentColor`，可用 `color` 属性或前景色工具类（`text-ds-primary` 等）改变。
+`size` 默认 `1em`，即图标跟随所在文字的字号；传数字按像素处理。颜色默认 `currentColor`，可用 `color` 属性或前景色工具类（`text-ds-primary-strong` 等）改变。
 
 <div class="demo-row">
   <Icon :icon="home" :size="16" />
   <Icon :icon="home" :size="24" />
-  <Icon :icon="home" :size="32" class="text-ds-primary" />
+  <Icon :icon="home" :size="32" class="text-ds-primary-strong" />
   <span class="text-xl text-ds-fg">购物车 <Icon :icon="home" /></span>
 </div>
 
 ```vue
 <Icon :icon="home" :size="16" />
 <Icon :icon="home" :size="24" />
-<Icon :icon="home" :size="32" class="text-ds-primary" />
+<Icon :icon="home" :size="32" class="text-ds-primary-strong" />
 <span class="text-xl text-ds-fg">购物车 <Icon :icon="home" /></span>
 ```
 

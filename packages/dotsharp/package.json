@@ -22,7 +22,8 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
-    "@iconify/vue": "^5.0.4"
+    "@iconify/vue": "^5.0.4",
+    "@material/material-color-utilities": "0.3.0"
   },
   "devDependencies": {
     "@iconify-icons/material-symbols": "^2.0.7",

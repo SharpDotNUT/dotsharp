@@ -7,8 +7,8 @@ dotsharp 是一个面向 Vue 3 的轻量组件库：组件用 SFC 与 `<script s
 
 - **组件即源码**：每个组件的文档、实时演示与代码片段都写在该组件目录的 `README.md` 中，文档站点直接引入
   同一份文件，演示与实现不会脱节。
-- **主题**：颜色由 HSL 锚点组合成 `--ds-*` 令牌，`useTheme()` 支持 `system` / `light` / `dark` 三种模式，
-  只写 `<html data-theme>`，不绑定任何文档框架。
+- **主题**：整套配色由一个源色按 Material 3 的 HCT / tonal palette 生成，`setSourceColor()` 可运行时换色；
+  `useTheme()` 支持 `system` / `light` / `dark` 三种模式，只写 `<html data-theme>`，不绑定任何文档框架。
 - **样式可预测**：`style.css` 由 Tailwind CSS 4 编译，只包含组件用到的工具类，不含 preflight，不会重置
   应用自身的页面样式；使用方不需要安装 Tailwind，也不需要配置 `@source`。
 - **可访问性优先**：交互元素使用原生 `button` / `input` / `nav`，状态通过 ARIA 属性表达，浮层处理焦点陷阱、

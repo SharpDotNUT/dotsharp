@@ -44,7 +44,11 @@ function select(): void {
     :class="[
       'ds-navigation-item group inline-flex min-w-0 flex-1 cursor-pointer items-center justify-center rounded-ds border-0 bg-transparent px-2 font-ds text-sm leading-none transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus',
       medium ? 'py-2' : 'flex-col gap-1 py-1.5',
-      selected ? (medium ? 'text-ds-primary' : 'text-ds-fg') : 'text-ds-muted hover:text-ds-fg',
+      selected
+        ? medium
+          ? 'text-ds-primary-strong'
+          : 'text-ds-fg'
+        : 'text-ds-muted hover:text-ds-fg',
     ]"
     @click="select"
     v-bind="$attrs"
@@ -53,14 +57,14 @@ function select(): void {
       <span
         :class="[
           'inline-flex min-w-0 max-w-full items-center justify-center gap-2 rounded-full px-4 py-2 transition-colors',
-          selected ? 'bg-ds-primary/10' : 'group-hover:bg-ds-surface-hover',
+          selected ? 'bg-ds-primary-strong/10' : 'group-hover:bg-ds-surface-hover',
         ]"
       >
         <Icon
           v-if="icon"
           :icon="icon"
           size="1.5em"
-          :class="selected ? 'text-ds-primary' : undefined"
+          :class="selected ? 'text-ds-primary-strong' : undefined"
         />
         <span v-if="$slots.default || label" class="min-w-0 truncate">
           <slot>{{ label }}</slot>
@@ -71,14 +75,14 @@ function select(): void {
       <span
         :class="[
           'inline-flex items-center justify-center rounded-full px-4 py-1.5 transition-colors',
-          selected ? 'bg-ds-primary/10' : 'group-hover:bg-ds-surface-hover',
+          selected ? 'bg-ds-primary-strong/10' : 'group-hover:bg-ds-surface-hover',
         ]"
       >
         <Icon
           v-if="icon"
           :icon="icon"
           size="1.5em"
-          :class="selected ? 'text-ds-primary' : undefined"
+          :class="selected ? 'text-ds-primary-strong' : undefined"
         />
       </span>
       <span v-if="$slots.default || label" class="max-w-full truncate">
