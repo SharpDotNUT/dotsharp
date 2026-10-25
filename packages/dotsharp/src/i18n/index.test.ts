@@ -4,6 +4,7 @@ import {
   canonicalLocale,
   getDateOrder,
   getFirstDayOfWeek,
+  getTimeFormat,
   isLocaleRegistered,
   matchLocale,
   registerLocale,
@@ -33,6 +34,18 @@ describe("i18n", () => {
     expect(getDateOrder()).toBe("ymd");
     setLocale("ja");
     expect(getDateOrder()).toBe("ymd");
+  });
+
+  it("follows the locale time format", () => {
+    setLocale("en");
+    expect(getTimeFormat()).toBe("12h");
+    expect(useI18n().timeFormat.value).toBe("12h");
+    setLocale("zh-Hans");
+    expect(getTimeFormat()).toBe("24h");
+    setLocale("ja");
+    expect(getTimeFormat()).toBe("24h");
+    registerLocale("ja", {}, { timeFormat: "12h" });
+    expect(getTimeFormat()).toBe("12h");
   });
 
   it("switches the reactive locale", () => {

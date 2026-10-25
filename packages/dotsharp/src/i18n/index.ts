@@ -13,6 +13,24 @@ export interface LocaleMessages {
   selectDate: string;
   /** 无效日期的错误信息。 */
   invalidDate: string;
+  /** 时间输入框的浮动标签。 */
+  time: string;
+  /** 时间选择模式的标题。 */
+  selectTime: string;
+  /** 无效时间的错误信息。 */
+  invalidTime: string;
+  /** 小时字段与小时表盘的无障碍名称。 */
+  hour: string;
+  /** 分钟字段与分钟表盘的无障碍名称。 */
+  minute: string;
+  /** 秒字段的无障碍名称。 */
+  second: string;
+  /** 上午；12 小时制的 AM/PM 列。 */
+  am: string;
+  /** 下午；12 小时制的 AM/PM 列。 */
+  pm: string;
+  /** 时钟按钮的无障碍名称。 */
+  clock: string;
   cancel: string;
   ok: string;
   previousMonth: string;
@@ -26,17 +44,23 @@ export interface LocaleMessages {
 /** 数字日期的书写顺序：月/日/年、日/月/年、年/月/日。 */
 export type DateOrder = "mdy" | "dmy" | "ymd";
 
+/** 时钟格式：12 小时制（带 AM/PM）或 24 小时制。 */
+export type TimeFormat = "12h" | "24h";
+
 export interface LocaleOptions {
   /** 输入框中的数字顺序，默认 `mdy`。 */
   order?: DateOrder;
   /** 一周的第一天，1 = 周一 … 7 = 周日；缺省时使用 `Intl` 的区域周信息。 */
   firstDayOfWeek?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  /** 默认时钟格式；缺省时使用 `Intl` 的区域小时制。 */
+  timeFormat?: TimeFormat;
 }
 
 interface RegisteredLocale {
   messages: LocaleMessages;
   order: DateOrder;
   firstDayOfWeek?: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  timeFormat?: TimeFormat;
 }
 
 /** 内置语言：`en`、`zh-Hans`、`zh-Hant`、`ja`。 */
@@ -45,6 +69,15 @@ const en: LocaleMessages = {
   enterDate: "Enter date",
   selectDate: "Select date",
   invalidDate: "Enter a valid date",
+  time: "Time",
+  selectTime: "Select time",
+  invalidTime: "Enter a valid time",
+  hour: "Hour",
+  minute: "Minute",
+  second: "Second",
+  am: "AM",
+  pm: "PM",
+  clock: "Open clock",
   cancel: "Cancel",
   ok: "OK",
   previousMonth: "Previous month",
@@ -55,13 +88,22 @@ const en: LocaleMessages = {
 };
 
 const builtins: Record<string, { messages: LocaleMessages; options: LocaleOptions }> = {
-  en: { messages: en, options: { order: "mdy" } },
+  en: { messages: en, options: { order: "mdy", timeFormat: "12h" } },
   "zh-Hans": {
     messages: {
       date: "日期",
       enterDate: "输入日期",
       selectDate: "选择日期",
       invalidDate: "请输入有效日期",
+      time: "时间",
+      selectTime: "选择时间",
+      invalidTime: "请输入有效时间",
+      hour: "小时",
+      minute: "分钟",
+      second: "秒",
+      am: "上午",
+      pm: "下午",
+      clock: "打开时钟",
       cancel: "取消",
       ok: "确定",
       previousMonth: "上个月",
@@ -70,7 +112,7 @@ const builtins: Record<string, { messages: LocaleMessages; options: LocaleOption
       chooseYear: "选择年份",
       calendar: "打开日历",
     },
-    options: { order: "ymd" },
+    options: { order: "ymd", timeFormat: "24h" },
   },
   "zh-Hant": {
     messages: {
@@ -78,6 +120,15 @@ const builtins: Record<string, { messages: LocaleMessages; options: LocaleOption
       enterDate: "輸入日期",
       selectDate: "選擇日期",
       invalidDate: "請輸入有效日期",
+      time: "時間",
+      selectTime: "選擇時間",
+      invalidTime: "請輸入有效時間",
+      hour: "小時",
+      minute: "分鐘",
+      second: "秒",
+      am: "上午",
+      pm: "下午",
+      clock: "開啟時鐘",
       cancel: "取消",
       ok: "確定",
       previousMonth: "上個月",
@@ -86,7 +137,7 @@ const builtins: Record<string, { messages: LocaleMessages; options: LocaleOption
       chooseYear: "選擇年份",
       calendar: "開啟日曆",
     },
-    options: { order: "ymd" },
+    options: { order: "ymd", timeFormat: "24h" },
   },
   ja: {
     messages: {
@@ -94,6 +145,15 @@ const builtins: Record<string, { messages: LocaleMessages; options: LocaleOption
       enterDate: "日付を入力",
       selectDate: "日付を選択",
       invalidDate: "有効な日付を入力してください",
+      time: "時刻",
+      selectTime: "時刻を選択",
+      invalidTime: "有効な時刻を入力してください",
+      hour: "時",
+      minute: "分",
+      second: "秒",
+      am: "午前",
+      pm: "午後",
+      clock: "時計を開く",
       cancel: "キャンセル",
       ok: "OK",
       previousMonth: "前月",
@@ -102,7 +162,7 @@ const builtins: Record<string, { messages: LocaleMessages; options: LocaleOption
       chooseYear: "年を選択",
       calendar: "カレンダーを開く",
     },
-    options: { order: "ymd" },
+    options: { order: "ymd", timeFormat: "24h" },
   },
 };
 
@@ -125,7 +185,13 @@ function entry(code: string): RegisteredLocale {
   if (registered) return registered;
 
   const builtin = builtins[key];
-  if (builtin) return { messages: builtin.messages, order: builtin.options.order ?? "mdy" };
+  if (builtin) {
+    return {
+      messages: builtin.messages,
+      order: builtin.options.order ?? "mdy",
+      timeFormat: builtin.options.timeFormat,
+    };
+  }
 
   return { messages: en, order: "mdy" };
 }
@@ -135,6 +201,7 @@ for (const [code, builtin] of Object.entries(builtins)) {
     messages: builtin.messages,
     order: builtin.options.order ?? "mdy",
     firstDayOfWeek: builtin.options.firstDayOfWeek,
+    timeFormat: builtin.options.timeFormat,
   });
 }
 
@@ -169,6 +236,7 @@ export function registerLocale(
     messages: { ...en, ...previous?.messages, ...messages },
     order: options.order ?? previous?.order ?? "mdy",
     firstDayOfWeek: options.firstDayOfWeek ?? previous?.firstDayOfWeek,
+    timeFormat: options.timeFormat ?? previous?.timeFormat,
   });
 }
 
@@ -200,6 +268,11 @@ export function getFirstDayOfWeek(): 1 | 2 | 3 | 4 | 5 | 6 | 7 {
   return intlFirstDayOfWeek(locale.value) ?? 7;
 }
 
+/** 当前语言的默认时钟格式。 */
+export function getTimeFormat(): TimeFormat {
+  return entry(locale.value).timeFormat ?? intlTimeFormat(locale.value);
+}
+
 /** 把语言代码交给 `Intl` 用；非法代码回退到 `en`。 */
 export function intlLocale(code: string): string {
   try {
@@ -229,6 +302,19 @@ function intlFirstDayOfWeek(code: string): 1 | 2 | 3 | 4 | 5 | 6 | 7 | undefined
     // 忽略：回退到周日。
   }
   return undefined;
+}
+
+/** 从 `Intl` 的区域小时制推默认格式：`h11` / `h12` 是 12 小时制，其余是 24 小时制。 */
+function intlTimeFormat(code: string): TimeFormat {
+  try {
+    const hourCycle = new Intl.DateTimeFormat(intlLocale(code), {
+      hour: "numeric",
+    }).resolvedOptions().hourCycle;
+    return hourCycle === "h11" || hourCycle === "h12" ? "12h" : "24h";
+  } catch {
+    // 忽略：回退到 24 小时制。
+  }
+  return "24h";
 }
 
 interface TagParts {
@@ -324,6 +410,8 @@ export interface UseI18nReturn {
   order: ComputedRef<DateOrder>;
   /** 一周的第一天，1 = 周一 … 7 = 周日。 */
   firstDayOfWeek: ComputedRef<1 | 2 | 3 | 4 | 5 | 6 | 7>;
+  /** 默认时钟格式。 */
+  timeFormat: ComputedRef<TimeFormat>;
   setLocale: typeof setLocale;
   registerLocale: typeof registerLocale;
   t: typeof t;
@@ -337,6 +425,7 @@ export function useI18n(): UseI18nReturn {
     intlLocale: computed(() => intlLocale(locale.value)),
     order: computed(() => getDateOrder()),
     firstDayOfWeek: computed(() => getFirstDayOfWeek()),
+    timeFormat: computed(() => getTimeFormat()),
     setLocale,
     registerLocale,
     t,

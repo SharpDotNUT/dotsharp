@@ -97,6 +97,8 @@ export default defineConfig({
           { text: "OptInputs 分组输入框", link: "/components/opt-inputs" },
           { text: "DateInput 日期输入框", link: "/components/date-input" },
           { text: "DatePicker 日期选择器", link: "/components/date-picker" },
+          { text: "TimeInput 时间输入框", link: "/components/time-input" },
+          { text: "TimePicker 时间选择器", link: "/components/time-picker" },
           { text: "Select 选择器", link: "/components/select" },
           { text: "Checkbox 复选框", link: "/components/checkbox" },
           { text: "Radio 单选按钮", link: "/components/radio" },

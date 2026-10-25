@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, shallowRef, useId, watch } from "vue";
+import { computed, ref, useId, watch } from "vue";
 import calendarIcon from "@iconify-icons/material-symbols/calendar-today";
 import Icon from "../icon/Icon.vue";
 import Input from "../input/Input.vue";
 import DatePicker from "../date-picker/DatePicker.vue";
 import { datePlaceholder, formatDateInput, parseDateInput } from "../date-picker/date";
 import type { DatePickerMode } from "../date-picker/types";
+import { useAnchoredPopup } from "../../composables/useAnchoredPopup";
 import { useI18n } from "../../i18n";
 
 type DateInputState = "default" | "success" | "error";
@@ -101,96 +102,21 @@ function commitText(): void {
   text.value = formatDateInput(parsed, order.value);
 }
 
-const GAP = 4;
-const EDGE = 8;
-
-const position = shallowRef<{ top: number; left: number } | null>(null);
-
-const popupStyle = computed(() => {
-  const point = position.value;
-  if (!point) return { visibility: "hidden" as const };
-  return { top: `${point.top}px`, left: `${point.left}px` };
-});
-
-function place(): void {
-  const trigger = rootRef.value;
-  const panel = popupRef.value;
-  if (!trigger || !panel) return;
-
-  const rect = trigger.getBoundingClientRect();
-  const width = panel.offsetWidth;
-  const height = panel.offsetHeight;
-  const below = window.innerHeight - rect.bottom - GAP - EDGE;
-  const above = rect.top - GAP - EDGE;
-  const up = height > below && above > below;
-
-  position.value = {
-    left: Math.max(EDGE, Math.min(rect.left, window.innerWidth - width - EDGE)),
-    top: up ? Math.max(EDGE, rect.top - GAP - height) : rect.bottom + GAP,
-  };
-}
-
-function listen(on: boolean): void {
-  if (typeof document === "undefined") return;
-  if (on) {
-    document.addEventListener("pointerdown", onPointerDown, true);
-    document.addEventListener("keydown", onKeydown);
-    window.addEventListener("resize", place);
-    window.addEventListener("scroll", place, true);
-  } else {
-    document.removeEventListener("pointerdown", onPointerDown, true);
-    document.removeEventListener("keydown", onKeydown);
-    window.removeEventListener("resize", place);
-    window.removeEventListener("scroll", place, true);
-  }
-}
-
-function onPointerDown(event: Event): void {
-  const target = event.target as Node | null;
-  if (!target) return;
-  if (rootRef.value?.contains(target) || popupRef.value?.contains(target)) return;
-  closePopup();
-}
-
-function onKeydown(event: KeyboardEvent): void {
-  if (event.key !== "Escape") return;
-  event.preventDefault();
-  closePopup();
-  rootRef.value?.querySelector("input")?.focus();
-}
-
-async function openPopup(): Promise<void> {
-  if (!canPick.value || popupOpen.value) return;
-
-  popupOpen.value = true;
-  position.value = null;
-  await nextTick();
-  if (!popupOpen.value) return;
-
-  place();
-  listen(true);
+const { panelStyle, show, hide } = useAnchoredPopup({
+  anchor: rootRef,
+  panel: popupRef,
+  open: popupOpen,
   // 弹出层 Teleport 到 body 末尾，不在输入框的 Tab 顺序里，打开时把焦点送进日历。
-  popupRef.value?.querySelector<HTMLElement>('[role="gridcell"][tabindex="0"]')?.focus();
-}
-
-/** `restoreFocus` 只用于选择和取消：点击页面其它位置时不应把焦点抢回输入框。 */
-function closePopup(restoreFocus = false): void {
-  if (!popupOpen.value) return;
-  popupOpen.value = false;
-  position.value = null;
-  listen(false);
-  if (restoreFocus) rootRef.value?.querySelector("input")?.focus();
-}
+  initialFocus: '[role="gridcell"][tabindex="0"]',
+});
 
 function togglePicker(): void {
   if (!canPick.value) return;
   commitText();
   if (props.modal) pickerOpen.value = true;
-  else if (popupOpen.value) closePopup();
-  else void openPopup();
+  else if (popupOpen.value) hide();
+  else void show();
 }
-
-onBeforeUnmount(() => listen(false));
 </script>
 
 <template>
@@ -246,15 +172,10 @@ onBeforeUnmount(() => listen(false));
           v-if="picker && !modal && popupOpen"
           :id="popupId"
           ref="popupRef"
-          :style="popupStyle"
+          :style="panelStyle"
           class="ds-date-input__popup fixed z-50"
         >
-          <DatePicker
-            v-model="value"
-            :header="false"
-            @confirm="closePopup(true)"
-            @cancel="closePopup(true)"
-          />
+          <DatePicker v-model="value" :header="false" @confirm="hide(true)" @cancel="hide(true)" />
         </div>
       </Transition>
     </Teleport>
