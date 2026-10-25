@@ -15,6 +15,9 @@ export type { NavigationDrawerValue } from "./components/navigation-drawer/conte
 export { default as NavigationRail } from "./components/navigation-rail/NavigationRail.vue";
 export { default as NavigationRailItem } from "./components/navigation-rail/NavigationRailItem.vue";
 export type { NavigationRailValue } from "./components/navigation-rail/context";
+export { default as Slider } from "./components/slider/Slider.vue";
+export { default as RangeSlider } from "./components/slider/RangeSlider.vue";
+export type { SliderRangeValue, SliderSize, SliderValueDisplay } from "./components/slider/shared";
 export { default as Tabs } from "./components/tabs/Tabs.vue";
 export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";
