@@ -27,7 +27,9 @@ import { selectContextKey, type SelectValue } from "./context";
 defineOptions({ inheritAttrs: false });
 
 interface SelectProps {
-  /** 没有可显示的选中项文本时显示的文字。 */
+  /** 浮动标签；聚焦、展开或有选中值时上浮到描边缺口，空态时居中显示。 */
+  label?: string;
+  /** 没有可显示的选中项文本时显示的文字。有 `label` 且未上浮时不显示。 */
   placeholder?: string;
   disabled?: boolean;
   /**
@@ -39,6 +41,7 @@ interface SelectProps {
 }
 
 const props = withDefaults(defineProps<SelectProps>(), {
+  label: undefined,
   placeholder: "",
   disabled: false,
   validator: undefined,
@@ -84,11 +87,13 @@ const {
 defineExpose({ validate, clearValidate });
 
 const messageId = `ds-select-message-${uid}`;
+const triggerId = `ds-select-trigger-${uid}`;
+const labelId = `ds-select-label-${uid}`;
 
 /** `FormItem` 的标签在没有显式无障碍名称时充当控件的可访问名称。 */
 const itemLabelAttrs = computed(() => {
   const labelId = formItem?.labelId.value;
-  if (!labelId || "aria-label" in attrs || "aria-labelledby" in attrs) return {};
+  if (props.label || !labelId || "aria-label" in attrs || "aria-labelledby" in attrs) return {};
   return { "aria-labelledby": labelId };
 });
 
@@ -140,6 +145,32 @@ const selectedLabel = computed(() => {
   }
   return "";
 });
+
+const focused = ref(false);
+const hasValue = computed(() => Boolean(selectedLabel.value));
+/** 标签在聚焦、展开或有选中值时上浮；`Safari` 点击按钮不聚焦，所以 `open` 也参与判断。 */
+const labelFloated = computed(
+  () => Boolean(props.label) && (hasValue.value || open.value || focused.value),
+);
+
+/** 描边由 `fieldset` 画出，才能用 `legend` 切出标签缺口；悬停与聚焦状态交给 group 变体。 */
+const outlineClasses = computed(() => {
+  if (isInvalid.value) {
+    return "border-ds-error group-focus-within:border-ds-error group-focus-within:border-2";
+  }
+  if (open.value) {
+    return "border-ds-primary-strong group-focus-within:border-ds-primary-strong group-focus-within:border-2";
+  }
+  return "border-ds-outline group-hover:border-ds-fg group-focus-within:border-ds-primary-strong group-focus-within:border-2";
+});
+
+const labelClasses = computed(() => [
+  "pointer-events-none absolute left-4 max-w-[calc(100%-2rem)] truncate transition-all duration-150",
+  labelFloated.value ? "top-0 -translate-y-1/2 text-xs" : "top-1/2 -translate-y-1/2 text-base",
+  isInvalid.value ? "text-ds-error" : "text-ds-muted group-focus-within:text-ds-primary-strong",
+]);
+
+const legendClasses = computed(() => (labelFloated.value ? "max-w-full" : "max-w-0"));
 
 const GAP = 4;
 const EDGE = 8;
@@ -319,6 +350,7 @@ function onKeydown(event: KeyboardEvent): void {
 function onBlur(event: FocusEvent): void {
   const next = event.relatedTarget as Node | null;
   if (next && (triggerRef.value?.contains(next) || panelRef.value?.contains(next))) return;
+  focused.value = false;
   closePanel();
   triggerValidation("blur");
 }
@@ -345,40 +377,55 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
     v-bind="rootAttrs"
     class="ds-select relative inline-flex flex-col gap-1 align-middle font-ds"
   >
-    <button
-      ref="triggerRef"
-      type="button"
-      role="combobox"
-      v-ripple
-      aria-haspopup="listbox"
-      :disabled="disabled"
-      :aria-expanded="open"
-      :aria-controls="open ? panelId : undefined"
-      :aria-activedescendant="open ? activeEl?.id : undefined"
-      :aria-invalid="isInvalid || undefined"
-      :aria-describedby="validationMessage ? messageId : undefined"
-      :class="[
-        'ds-select__trigger box-border flex min-h-14 w-full min-w-40 cursor-pointer items-center justify-between gap-2 rounded-ds-sm border bg-ds-surface px-4 text-base leading-6 text-ds-fg transition-colors focus-visible:border-2 focus-visible:border-ds-primary-strong disabled:cursor-not-allowed disabled:opacity-60',
-        isInvalid
-          ? 'border-ds-error hover:border-ds-error focus-visible:border-ds-error'
-          : open
-            ? 'border-ds-primary-strong hover:border-ds-primary-strong'
-            : 'border-ds-outline hover:border-ds-fg',
-      ]"
-      v-bind="{ ...triggerAttrs, ...itemLabelAttrs }"
-      @click="toggle"
-      @keydown="onKeydown"
-      @blur="onBlur"
-    >
-      <span
-        class="min-w-0 flex-1 truncate text-left"
-        :class="selectedLabel ? '' : 'text-ds-muted'"
-        >{{ selectedLabel || placeholder }}</span
+    <div class="group relative w-full" :class="disabled ? 'opacity-60' : ''">
+      <fieldset
+        class="pointer-events-none absolute right-0 bottom-0 left-0 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
+        :class="[label ? '-top-1.5' : 'top-0', outlineClasses]"
+        aria-hidden="true"
       >
-      <span class="flex w-6 shrink-0 items-center justify-center text-ds-muted">
-        <Icon :icon="chevronIcon" size="1.5em" />
-      </span>
-    </button>
+        <legend
+          v-if="label"
+          class="ml-3 overflow-hidden whitespace-nowrap p-0 text-xs leading-none transition-[max-width] duration-150"
+          :class="legendClasses"
+        >
+          <span class="invisible inline-block px-1">{{ label }}</span>
+        </legend>
+      </fieldset>
+
+      <button
+        :id="triggerId"
+        ref="triggerRef"
+        type="button"
+        role="combobox"
+        v-ripple
+        aria-haspopup="listbox"
+        :disabled="disabled"
+        :aria-expanded="open"
+        :aria-controls="open ? panelId : undefined"
+        :aria-activedescendant="open ? activeEl?.id : undefined"
+        :aria-invalid="isInvalid || undefined"
+        :aria-describedby="validationMessage ? messageId : undefined"
+        class="ds-select__trigger box-border flex min-h-14 w-full min-w-40 cursor-pointer items-center justify-between gap-2 rounded-ds-sm bg-ds-surface px-4 text-base leading-6 text-ds-fg transition-colors disabled:cursor-not-allowed"
+        v-bind="{ ...triggerAttrs, ...itemLabelAttrs }"
+        @click="toggle"
+        @keydown="onKeydown"
+        @focus="focused = true"
+        @blur="onBlur"
+      >
+        <span
+          class="min-w-0 flex-1 truncate text-left"
+          :class="selectedLabel ? '' : 'text-ds-muted'"
+          >{{ selectedLabel || (label && !labelFloated ? "" : placeholder) }}</span
+        >
+        <span class="flex w-6 shrink-0 items-center justify-center text-ds-muted">
+          <Icon :icon="chevronIcon" size="1.5em" />
+        </span>
+      </button>
+
+      <label v-if="label" :id="labelId" :for="triggerId" :class="labelClasses">
+        {{ label }}
+      </label>
+    </div>
 
     <p v-if="validationMessage" :id="messageId" class="px-4 text-xs leading-4 text-ds-error">
       {{ validationMessage }}

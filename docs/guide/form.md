@@ -183,6 +183,34 @@ inputRef.value?.validate();
 </FormItem>
 ```
 
+## 什么时候不用 FormItem
+
+`FormItem` 不是必需的。如果表单很简单、只有自带 `label` 的控件（`Input`、`Select`），并且不需要必填标记和
+字段说明，直接用控件自己的 `label` 更好：
+
+```vue
+<Form @submit="onSubmit">
+  <Input v-model="email" label="邮箱" :validator="emailValidator" />
+  <Select v-model:value="plan" label="套餐" :validator="planValidator">
+    <Option label="基础版" value="basic" />
+    <Option label="专业版" value="pro" />
+  </Select>
+  <Button type="submit">提交</Button>
+</Form>
+```
+
+控件自己的标签会与控件关联成可访问名称，`validator`、`Form` 的整体校验、`validate()` / `clearValidate()`
+都不受影响，只是少了一层包裹。
+
+需要下面这些能力时再用 `FormItem`：
+
+- 标签末尾的必填标记（`required`）；
+- 字段下方的说明文字（`description`）；
+- 控件本身没有 `label`（`Checkbox`、`RadioGroup`、`Slider` 等）：这时 `FormItem` 的标签既负责排版，也作为
+  控件的可访问名称。
+
+同一个字段不要同时给 `FormItem` 和控件写标签，会渲染出两份。
+
 ## 支持的控件
 
 以下控件都使用同一套 `validator` / `validateOn` / `validate()` / `clearValidate()`：

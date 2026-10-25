@@ -17,6 +17,7 @@ const disabledValue = ref("economy");
 由 `Select` 与 `Option` 组合而成：`Select` 持有选中值（`v-model:value`），每个 `Option` 描述一个候选项。
 
 - 收起时触发器显示选中项的 `label`，展开后从弹层里挑选。
+- `label` 提供与 `Input` 一致的浮动标签：空值未聚焦时居中，聚焦、展开或有选中值时上浮到描边缺口。
 - 触发器沿用 `Input` outlined 变体的几何：56px 高、4px 圆角、1px 描边、16px 正文，尾部 24px 箭头。
 - 弹层按 Material 3 菜单绘制：`surface-container` 底色、elevation 2 阴影、4px 圆角、8px 上下内边距，选项行高 48px。
 - `Option` 的标识默认为自身索引，也可以用 `value` 指定。
@@ -59,6 +60,49 @@ const cabin = ref("economy");
 ```
 
 `Select` 的根元素是行内块，宽度由外部决定；`class="w-full"` 之类的作用在根元素上，其余属性与事件透传给触发器按钮。
+
+## 标签
+
+`label` 渲染在触发器内部的浮动标签：空值且未聚焦时位于中间，聚焦、展开或有选中值时上浮到描边缺口，和
+`Input` 的 `label` 行为一致。它同时是触发器的可访问名称。
+
+<div class="demo-row">
+  <Select v-model:value="cabin" label="舱位" class="w-full max-w-xs">
+    <Option label="经济舱" value="economy" />
+    <Option label="商务舱" value="business" />
+  </Select>
+  <Select v-model:value="empty" label="舱位" placeholder="请选择舱位" class="w-full max-w-xs">
+    <Option label="经济舱" value="economy" />
+    <Option label="商务舱" value="business" />
+  </Select>
+</div>
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Option, Select } from "@sharpdotnut/dotsharp";
+
+const cabin = ref("economy");
+const empty = ref<string | number>("");
+</script>
+
+<template>
+  <Select v-model:value="cabin" label="舱位">
+    <Option label="经济舱" value="economy" />
+    <Option label="商务舱" value="business" />
+  </Select>
+  <Select v-model:value="empty" label="舱位" placeholder="请选择舱位">
+    <Option label="经济舱" value="economy" />
+    <Option label="商务舱" value="business" />
+  </Select>
+</template>
+```
+
+传了 `label` 后，`placeholder` 只在标签上浮且没有选中值时出现（聚焦或展开空选择器），两者同时使用不会重叠。
+省略 `label` 时没有浮动标签，`placeholder` 始终居中显示，与之前的用法一致。
+
+简单表单里需要标签时，优先用这个 `label`，不必再包一层 `FormItem`；判断标准见
+[表单指南 · 什么时候不用 FormItem](/guide/form#什么时候不用-formitem)。
 
 ## 标识：value 与索引
 
@@ -117,8 +161,8 @@ const cabin = ref("economy");
 
 ## 占位文字与禁用
 
-`placeholder` 在没有可显示的选中项文本时出现（例如选中项没有 `label`，或选项列表为空）。`disabled` 让触发器
-不可操作：
+`placeholder` 在没有可显示的选中项文本时出现（例如选中项没有 `label`，或选项列表为空）。没设置 `label`
+时它始终显示；设置了 `label` 时只在标签上浮后出现，见[标签](#标签)。`disabled` 让触发器不可操作：
 
 <div class="demo-row">
   <Select v-model:value="empty" placeholder="请选择舱位" class="w-full max-w-xs">
@@ -178,12 +222,14 @@ const cabin = ref("economy");
 | 属性          | 类型                                         | 默认值              | 说明                                          |
 | ------------- | -------------------------------------------- | ------------------- | --------------------------------------------- |
 | v-model:value | `string \| number`                           | `0`                 | 当前选中值，对应子项的 `value` 或索引         |
+| label         | `string`                                     | —                   | 浮动标签；空值未聚焦时居中，其余时候上浮      |
 | placeholder   | `string`                                     | `""`                | 没有可显示的选中项文本时显示的文字            |
 | disabled      | `boolean`                                    | false               | 禁用触发器：不可展开、不可用键盘打开          |
 | validator     | `(value) => boolean \| string`               | —                   | 验证函数：`false` 通过，`true` / 字符串不通过 |
 | validateOn    | `"input" \| "blur" \| ("input" \| "blur")[]` | `["input", "blur"]` | 自动校验时机；传 `[]` 关闭自动校验            |
 
 - 根元素是 `div`（`relative inline-flex flex-col`），`class` / `style` 落在这里，其余属性与事件透传给触发器按钮。
+- 传 `label` 时通过 `<label for>` 关联触发器，标签即按钮的可访问名称；不传时回退到 `FormItem` 的标签。
 - 触发器是 `role="combobox"` 的 `button`，带 `aria-haspopup="listbox"`、`aria-expanded`、`aria-controls`，
   展开时同步 `aria-activedescendant`。
 

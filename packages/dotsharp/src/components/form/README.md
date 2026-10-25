@@ -408,6 +408,8 @@ const noteValidator = (value: string | number) =>
   可访问名称（通过 `aria-labelledby`）。
 - 控件只有“常规”和“不通过”两种状态，全部由 `validator` 驱动，没有单独的 success / error 状态属性。
   验证函数返回 `true` 时只有错误状态、没有文字；想要提示文案就返回字符串。
+- 简单表单、只有 `Input` / `Select` 这类自带 `label` 的控件、也不需要必填标记与说明文字时，直接用控件自己的
+  `label`，不必再包 `FormItem`；判断标准见[表单指南 · 什么时候不用 FormItem](/guide/form#什么时候不用-formitem)。
 
 ## API
 
