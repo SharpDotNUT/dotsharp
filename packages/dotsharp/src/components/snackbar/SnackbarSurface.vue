@@ -37,7 +37,7 @@ defineEmits<{ action: []; dismiss: [] }>();
       v-bind="$attrs"
       role="status"
       aria-atomic="true"
-      class="ds-snackbar__surface pointer-events-auto flex min-h-12 w-full max-w-[35rem] items-center gap-1 rounded-ds-sm bg-ds-fg py-2 pr-2 pl-4 text-sm leading-5 text-ds-bg shadow-[0_1px_2px_0_rgba(0,0,0,0.3),0_2px_6px_2px_rgba(0,0,0,0.15)] sm:w-fit sm:min-w-[21.5rem]"
+      class="ds-snackbar__surface pointer-events-auto flex min-h-12 w-full max-w-[35rem] items-center gap-1 rounded-ds-sm bg-ds-fg py-2 pr-2 pl-4 text-sm leading-5 text-ds-bg shadow-ds-3 sm:w-fit sm:min-w-[21.5rem]"
     >
       <div class="min-w-0 flex-1 py-2">
         <slot>{{ text }}</slot>

@@ -153,7 +153,7 @@ const RailNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, pro
     :class="[
       'ds-navigation-rail flex h-full flex-col bg-ds-surface font-ds',
       isModal
-        ? 'absolute inset-y-0 left-0 z-20 overflow-y-auto rounded-r-ds-lg shadow-xl'
+        ? 'absolute inset-y-0 left-0 z-20 overflow-y-auto rounded-r-ds-lg shadow-ds-3'
         : 'relative shrink-0 transition-[width] duration-200 ease-out',
       isExpanded ? undefined : 'w-24',
     ]"

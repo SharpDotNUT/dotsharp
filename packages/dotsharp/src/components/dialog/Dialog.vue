@@ -61,7 +61,7 @@ function dialogAttrs(): Record<string, unknown> {
 const panelClasses = computed(() =>
   isFullscreen.value
     ? "h-full w-full"
-    : "m-auto h-fit max-h-[calc(100dvh-3rem)] w-[calc(100%-3rem)] max-w-[35rem] overflow-hidden p-6 shadow-xl",
+    : "m-auto h-fit max-h-[calc(100dvh-3rem)] w-[calc(100%-3rem)] max-w-[35rem] overflow-hidden p-6 shadow-ds-3",
 );
 
 const panelEnterFrom = computed(() =>

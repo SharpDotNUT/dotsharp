@@ -59,7 +59,7 @@ const paddingClasses: Record<ContainerLevel, string> = {
 };
 
 const variantClasses: Record<CardVariant, string> = {
-  elevated: "bg-ds-elevated shadow-[0_1px_2px_0_rgba(0,0,0,0.3),0_2px_6px_2px_rgba(0,0,0,0.15)]",
+  elevated: "bg-ds-elevated shadow-ds-2",
   filled: "bg-ds-surface-hover",
   surface: "bg-ds-surface",
   outlined: "border border-ds-line bg-ds-surface",

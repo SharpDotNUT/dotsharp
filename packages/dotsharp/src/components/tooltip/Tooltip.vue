@@ -339,8 +339,8 @@ onBeforeUnmount(() => {
       :class="[
         'ds-tooltip__panel fixed z-50 box-border font-ds',
         isRich
-          ? 'max-w-80 rounded-ds-lg bg-ds-elevated p-3 text-ds-fg shadow-[0_1px_2px_0_rgba(0,0,0,0.3),0_2px_6px_2px_rgba(0,0,0,0.15)]'
-          : 'pointer-events-none max-w-[12.5rem] rounded-ds-sm bg-ds-fg px-2 py-1 text-center text-xs leading-4 text-ds-bg shadow-[0_1px_2px_0_rgba(0,0,0,0.3),0_2px_6px_2px_rgba(0,0,0,0.15)]',
+          ? 'max-w-80 rounded-ds-lg bg-ds-elevated p-3 text-ds-fg shadow-ds-2'
+          : 'pointer-events-none max-w-[12.5rem] rounded-ds-sm bg-ds-fg px-2 py-1 text-center text-xs leading-4 text-ds-bg shadow-ds-2',
       ]"
       @pointerenter="onPanelEnter"
       @pointerleave="onPanelLeave"

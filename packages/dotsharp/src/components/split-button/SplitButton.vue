@@ -46,7 +46,7 @@ const arrowRef = ref<HTMLButtonElement | null>(null);
 
 /** 容器承载底色 / 边框 / 文字色，两段按钮只负责悬浮层，缝隙处不会透出别的颜色。 */
 const containerClasses: Record<ButtonVariant, string> = {
-  elevated: "bg-ds-elevated text-ds-primary-strong shadow-sm",
+  elevated: "bg-ds-elevated text-ds-primary-strong shadow-ds-1",
   filled: "bg-ds-primary text-ds-on-primary",
   tonal: "bg-ds-tonal text-ds-on-tonal",
   outlined: "border border-ds-outline bg-transparent text-ds-fg",

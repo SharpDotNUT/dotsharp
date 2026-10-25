@@ -68,6 +68,25 @@ setSourceColor("#0e9f8f"); // '#rrggbb'、'rrggbb'、'#rgb' 均可
 - 样式表不含 Tailwind preflight，不会重置应用自身的页面样式。
 - 颜色令牌来自 `@material/material-color-utilities` 的 HCT / tonal palette 实现（随包安装，无需额外配置）。
 
+## 层级（elevation）
+
+`--ds-elevation-0` … `--ds-elevation-5` 是 Material 3 的固定黑色阴影，由 `@theme inline` 映射成
+`shadow-ds-0` … `shadow-ds-5`；组件按层级使用这些工具类，不再手写阴影字面值。
+
+| 层级 | 工具类          | 典型用途                                        |
+| ---- | --------------- | ----------------------------------------------- |
+| 0    | `shadow-ds-0`   | 无阴影                                          |
+| 1    | `shadow-ds-1`   | elevated 按钮、滑块数值气泡                     |
+| 2    | `shadow-ds-2`   | elevated 卡片、菜单 / 选择器面板、提示气泡、FAB |
+| 3    | `shadow-ds-3`   | 对话框、模态抽屉 / 侧栏、Snackbar、悬浮的 FAB   |
+| 4–5  | `shadow-ds-4/5` | 预留给更高的叠层，组件暂未使用                  |
+
+`dist/style.css` 与其它 Tailwind 工具类一样按需生成，只包含库内实际引用的类；需要预留层级时直接写
+`box-shadow: var(--ds-elevation-4)`，或在使用方自己的 Tailwind 里生成同名工具类。
+
+层级不随源色生成，明暗两套共用同一组值——M3 在暗色模式下靠提高表面色明度区分叠层，而不是加深阴影。
+需要整体调浅时，在自有样式里覆写 `--ds-elevation-*` 即可（工具类引用的是变量本身）。
+
 ## 使用
 
 ```ts

@@ -9,7 +9,7 @@ export type ButtonSize = "sm" | "md" | "lg";
  * 避免两处各写一份颜色映射后漂移。
  */
 export const buttonVariantClasses: Record<ButtonVariant, string> = {
-  elevated: "bg-ds-elevated text-ds-primary-strong shadow-sm enabled:hover:bg-ds-elevated-hover",
+  elevated: "bg-ds-elevated text-ds-primary-strong shadow-ds-1 enabled:hover:bg-ds-elevated-hover",
   filled: "bg-ds-primary text-ds-on-primary enabled:hover:bg-ds-primary-hover",
   tonal: "bg-ds-tonal text-ds-on-tonal enabled:hover:bg-ds-tonal-hover",
   outlined: "border-ds-outline bg-transparent text-ds-fg enabled:hover:bg-ds-fg/10",

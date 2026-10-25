@@ -413,7 +413,7 @@ Escape 走原生 `cancel` 事件，组件始终拦截它：先播完面板的离
   类名 `ds-dialog__root`），面板在它内部绝对定位。
 - 遮罩是原生 `::backdrop`：`basic` 用 `backdrop:bg-ds-scrim`（`--ds-scrim`，32% 黑），`fullscreen` 透明。
 - 面板是 `Card`（`variant="surface"`、`level="1"`，类名 `ds-dialog`）：`basic` 用 `padded="false"` 加 24px 内边距，
-  最大宽度 560px、`rounded-ds-xl`、`shadow-xl`；`fullscreen` 用卡片默认内边距铺满视口。
+  最大宽度 560px、`rounded-ds-xl`、`shadow-ds-3`；`fullscreen` 用卡片默认内边距铺满视口。
 - 进出场：`basic` 200ms 淡入并从 95% 放大，退出 150ms；`fullscreen` 250ms 从底部滑入，200ms 滑出。
 - `class` 与 `style` 透传到面板，可以覆盖外观，但不要改 `position` 与 `inset`；也不要再改宽度，
   宽度由变体与视口共同决定。

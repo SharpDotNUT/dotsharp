@@ -56,6 +56,22 @@
 }
 
 /*
+ * Elevation levels 0-5, in Material 3's own values. They are not generated from
+ * the source colour: M3 keeps the black shadows in both modes (dark mode raises
+ * the surface tone instead of deepening shadows), so no dark override block is
+ * needed. This block is hand-written — `palette.test.ts` only checks the
+ * generated colour blocks above, which must equal `generateTokens()`.
+ */
+:root {
+  --ds-elevation-0: 0 0 #0000;
+  --ds-elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 1px 3px 1px rgb(0 0 0 / 0.15);
+  --ds-elevation-2: 0 1px 2px 0 rgb(0 0 0 / 0.3), 0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --ds-elevation-3: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 4px 8px 3px rgb(0 0 0 / 0.15);
+  --ds-elevation-4: 0 2px 3px 0 rgb(0 0 0 / 0.3), 0 6px 10px 4px rgb(0 0 0 / 0.15);
+  --ds-elevation-5: 0 4px 4px 0 rgb(0 0 0 / 0.3), 0 8px 12px 6px rgb(0 0 0 / 0.15);
+}
+
+/*
  * `inline` keeps the generated utilities pointing at the `--ds-*` token vars, so
  * dark mode only has to override the tokens above.
  */
@@ -87,6 +103,14 @@
   --radius-ds: var(--ds-radius);
   --radius-ds-lg: var(--ds-radius-lg);
   --radius-ds-xl: var(--ds-radius-xl);
+
+  --shadow-ds-0: var(--ds-elevation-0);
+  --shadow-ds-1: var(--ds-elevation-1);
+  --shadow-ds-2: var(--ds-elevation-2);
+  --shadow-ds-3: var(--ds-elevation-3);
+  --shadow-ds-4: var(--ds-elevation-4);
+  --shadow-ds-5: var(--ds-elevation-5);
+
   --font-ds: var(--ds-font);
 }
 

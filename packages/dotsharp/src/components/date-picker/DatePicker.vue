@@ -352,7 +352,7 @@ useOverlayPanel({
           variant="filled"
           :level="modal ? 1 : undefined"
           :padded="false"
-          :class="['ds-date-picker w-[22rem] max-w-full text-left', modal ? 'shadow-xl' : '']"
+          :class="['ds-date-picker w-[22rem] max-w-full text-left', modal ? 'shadow-ds-3' : '']"
           v-bind="$attrs"
         >
           <div v-if="header" class="px-6 pt-6 pb-4">

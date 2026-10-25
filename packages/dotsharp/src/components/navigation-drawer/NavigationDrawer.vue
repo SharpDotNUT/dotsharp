@@ -105,7 +105,7 @@ const DrawerNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
         aria-modal="true"
         :aria-label="label"
         tabindex="-1"
-        class="ds-navigation-drawer ds-navigation-drawer--modal absolute inset-y-0 left-0 z-50 flex w-90 max-w-full flex-col overflow-y-auto rounded-r-ds-lg bg-ds-surface font-ds shadow-xl focus-visible:outline-none"
+        class="ds-navigation-drawer ds-navigation-drawer--modal absolute inset-y-0 left-0 z-50 flex w-90 max-w-full flex-col overflow-y-auto rounded-r-ds-lg bg-ds-surface font-ds shadow-ds-3 focus-visible:outline-none"
       >
         <nav :aria-label="label" class="flex min-h-full flex-col px-3 py-3">
           <DrawerNodes :nodes="items" />

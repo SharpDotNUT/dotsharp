@@ -323,7 +323,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
 
       <div
         v-if="showValue !== 'never'"
-        class="pointer-events-none absolute bottom-full z-30 mb-2 flex h-11 min-w-11 -translate-x-1/2 items-center justify-center rounded-full bg-ds-fg px-3 text-sm leading-none font-medium text-ds-bg shadow-sm transition-[opacity,transform] duration-150 ease-out"
+        class="pointer-events-none absolute bottom-full z-30 mb-2 flex h-11 min-w-11 -translate-x-1/2 items-center justify-center rounded-full bg-ds-fg px-3 text-sm leading-none font-medium text-ds-bg shadow-ds-1 transition-[opacity,transform] duration-150 ease-out"
         :class="bubbleVisible ? 'scale-100 opacity-100' : 'scale-75 opacity-0'"
         :style="{ left: bubbleLeft }"
         aria-hidden="true"

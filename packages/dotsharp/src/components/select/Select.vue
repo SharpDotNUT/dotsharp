@@ -347,7 +347,7 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
           role="listbox"
           tabindex="-1"
           :style="panelStyle"
-          class="ds-select__panel fixed z-50 overflow-y-auto rounded-ds-sm bg-ds-elevated py-2 font-ds text-ds-fg shadow-[0_1px_2px_0_rgba(0,0,0,0.3),0_2px_6px_2px_rgba(0,0,0,0.15)]"
+          class="ds-select__panel fixed z-50 overflow-y-auto rounded-ds-sm bg-ds-elevated py-2 font-ds text-ds-fg shadow-ds-2"
         >
           <OptionNodes :nodes="items" />
         </div>

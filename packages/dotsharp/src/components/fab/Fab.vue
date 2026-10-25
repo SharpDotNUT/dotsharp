@@ -85,7 +85,7 @@ const paddingClasses: Record<FabSize, string> = {
       extended ? extendedSizeClasses[size] : squareSizeClasses[size],
       extended ? paddingClasses[size] : '',
       textClasses[size],
-      lowered ? 'shadow-lg' : 'shadow-md',
+      lowered ? 'shadow-ds-3' : 'shadow-ds-2',
     ]"
   >
     <Icon v-if="icon" :icon="icon" :size="iconSizes[size]" />
