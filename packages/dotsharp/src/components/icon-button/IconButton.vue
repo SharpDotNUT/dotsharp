@@ -20,16 +20,28 @@ const props = withDefaults(defineProps<IconButtonProps>(), {
 </script>
 
 <template>
-  <button
-    type="button"
-    v-ripple
-    v-bind="$attrs"
-    :aria-label="label"
-    :disabled="disabled"
-    class="ds-icon-button inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-[1.5rem] text-ds-fg transition-colors hover:bg-ds-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus disabled:pointer-events-none disabled:opacity-40"
-  >
-    <slot>
-      <Icon v-if="icon" :icon="icon" />
-    </slot>
-  </button>
+  <!--
+    徽标放在 button 外面：ripple 会给 button 设 `overflow: hidden` 以裁剪涟漪，
+    放进按钮里会被圆形边界裁掉。
+  -->
+  <span class="ds-icon-button__root relative inline-flex shrink-0">
+    <button
+      type="button"
+      v-ripple
+      v-bind="$attrs"
+      :aria-label="label"
+      :disabled="disabled"
+      class="ds-icon-button inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-[1.5rem] text-ds-fg transition-colors hover:bg-ds-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus disabled:pointer-events-none disabled:opacity-40"
+    >
+      <slot>
+        <Icon v-if="icon" :icon="icon" />
+      </slot>
+    </button>
+    <span
+      v-if="$slots.badge"
+      class="ds-icon-button__badge pointer-events-none absolute top-0 right-0 translate-x-1/2 -translate-y-1/2"
+    >
+      <slot name="badge" />
+    </span>
+  </span>
 </template>

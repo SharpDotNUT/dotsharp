@@ -41,6 +41,7 @@
   --ds-primary-strong: #6f528a;
   --ds-on-primary: #280d42;
   --ds-error: #ba1a1a;
+  --ds-on-error: #ffffff;
   --ds-success: #245e24;
   --ds-scrim: #00000052;
   --ds-focus-ring: #6f528a59;
@@ -77,6 +78,7 @@
   --color-ds-primary-strong: var(--ds-primary-strong);
   --color-ds-on-primary: var(--ds-on-primary);
   --color-ds-error: var(--ds-error);
+  --color-ds-on-error: var(--ds-on-error);
   --color-ds-success: var(--ds-success);
   --color-ds-focus: var(--ds-focus-ring);
   --color-ds-scrim: var(--ds-scrim);
@@ -136,6 +138,7 @@
     --ds-primary-strong: #dbb9f9;
     --ds-on-primary: #f0dbff;
     --ds-error: #ffb4ab;
+    --ds-on-error: #690005;
     --ds-success: #89c881;
     --ds-scrim: #00000052;
     --ds-focus-ring: #dbb9f966;
@@ -163,6 +166,7 @@
   --ds-primary-strong: #dbb9f9;
   --ds-on-primary: #f0dbff;
   --ds-error: #ffb4ab;
+  --ds-on-error: #690005;
   --ds-success: #89c881;
   --ds-scrim: #00000052;
   --ds-focus-ring: #dbb9f966;

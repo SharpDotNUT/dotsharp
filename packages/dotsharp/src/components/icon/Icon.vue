@@ -29,18 +29,31 @@ const ssr = computed(() => typeof props.icon === "object" && props.icon !== null
 </script>
 
 <template>
-  <IconifyIcon
-    class="ds-icon shrink-0"
-    :icon="icon"
-    :ssr="ssr"
-    :width="size"
-    :height="size"
-    :color="color"
-    :inline="inline"
-    :aria-hidden="label ? undefined : 'true'"
-    :aria-label="label"
-    :role="label ? 'img' : undefined"
-    focusable="false"
-    v-bind="$attrs"
-  />
+  <span
+    :class="[
+      'ds-icon relative inline-flex shrink-0 items-center justify-center',
+      inline ? 'align-[-0.125em]' : '',
+    ]"
+  >
+    <IconifyIcon
+      class="ds-icon__glyph"
+      :icon="icon"
+      :ssr="ssr"
+      :width="size"
+      :height="size"
+      :color="color"
+      :inline="inline"
+      :aria-hidden="label ? undefined : 'true'"
+      :aria-label="label"
+      :role="label ? 'img' : undefined"
+      focusable="false"
+      v-bind="$attrs"
+    />
+    <span
+      v-if="$slots.badge"
+      class="ds-icon__badge pointer-events-none absolute top-0 right-0 translate-x-1/2 -translate-y-1/2"
+    >
+      <slot name="badge" />
+    </span>
+  </span>
 </template>

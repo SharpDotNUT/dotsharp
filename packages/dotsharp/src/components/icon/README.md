@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Icon } from "@sharpdotnut/dotsharp";
+import { Badge, Icon } from "@sharpdotnut/dotsharp";
+import mailIcon from "@iconify-icons/material-symbols/mail-outline";
 import home from "@iconify-icons/material-symbols/home";
 import search from "@iconify-icons/material-symbols/search";
 import favorite from "@iconify-icons/material-symbols/favorite";
@@ -54,6 +55,37 @@ import search from "@iconify-icons/material-symbols/search";
 
 `inline` 默认为 `true`，图标会以 `-0.125em` 基线与文字对齐；需要纯图形排版时可传 `:inline="false"`。
 
+## 徽标
+
+`#badge` 插槽把 `Badge` 贴在图标右上角：图标外面有一层 `relative` 容器，徽标被绝对定位并向外偏移自身一半。
+父级若 `overflow-hidden`，请留出内边距，否则徽标会被裁掉。
+
+<div class="demo-row">
+  <Icon :icon="mailIcon" label="消息">
+    <template #badge><Badge label="有新邮件" /></template>
+  </Icon>
+  <Icon :icon="home" :size="32" label="主页">
+    <template #badge><Badge :value="12" label="12 个新项目" /></template>
+  </Icon>
+</div>
+
+```vue
+<script setup lang="ts">
+import { Badge, Icon } from "@sharpdotnut/dotsharp";
+import mailIcon from "@iconify-icons/material-symbols/mail-outline";
+</script>
+
+<template>
+  <Icon :icon="mailIcon" label="消息">
+    <template #badge>
+      <Badge label="有新邮件" />
+    </template>
+  </Icon>
+</template>
+```
+
+徽标本身的行为与 `max` / `label` 等属性见 [Badge](/components/badge)。
+
 ## 无障碍
 
 默认按装饰图标处理：输出 `aria-hidden="true"` 与 `focusable="false"`，屏幕阅读器会跳过。图标本身承载语义时（例如只有图标的按钮），用 `label` 提供名称：
@@ -93,4 +125,9 @@ import search from "@iconify-icons/material-symbols/search";
 | label  | `string`                | —       | 无障碍名称；提供时输出 `role="img"` 与 `aria-label` |
 | inline | `boolean`               | `true`  | 与文字基线对齐（`vertical-align: -0.125em`）        |
 
-其余属性（`class`、`style`、事件等）透传到根 `svg`，也支持 `@iconify/vue` 的 `flip`、`rotate` 等定制属性。
+| 插槽  | 说明                                       |
+| ----- | ------------------------------------------ |
+| badge | 定位在图标右上角的徽标，通常放一个 `Badge` |
+
+其余属性（`class`、`style`、事件等）与 `flip`、`rotate` 等 Iconify 定制属性都透传到图标的 `svg`。
+最外层是 `relative inline-flex` 的容器，只为 `#badge` 定位存在；图标尺寸由 `size` 决定。

@@ -1,4 +1,5 @@
 export { default as AppBar } from "./components/app-bar/AppBar.vue";
+export { default as Badge } from "./components/badge/Badge.vue";
 export { default as Button } from "./components/button/Button.vue";
 export { default as Card } from "./components/card/Card.vue";
 export { default as Checkbox } from "./components/checkbox/Checkbox.vue";
@@ -9,6 +10,8 @@ export { default as DateInput } from "./components/date-input/DateInput.vue";
 export { default as DatePicker } from "./components/date-picker/DatePicker.vue";
 export type { DatePickerMode } from "./components/date-picker/types";
 export { default as Dialog } from "./components/dialog/Dialog.vue";
+export { default as Divider } from "./components/divider/Divider.vue";
+export type { DividerInset } from "./components/divider/types";
 export { default as Icon } from "./components/icon/Icon.vue";
 export { default as IconButton } from "./components/icon-button/IconButton.vue";
 export { default as Input } from "./components/input/Input.vue";
@@ -48,6 +51,8 @@ export { default as Switch } from "./components/switch/Switch.vue";
 export { default as Tabs } from "./components/tabs/Tabs.vue";
 export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";
+export { default as Tooltip } from "./components/tooltip/Tooltip.vue";
+export type { TooltipPlacement, TooltipVariant } from "./components/tooltip/types";
 export { useTheme } from "./composables/useTheme";
 export type { ResolvedTheme, ThemeMode, UseThemeReturn } from "./composables/useTheme";
 export {

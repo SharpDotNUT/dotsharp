@@ -108,6 +108,9 @@ export default defineConfig({
         items: [
           { text: "Container 容器", link: "/components/container" },
           { text: "Card 卡片", link: "/components/card" },
+          { text: "Divider 分隔线", link: "/components/divider" },
+          { text: "Badge 徽标", link: "/components/badge" },
+          { text: "Tooltip 工具提示", link: "/components/tooltip" },
           { text: "Progress 进度条", link: "/components/progress" },
           { text: "List 列表", link: "/components/list" },
           { text: "Dialog 对话框", link: "/components/dialog" },

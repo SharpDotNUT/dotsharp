@@ -53,6 +53,7 @@ const LIGHT_TOKENS: Record<string, TokenSpec> = {
   "primary-strong": { palette: "primary", tone: 40 },
   "on-primary": { palette: "primary", tone: 10 },
   error: { palette: "error", tone: 40 },
+  "on-error": { palette: "error", tone: 100 },
   success: { palette: "success", tone: 35 },
   scrim: { palette: "neutral", tone: 0, alpha: 0.32 },
 };
@@ -76,6 +77,7 @@ const DARK_TOKENS: Record<string, TokenSpec> = {
   "primary-strong": { palette: "primary", tone: 80 },
   "on-primary": { palette: "primary", tone: 90 },
   error: { palette: "error", tone: 80 },
+  "on-error": { palette: "error", tone: 20 },
   success: { palette: "success", tone: 75 },
   scrim: { palette: "neutral", tone: 0, alpha: 0.32 },
 };
