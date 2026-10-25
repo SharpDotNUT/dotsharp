@@ -11,11 +11,14 @@ import visibilityOffIcon from "@iconify-icons/material-symbols/visibility-off";
 defineOptions({ inheritAttrs: false });
 
 type InputVariant = "outlined" | "filled";
+type InputShape = "default" | "pill";
 type InputState = "default" | "success" | "error";
 
 interface InputProps {
   /** 容器样式：outlined 为描边，filled 为浅色填充 + 底边。 */
   variant?: InputVariant;
+  /** 容器形状：`pill` 为胶囊形搜索栏（无描边、浅色填充、高 40px），多行时忽略。 */
+  shape?: InputShape;
   /** 浮动标签，位于描边的缺口处；建议同时不要再传 placeholder。 */
   label?: string;
   /** 原生 input 类型，如 text、email、password、number、search、tel。 */
@@ -46,6 +49,7 @@ interface InputProps {
 
 const props = withDefaults(defineProps<InputProps>(), {
   variant: "outlined",
+  shape: "default",
   label: undefined,
   type: "text",
   state: "default",
@@ -87,6 +91,8 @@ const messageId = computed(() => `${inputId.value}-message`);
 const hasValue = computed(() => String(model.value ?? "").length > 0);
 const count = computed(() => Array.from(String(model.value ?? "")).length);
 const hasLeading = computed(() => Boolean(slots.leading) || Boolean(props.leadingIcon));
+/** 胶囊形只对单行有意义：多行文本回到 `variant` 的样式。 */
+const pill = computed(() => props.shape === "pill" && !props.textarea);
 
 const message = computed(() =>
   props.state === "error" ? (props.errorMessage ?? props.description) : props.description,
@@ -139,6 +145,13 @@ const filledStateClasses: Record<InputState, string> = {
   error: "border-ds-error group-focus-within:border-b-2",
 };
 
+/** 胶囊形没有描边，状态与聚焦改用 `ring`，不改变盒子尺寸。 */
+const pillStateClasses: Record<InputState, string> = {
+  default: "group-focus-within:ring-2 group-focus-within:ring-ds-primary-strong",
+  success: "ring-1 ring-ds-success group-focus-within:ring-2",
+  error: "ring-1 ring-ds-error group-focus-within:ring-2",
+};
+
 const labelStateClasses: Record<InputState, string> = {
   default: "text-ds-muted group-focus-within:text-ds-primary-strong",
   success: "text-ds-success",
@@ -153,7 +166,9 @@ const messageStateClasses: Record<InputState, string> = {
 
 const boxClasses = computed(() => {
   const classes = [props.disabled ? "opacity-60" : ""];
-  if (props.variant === "filled") {
+  if (pill.value) {
+    classes.push("group relative rounded-full bg-ds-surface-hover", pillStateClasses[props.state]);
+  } else if (props.variant === "filled") {
     classes.push(
       "group relative rounded-t-ds-sm border-b bg-ds-surface-hover",
       filledStateClasses[props.state],
@@ -165,6 +180,8 @@ const boxClasses = computed(() => {
 });
 
 const rowClasses = computed(() => {
+  if (pill.value) return ["flex h-10 items-center gap-2 px-4"];
+
   const vertical =
     props.variant === "filled"
       ? props.label
@@ -221,7 +238,7 @@ const actionClasses =
   <div class="ds-input flex w-full flex-col gap-1 font-ds" v-bind="rootAttrs">
     <div :class="boxClasses" :data-filled="hasValue ? 'true' : undefined">
       <fieldset
-        v-if="variant === 'outlined'"
+        v-if="variant === 'outlined' && !pill"
         class="pointer-events-none absolute -top-1.5 right-0 bottom-0 left-0 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
         :class="outlineStateClasses[state]"
         aria-hidden="true"
@@ -256,6 +273,7 @@ const actionClasses =
           v-else
           ref="controlRef"
           v-model="model"
+          :aria-label="pill && label ? label : undefined"
           v-bind="controlAttrs"
           :id="inputId"
           :type="resolvedType"
@@ -307,7 +325,7 @@ const actionClasses =
         </button>
       </div>
 
-      <div v-if="label" :class="labelWrapperClasses">
+      <div v-if="label && !pill" :class="labelWrapperClasses">
         <label :for="inputId" :class="labelClasses">{{ label }}</label>
       </div>
     </div>

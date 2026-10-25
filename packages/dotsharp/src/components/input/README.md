@@ -21,6 +21,7 @@ const filled = ref("Aurora");
 
 - 标签悬停（浮动）由 CSS 完成：聚焦或有内容时，标签上浮到描边缺口处，缺口由 `fieldset` / `legend` 切出，不需要给标签加背景色，因此在任何页面背景上都正确。
 - `variant="filled"` 切换为浅色填充 + 底边的样式。
+- `shape="pill"` 换成胶囊形搜索栏：无描边、浅色填充、40px 高、两端全圆角。
 - 前置 / 尾部内容用 `#leading` / `#trailing` 插槽，也可以用 `leadingIcon` / `trailingIcon` 直接传图标数据。
 - `type="password"` 自带明文切换，`clearable` 自带清除按钮，`state` 自带成功 / 错误图标。
 
@@ -229,29 +230,56 @@ const filled = ref("Aurora");
 
 `filled` 的标签固定在填充区顶部，聚焦时底边加粗，不使用 `fieldset` 缺口。
 
+## 胶囊搜索栏
+
+`shape="pill"` 换成材质 3 的搜索栏：去掉描边、改用 `--ds-surface-hover` 填充、高度 40px、两端全圆角；聚焦与校验状态用 `ring` 表示，不改变盒子尺寸。多行（`textarea`）时忽略该属性。
+
+<div class="demo-row">
+  <Input v-model="searchText" shape="pill" type="search" placeholder="Search" class="max-w-md" />
+  <Input v-model="filled" shape="pill" state="error" placeholder="Error" class="max-w-md" />
+</div>
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Input } from "@sharpdotnut/dotsharp";
+
+const searchText = ref("");
+</script>
+
+<template>
+  <Input v-model="searchText" shape="pill" type="search" placeholder="Search" />
+  <Input v-model="searchText" shape="pill" state="error" placeholder="Error" />
+</template>
+```
+
+- 胶囊形没有标签缺口：`label` 不渲染成可见标签，只作为 `aria-label` 提供给读屏，视觉提示交给 `placeholder`。
+- 胶囊形下 `variant` 不生效（既不画描边，也不加底边）。
+
 ## API
 
 ### 属性
 
-| 属性         | 类型                                | 默认值       | 说明                                         |
-| ------------ | ----------------------------------- | ------------ | -------------------------------------------- |
-| v-model      | `string \| number`                  | `""`         | 绑定值                                       |
-| variant      | `"outlined" \| "filled"`            | `"outlined"` | 容器样式                                     |
-| label        | `string`                            | —            | 浮动标签，同时作为控件的可访问名称           |
-| type         | `string`                            | `"text"`     | 原生 `input` 类型                            |
-| state        | `"default" \| "success" \| "error"` | `"default"`  | 校验状态，影响描边、标签、辅助文字与状态图标 |
-| disabled     | `boolean`                           | `false`      | 禁用                                         |
-| readonly     | `boolean`                           | `false`      | 只读                                         |
-| textarea     | `boolean`                           | `false`      | 渲染为多行 `<textarea>`                      |
-| rows         | `number`                            | `3`          | `textarea` 的初始行数                        |
-| clearable    | `boolean`                           | `false`      | 有内容时显示清除按钮                         |
-| revealable   | `boolean`                           | `true`       | `type="password"` 时显示明文切换按钮         |
-| leadingIcon  | `IconifyIcon \| string`             | —            | 前置图标；`#leading` 插槽优先                |
-| trailingIcon | `IconifyIcon \| string`             | —            | 尾部图标；`#trailing` 插槽优先               |
-| description  | `string`                            | —            | 辅助文字                                     |
-| errorMessage | `string`                            | —            | `state="error"` 时替换辅助文字               |
-| maxlength    | `number`                            | —            | 最大长度，同时自动开启字数统计               |
-| showCount    | `boolean`                           | `false`      | 只显示字数统计、不限制长度                   |
+| 属性         | 类型                                | 默认值       | 说明                                              |
+| ------------ | ----------------------------------- | ------------ | ------------------------------------------------- |
+| v-model      | `string \| number`                  | `""`         | 绑定值                                            |
+| variant      | `"outlined" \| "filled"`            | `"outlined"` | 容器样式                                          |
+| shape        | `"default" \| "pill"`               | `"default"`  | 容器形状；`pill` 为 40px 胶囊形搜索栏（多行忽略） |
+| label        | `string`                            | —            | 浮动标签，同时作为控件的可访问名称                |
+| type         | `string`                            | `"text"`     | 原生 `input` 类型                                 |
+| state        | `"default" \| "success" \| "error"` | `"default"`  | 校验状态，影响描边、标签、辅助文字与状态图标      |
+| disabled     | `boolean`                           | `false`      | 禁用                                              |
+| readonly     | `boolean`                           | `false`      | 只读                                              |
+| textarea     | `boolean`                           | `false`      | 渲染为多行 `<textarea>`                           |
+| rows         | `number`                            | `3`          | `textarea` 的初始行数                             |
+| clearable    | `boolean`                           | `false`      | 有内容时显示清除按钮                              |
+| revealable   | `boolean`                           | `true`       | `type="password"` 时显示明文切换按钮              |
+| leadingIcon  | `IconifyIcon \| string`             | —            | 前置图标；`#leading` 插槽优先                     |
+| trailingIcon | `IconifyIcon \| string`             | —            | 尾部图标；`#trailing` 插槽优先                    |
+| description  | `string`                            | —            | 辅助文字                                          |
+| errorMessage | `string`                            | —            | `state="error"` 时替换辅助文字                    |
+| maxlength    | `number`                            | —            | 最大长度，同时自动开启字数统计                    |
+| showCount    | `boolean`                           | `false`      | 只显示字数统计、不限制长度                        |
 
 ### 插槽
 
