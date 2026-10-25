@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, useAttrs, useId, useSlots, watch } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import closeIcon from "@iconify-icons/material-symbols/close";
+import Card from "../card/Card.vue";
 import Icon from "../icon/Icon.vue";
+import IconButton from "../icon-button/IconButton.vue";
 import { useBodyScrollLock } from "../../composables/useBodyScrollLock";
 
 defineOptions({ inheritAttrs: false });
@@ -33,11 +35,14 @@ const props = withDefaults(defineProps<DialogProps>(), {
 const open = defineModel<boolean>("open", { default: false });
 
 const attrs = useAttrs();
+const slots = useSlots();
 const dialogRef = ref<HTMLDialogElement | null>(null);
 const visible = ref(false);
 const titleId = useId();
 
 const isFullscreen = computed(() => props.variant === "fullscreen");
+const hasIcon = computed(() => Boolean(props.icon || slots.icon));
+const hasHeader = computed(() => Boolean(props.title) || hasIcon.value);
 
 /** `class` / `style` 属于面板；其余属性（`aria-*`、事件）落到原生 `<dialog>` 上。 */
 function panelAttrs(): Record<string, unknown> {
@@ -52,10 +57,11 @@ function dialogAttrs(): Record<string, unknown> {
   return rest;
 }
 
+/** 面板本体是一个 `Card`：圆角、表面色与头部 / 底部结构都由它提供。 */
 const panelClasses = computed(() =>
   isFullscreen.value
     ? "h-full w-full"
-    : "m-auto h-fit max-h-[calc(100dvh-3rem)] w-[calc(100%-3rem)] max-w-[35rem] overflow-hidden rounded-ds-xl p-6",
+    : "m-auto h-fit max-h-[calc(100dvh-3rem)] w-[calc(100%-3rem)] max-w-[35rem] overflow-hidden p-6 shadow-xl",
 );
 
 const panelEnterFrom = computed(() =>
@@ -149,63 +155,57 @@ onBeforeUnmount(() => {
         :leave-active-class="panelLeaveActive"
         @after-leave="onAfterLeave"
       >
-        <div
-          v-if="visible"
+        <Card
+          v-if="visible && isFullscreen"
           v-bind="panelAttrs()"
-          class="ds-dialog absolute inset-0 z-10 flex flex-col bg-ds-surface font-ds text-ds-fg shadow-xl"
-          :class="panelClasses"
+          variant="surface"
+          :level="1"
+          :class="['ds-dialog absolute inset-0 z-10', panelClasses]"
         >
-          <template v-if="isFullscreen">
-            <header class="flex h-16 shrink-0 items-center gap-1 px-2">
-              <button
-                type="button"
-                class="ds-dialog__close inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ds-fg transition-colors hover:bg-ds-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus"
-                :aria-label="closeLabel"
-                @click="close"
-              >
-                <Icon :icon="closeIcon" size="24" />
-              </button>
-              <h2
-                v-if="title"
-                :id="titleId"
-                class="min-w-0 flex-1 truncate px-2 text-xl leading-7 font-normal text-ds-fg"
-              >
-                {{ title }}
-              </h2>
-              <div v-if="$slots.actions" class="flex shrink-0 items-center gap-2 px-2">
-                <slot name="actions" />
-              </div>
-            </header>
-            <div class="min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6">
-              <slot />
-            </div>
+          <template #title-left>
+            <IconButton :icon="closeIcon" :label="closeLabel" @click="close" />
           </template>
-
-          <template v-else>
-            <div v-if="icon || $slots.icon" class="mb-4 flex justify-center text-ds-muted">
-              <slot name="icon">
-                <Icon v-if="icon" :icon="icon" size="24" />
-              </slot>
-            </div>
-            <h2
-              v-if="title"
-              :id="titleId"
-              class="text-2xl leading-8 font-normal text-ds-fg"
-              :class="icon || $slots.icon ? 'text-center' : 'text-start'"
-            >
+          <template v-if="title" #title>
+            <h2 :id="titleId" class="truncate text-xl leading-7 font-normal text-ds-fg">
               {{ title }}
             </h2>
-            <div
-              class="min-h-0 overflow-y-auto text-sm leading-5 text-ds-muted"
-              :class="title || icon || $slots.icon ? 'mt-4' : ''"
-            >
-              <slot />
-            </div>
-            <div v-if="$slots.actions" class="mt-6 flex flex-wrap items-center justify-end gap-2">
-              <slot name="actions" />
+          </template>
+          <template v-if="$slots['title-right']" #title-right>
+            <slot name="title-right" />
+          </template>
+          <div class="min-h-0 flex-1 overflow-y-auto">
+            <slot />
+          </div>
+        </Card>
+
+        <Card
+          v-else-if="visible"
+          v-bind="panelAttrs()"
+          variant="surface"
+          :level="1"
+          :padded="false"
+          :class="['ds-dialog absolute inset-0 z-10', panelClasses]"
+        >
+          <template v-if="hasHeader" #title>
+            <div :class="hasIcon ? 'flex flex-col items-center gap-2' : ''">
+              <slot v-if="hasIcon" name="icon">
+                <Icon v-if="icon" :icon="icon" size="24" class="text-ds-muted" />
+              </slot>
+              <h2 v-if="title" :id="titleId" class="text-2xl leading-8 font-normal text-ds-fg">
+                {{ title }}
+              </h2>
             </div>
           </template>
-        </div>
+          <template v-if="$slots['footer-left']" #footer-left>
+            <slot name="footer-left" />
+          </template>
+          <template v-if="$slots['footer-right']" #footer-right>
+            <slot name="footer-right" />
+          </template>
+          <div class="min-h-0 flex-1 overflow-y-auto text-sm leading-5 text-ds-muted">
+            <slot />
+          </div>
+        </Card>
       </Transition>
     </dialog>
   </Teleport>
