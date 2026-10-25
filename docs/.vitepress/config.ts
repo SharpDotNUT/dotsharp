@@ -74,6 +74,7 @@ export default defineConfig({
           { text: "简介", link: "/guide/intro" },
           { text: "快速开始", link: "/guide/getting-started" },
           { text: "统一范式", link: "/guide/patterns" },
+          { text: "涟漪 Ripple", link: "/guide/ripple" },
           { text: "主题", link: "/guide/theme" },
         ],
       },

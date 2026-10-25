@@ -3,6 +3,7 @@ import { computed, inject, ref, useId } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import checkIcon from "@iconify-icons/material-symbols/check";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import { selectContextKey, type SelectValue } from "./context";
 
 defineOptions({ inheritAttrs: false });
@@ -54,6 +55,7 @@ function highlight(): void {
   <div
     :id="optionId"
     ref="el"
+    v-ripple
     role="option"
     :aria-selected="selected"
     :aria-disabled="disabled || undefined"

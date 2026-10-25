@@ -2,6 +2,7 @@
 import { computed, ref, useAttrs, useId, useSlots } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import checkCircleIcon from "@iconify-icons/material-symbols/check-circle";
 import closeIcon from "@iconify-icons/material-symbols/close";
 import errorIcon from "@iconify-icons/material-symbols/error";
@@ -306,6 +307,7 @@ const actionClasses =
         <button
           v-if="canClear"
           type="button"
+          v-ripple
           :class="actionClasses"
           aria-label="Clear input"
           @click="clear"
@@ -316,6 +318,7 @@ const actionClasses =
         <button
           v-if="canReveal"
           type="button"
+          v-ripple
           :class="actionClasses"
           :aria-label="revealed ? 'Hide password' : 'Show password'"
           :aria-pressed="revealed"

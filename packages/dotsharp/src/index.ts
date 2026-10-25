@@ -29,3 +29,5 @@ export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";
 export { useTheme } from "./composables/useTheme";
 export type { ResolvedTheme, ThemeMode, UseThemeReturn } from "./composables/useTheme";
+export { vRipple } from "./directives/ripple";
+export type { RippleOptions, RippleValue } from "./directives/ripple";

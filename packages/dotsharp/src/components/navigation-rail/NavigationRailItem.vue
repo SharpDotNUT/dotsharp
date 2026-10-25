@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import { navigationRailContextKey, type NavigationRailValue } from "./context";
 
 defineOptions({ inheritAttrs: false });
@@ -72,6 +73,7 @@ function select(): void {
   >
     <template v-if="expandedLayout">
       <span
+        v-ripple
         :class="[
           'flex h-14 w-full items-center gap-2 rounded-full px-4 transition-colors',
           selected ? 'bg-ds-tonal' : 'group-hover:bg-ds-surface-hover',
@@ -90,6 +92,7 @@ function select(): void {
     </template>
     <template v-else>
       <span
+        v-ripple
         :class="[
           'inline-flex h-8 w-14 items-center justify-center rounded-full transition-colors',
           selected ? 'bg-ds-tonal' : 'group-hover:bg-ds-surface-hover',

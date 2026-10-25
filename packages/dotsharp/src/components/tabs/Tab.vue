@@ -2,6 +2,7 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import { tabsContextKey, type TabsValue } from "./context";
 
 defineOptions({ inheritAttrs: false });
@@ -46,6 +47,7 @@ function select(): void {
     ref="el"
     type="button"
     role="tab"
+    v-ripple
     :aria-selected="selected"
     :disabled="disabled"
     :tabindex="tabs ? (focused ? 0 : -1) : undefined"

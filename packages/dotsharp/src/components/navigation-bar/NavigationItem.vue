@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import { navigationContextKey, type NavigationValue } from "./context";
 
 defineOptions({ inheritAttrs: false });
@@ -63,6 +64,7 @@ function select(): void {
   >
     <template v-if="medium">
       <span
+        v-ripple
         :class="[
           'inline-flex min-w-0 max-w-full items-center justify-center gap-2 rounded-full px-4 py-2 transition-colors',
           selected ? 'bg-ds-tonal' : 'group-hover:bg-ds-surface-hover',
@@ -81,6 +83,7 @@ function select(): void {
     </template>
     <template v-else>
       <span
+        v-ripple
         :class="[
           'inline-flex items-center justify-center rounded-full px-4 py-1.5 transition-colors',
           selected ? 'bg-ds-tonal' : 'group-hover:bg-ds-surface-hover',

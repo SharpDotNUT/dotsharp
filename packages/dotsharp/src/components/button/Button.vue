@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { vRipple } from "../../directives/ripple";
+
 defineOptions({ inheritAttrs: false });
 
 type ButtonVariant = "elevated" | "filled" | "tonal" | "outlined" | "text";
@@ -36,6 +38,7 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 <template>
   <button
+    v-ripple
     class="ds-button inline-flex cursor-pointer items-center justify-center gap-2 rounded-full border border-transparent font-ds text-sm leading-none font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ds-focus disabled:cursor-not-allowed disabled:opacity-50"
     :class="[variantClasses[variant], sizeClasses[size]]"
     :type="type"

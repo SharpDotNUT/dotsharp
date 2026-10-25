@@ -17,6 +17,7 @@ import {
 } from "vue";
 import chevronIcon from "@iconify-icons/material-symbols/arrow-drop-down";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import Option from "./Option.vue";
 import { selectContextKey, type SelectValue } from "./context";
 
@@ -305,6 +306,7 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
       ref="triggerRef"
       type="button"
       role="combobox"
+      v-ripple
       aria-haspopup="listbox"
       :disabled="disabled"
       :aria-expanded="open"

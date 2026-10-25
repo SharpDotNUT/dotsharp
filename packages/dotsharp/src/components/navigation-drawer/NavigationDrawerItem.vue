@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 import { navigationDrawerContextKey, type NavigationDrawerValue } from "./context";
 
 defineOptions({ inheritAttrs: false });
@@ -47,6 +48,7 @@ function select(): void {
 <template>
   <component
     :is="isLink ? 'a' : 'button'"
+    v-ripple
     :href="isLink ? href : undefined"
     :type="isLink ? undefined : 'button'"
     :disabled="isLink ? undefined : disabled"

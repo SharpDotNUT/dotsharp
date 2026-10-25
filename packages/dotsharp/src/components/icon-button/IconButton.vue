@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IconifyIcon } from "@iconify/vue";
 import Icon from "../icon/Icon.vue";
+import { vRipple } from "../../directives/ripple";
 
 defineOptions({ inheritAttrs: false });
 
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<IconButtonProps>(), {
 <template>
   <button
     type="button"
+    v-ripple
     v-bind="$attrs"
     :aria-label="label"
     :disabled="disabled"
