@@ -111,6 +111,8 @@ export default defineConfig({
           { text: "Divider 分隔线", link: "/components/divider" },
           { text: "Badge 徽标", link: "/components/badge" },
           { text: "Tooltip 工具提示", link: "/components/tooltip" },
+          { text: "Menu 菜单", link: "/components/menu" },
+          { text: "ContextMenu 上下文菜单", link: "/components/context-menu" },
           { text: "Progress 进度条", link: "/components/progress" },
           { text: "List 列表", link: "/components/list" },
           { text: "Dialog 对话框", link: "/components/dialog" },
