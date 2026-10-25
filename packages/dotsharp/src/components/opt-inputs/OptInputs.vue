@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, useId, watch, type ComponentPublicInstance } from "vue";
-import type { OptInputsAccept } from "./shared";
-import { applyOptChars, filterOptChars, normalizeOptValue, removeOptChar } from "./shared";
+import type { OptInputsAccept, OptInputsLetterCase } from "./shared";
+import { applyOptChars, normalizeOptValue, removeOptChar, sanitizeOptChars } from "./shared";
 
 defineOptions({ inheritAttrs: false });
 
 interface OptInputsProps {
   /** 输入框数量。 */
   length?: number;
-  /** 允许的字符：`numeric` 数字、`alpha` 英文字母、`any` 任意单一字符。 */
+  /** 允许的字符：`numeric` 数字、`alpha` 英文字母、`alphanumeric` 数字与字母、`any` 任意单一字符。 */
   accept?: OptInputsAccept;
+  /** 字母大小写：`uppercase` / `lowercase` 自动转换，`none` 保持原样。 */
+  letterCase?: OptInputsLetterCase;
   /** 掩码显示：输入内容以圆点呈现，模型里仍是原始字符。 */
   mask?: boolean;
   /** 是否允许剪贴板粘贴；关闭后粘贴会被直接阻止。 */
@@ -22,6 +24,7 @@ interface OptInputsProps {
 const props = withDefaults(defineProps<OptInputsProps>(), {
   length: 6,
   accept: "numeric",
+  letterCase: "none",
   mask: false,
   allowPaste: true,
   disabled: false,
@@ -35,7 +38,9 @@ const uid = useId();
 const labelId = `ds-opt-inputs-label-${uid}`;
 
 /** 过滤非法字符并截断后的值；外部写入也会先经过这里。 */
-const normalized = computed(() => normalizeOptValue(model.value, props.accept, props.length));
+const normalized = computed(() =>
+  normalizeOptValue(model.value, props.accept, props.length, props.letterCase),
+);
 
 /**
  * 记录上一次是否已填满，保证 `complete` 只在“刚好填满”的那次触发；
@@ -95,7 +100,7 @@ function write(start: number, accepted: string[]): void {
 
 function onInput(index: number, event: Event): void {
   const input = event.target as HTMLInputElement;
-  const accepted = filterOptChars(input.value, props.accept);
+  const accepted = sanitizeOptChars(input.value, props.accept, props.letterCase);
 
   if (!accepted.length) {
     input.value = cellValue(index);
@@ -166,7 +171,11 @@ function onPaste(event: ClipboardEvent): void {
     return;
   }
 
-  const accepted = filterOptChars(event.clipboardData?.getData("text") ?? "", props.accept);
+  const accepted = sanitizeOptChars(
+    event.clipboardData?.getData("text") ?? "",
+    props.accept,
+    props.letterCase,
+  );
   event.preventDefault();
   if (!accepted.length) return;
 
