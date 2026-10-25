@@ -18,6 +18,9 @@ export type {
   NavigationRailPresentation,
   NavigationRailValue,
 } from "./components/navigation-rail/context";
+export { default as Select } from "./components/select/Select.vue";
+export { default as Option } from "./components/select/Option.vue";
+export type { SelectValue } from "./components/select/context";
 export { default as Slider } from "./components/slider/Slider.vue";
 export { default as RangeSlider } from "./components/slider/RangeSlider.vue";
 export type { SliderRangeValue, SliderSize, SliderValueDisplay } from "./components/slider/shared";

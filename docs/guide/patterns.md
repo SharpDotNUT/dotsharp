@@ -5,11 +5,12 @@
 | 父组件             | 子项                   | 选中值类型         |
 | ------------------ | ---------------------- | ------------------ |
 | `Tabs`             | `Tab`                  | `string \| number` |
+| `Select`           | `Option`               | `string \| number` |
 | `NavigationBar`    | `NavigationItem`       | `string \| number` |
 | `NavigationRail`   | `NavigationRailItem`   | `string \| number` |
 | `NavigationDrawer` | `NavigationDrawerItem` | `string \| number` |
 
-新增同类组件（如 `Select` / `Option`、`Steps` / `Step`）时沿用这套写法，不要另立规则。
+新增同类组件（如 `Steps` / `Step`）时沿用这套写法，不要另立规则。
 
 ## 选中值是一个模型
 
@@ -42,6 +43,9 @@
 
 图标尺寸由各组件的排版决定（例如 `Tab` 用 `1.25em`，`NavigationItem` 用 `1.5em`），需要不受限制的图标时
 改用插槽放 `<Icon>`。
+
+`Select` 多一条约束：收起态的触发器只读选中项的 `label`，因此用插槽描述 `Option` 时 `label` 仍然必须提供，
+否则触发器没有文字可显示（回退到 `placeholder`）。
 
 ## 子项标识：value 或索引
 

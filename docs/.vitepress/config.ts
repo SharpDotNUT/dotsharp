@@ -85,6 +85,7 @@ export default defineConfig({
           { text: "Icon 图标", link: "/components/icon" },
           { text: "IconButton 图标按钮", link: "/components/icon-button" },
           { text: "Input 文本框", link: "/components/input" },
+          { text: "Select 选择器", link: "/components/select" },
           { text: "Slider 滑块", link: "/components/slider" },
           { text: "Tabs 标签页", link: "/components/tabs" },
         ],
