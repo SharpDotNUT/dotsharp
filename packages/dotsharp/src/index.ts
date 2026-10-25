@@ -1,7 +1,13 @@
 export { default as AppBar } from "./components/app-bar/AppBar.vue";
 export { default as Button } from "./components/button/Button.vue";
+export { default as Card } from "./components/card/Card.vue";
 export { default as Checkbox } from "./components/checkbox/Checkbox.vue";
 export { default as Chip } from "./components/chip/Chip.vue";
+export { default as Container } from "./components/container/Container.vue";
+export type { ContainerLevel } from "./components/container/context";
+export { default as DateInput } from "./components/date-input/DateInput.vue";
+export { default as DatePicker } from "./components/date-picker/DatePicker.vue";
+export type { DatePickerMode } from "./components/date-picker/types";
 export { default as Dialog } from "./components/dialog/Dialog.vue";
 export { default as Icon } from "./components/icon/Icon.vue";
 export { default as IconButton } from "./components/icon-button/IconButton.vue";
@@ -40,5 +46,15 @@ export { default as Tab } from "./components/tabs/Tab.vue";
 export type { TabsValue } from "./components/tabs/context";
 export { useTheme } from "./composables/useTheme";
 export type { ResolvedTheme, ThemeMode, UseThemeReturn } from "./composables/useTheme";
+export {
+  matchLocale,
+  registerLocale,
+  setLocale,
+  useI18n,
+  type DateOrder,
+  type LocaleMessages,
+  type LocaleOptions,
+  type UseI18nReturn,
+} from "./i18n";
 export { vRipple } from "./directives/ripple";
 export type { RippleOptions, RippleValue } from "./directives/ripple";

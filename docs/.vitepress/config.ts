@@ -76,6 +76,7 @@ export default defineConfig({
           { text: "统一范式", link: "/guide/patterns" },
           { text: "涟漪 Ripple", link: "/guide/ripple" },
           { text: "主题", link: "/guide/theme" },
+          { text: "国际化", link: "/guide/i18n" },
         ],
       },
       {
@@ -90,6 +91,8 @@ export default defineConfig({
         text: "输入与选择",
         items: [
           { text: "Input 文本框", link: "/components/input" },
+          { text: "DateInput 日期输入框", link: "/components/date-input" },
+          { text: "DatePicker 日期选择器", link: "/components/date-picker" },
           { text: "Select 选择器", link: "/components/select" },
           { text: "Checkbox 复选框", link: "/components/checkbox" },
           { text: "Radio 单选按钮", link: "/components/radio" },
@@ -102,6 +105,8 @@ export default defineConfig({
       {
         text: "展示与容器",
         items: [
+          { text: "Container 容器", link: "/components/container" },
+          { text: "Card 卡片", link: "/components/card" },
           { text: "List 列表", link: "/components/list" },
           { text: "Dialog 对话框", link: "/components/dialog" },
         ],

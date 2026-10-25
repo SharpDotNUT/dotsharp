@@ -266,6 +266,7 @@ const searchText = ref("");
 | variant      | `"outlined" \| "filled"`            | `"outlined"` | 容器样式                                          |
 | shape        | `"default" \| "pill"`               | `"default"`  | 容器形状；`pill` 为 40px 胶囊形搜索栏（多行忽略） |
 | label        | `string`                            | —            | 浮动标签，同时作为控件的可访问名称                |
+| floatLabel   | `boolean`                           | `false`      | 标签始终上浮；默认仅在聚焦或有内容时上浮          |
 | type         | `string`                            | `"text"`     | 原生 `input` 类型                                 |
 | state        | `"default" \| "success" \| "error"` | `"default"`  | 校验状态，影响描边、标签、辅助文字与状态图标      |
 | disabled     | `boolean`                           | `false`      | 禁用                                              |

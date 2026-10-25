@@ -22,6 +22,8 @@ interface InputProps {
   shape?: InputShape;
   /** 浮动标签，位于描边的缺口处；建议同时不要再传 placeholder。 */
   label?: string;
+  /** 标签始终位于描边缺口处；默认只在聚焦或有内容时上浮。 */
+  floatLabel?: boolean;
   /** 原生 input 类型，如 text、email、password、number、search、tel。 */
   type?: string;
   /** 校验状态：影响描边、标签、辅助文字与右侧状态图标。 */
@@ -52,6 +54,7 @@ const props = withDefaults(defineProps<InputProps>(), {
   variant: "outlined",
   shape: "default",
   label: undefined,
+  floatLabel: false,
   type: "text",
   state: "default",
   disabled: false,
@@ -207,7 +210,7 @@ const labelClasses = computed(() => {
   ];
   if (props.variant === "filled") {
     classes.push("top-0 text-xs");
-  } else if (props.textarea) {
+  } else if (props.textarea || props.floatLabel) {
     classes.push("top-0 -translate-y-1/2 text-xs");
   } else {
     classes.push(
@@ -223,7 +226,7 @@ const labelClasses = computed(() => {
 const legendClasses = computed(() => [
   legendOffsetClasses.value,
   "overflow-hidden whitespace-nowrap p-0 text-xs leading-none transition-[max-width] duration-150",
-  props.textarea
+  props.textarea || props.floatLabel
     ? "max-w-full"
     : "max-w-0 group-focus-within:max-w-full group-data-[filled=true]:max-w-full",
 ]);
