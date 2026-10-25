@@ -88,6 +88,32 @@
   --font-ds: var(--ds-font);
 }
 
+/*
+ * Component animation. `--animate-*` inside `@theme` yields both the `animate-*` utility and a
+ * top-level `@keyframes`, so `dist/style.css` carries the motion and consumers can retune the
+ * duration / easing through the same custom property. This block is hand-written (it is not one
+ * of the generated colour tokens above), which is why `palette.test.ts` only looks at the token
+ * blocks.
+ */
+@theme {
+  --animate-ds-progress-indeterminate: ds-progress-indeterminate 1.8s ease-in-out infinite;
+
+  /* The sweeping segment is 1/4 of the track, so `translate` percentages cover it four times over. */
+  @keyframes ds-progress-indeterminate {
+    from {
+      translate: -150% 0;
+      scale: 0.4 1;
+    }
+    50% {
+      scale: 1 1;
+    }
+    to {
+      translate: 400% 0;
+      scale: 0.4 1;
+    }
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
