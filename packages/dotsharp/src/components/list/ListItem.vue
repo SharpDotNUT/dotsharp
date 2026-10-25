@@ -45,14 +45,14 @@ const inactiveLink = computed(() => isLink.value && props.disabled);
 </script>
 
 <template>
-  <li class="ds-list-item m-0 p-0" v-bind="rootAttrs">
+  <li class="ds-list-item m-0! p-0!" v-bind="rootAttrs">
     <component
       :is="isLink ? 'a' : 'div'"
       :href="isLink ? href : undefined"
       :aria-disabled="inactiveLink ? 'true' : undefined"
       :tabindex="inactiveLink ? -1 : undefined"
       :class="[
-        'flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left text-inherit no-underline',
+        'flex min-h-14 w-full items-center gap-3 px-4 py-2 text-left text-inherit! no-underline!',
         isLink
           ? 'cursor-pointer transition-colors hover:bg-ds-surface-hover focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus'
           : '',
@@ -73,7 +73,7 @@ const inactiveLink = computed(() => isLink.value && props.disabled);
         <div class="truncate text-base leading-6">
           <slot>{{ label }}</slot>
         </div>
-        <p v-if="description" class="m-0 truncate text-sm leading-5 text-ds-muted">
+        <p v-if="description" class="m-0! truncate text-sm leading-5! text-ds-muted">
           {{ description }}
         </p>
       </div>
