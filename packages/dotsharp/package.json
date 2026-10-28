@@ -1,7 +1,23 @@
 {
   "name": "@sharpdotnut/dotsharp",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "description": "dotsharp——适用于 Vue 3 的组件库，内置明暗主题切换。",
+  "keywords": [
+    "component-library",
+    "components",
+    "design-system",
+    "material-3",
+    "material-design",
+    "tailwind",
+    "tailwindcss",
+    "ui",
+    "vue",
+    "vue3"
+  ],
   "homepage": "https://dotsharp.sharpdotnut.com/",
+  "bugs": {
+    "url": "https://github.com/SharpDotNUT/dotsharp/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SharpDotNUT/dotsharp.git",
@@ -14,6 +30,7 @@
   "sideEffects": [
     "**/*.css"
   ],
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -21,6 +38,9 @@
     },
     "./style.css": "./dist/style.css",
     "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "vp pack && pnpm run build:css",
