@@ -8,7 +8,7 @@ const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
 export default defineConfig({
   lang: "zh-CN",
   title: "dotsharp",
-  description: "dotsharp——适用于 Vue 3 的轻量组件库，内置明暗主题切换。",
+  description: "dotsharp——适用于 Vue 3 的组件库，内置明暗主题切换。",
   appearance: false,
 
   head: [
