@@ -10,6 +10,34 @@ const index = ref(0);
 const cabinIcon = ref("business");
 const empty = ref<string | number>("");
 const disabledValue = ref("economy");
+
+const cities = [
+  "北京",
+  "上海",
+  "广州",
+  "深圳",
+  "杭州",
+  "成都",
+  "重庆",
+  "武汉",
+  "西安",
+  "南京",
+  "苏州",
+  "天津",
+  "长沙",
+  "郑州",
+  "青岛",
+  "厦门",
+  "昆明",
+  "大连",
+  "合肥",
+  "福州",
+  "济南",
+  "沈阳",
+  "哈尔滨",
+  "乌鲁木齐",
+];
+const city = ref("北京");
 </script>
 
 # Select 选择器
@@ -208,6 +236,33 @@ const cabinIcon = ref("business");
   <Option label="经济舱" value="economy" />
   <Option label="商务舱（售罄）" value="business" disabled />
 </Select>
+```
+
+## 长列表
+
+选项多到放不下时，弹层最高 `320px`，超出部分在弹层内部滚动，用 `v-for` 渲染即可，不需要额外配置。滚动只影响
+列表本身，不会改变弹层位置；用键盘移动高亮项时，列表会自动滚到高亮项所在的可见区域。
+
+<div class="demo-row">
+  <Select v-model:value="city" label="出发城市" class="w-full max-w-xs">
+    <Option v-for="name in cities" :key="name" :label="name" :value="name" />
+  </Select>
+</div>
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Option, Select } from "@sharpdotnut/dotsharp";
+
+const cities = ["北京", "上海", "广州", "深圳", "杭州", "成都", "重庆", "武汉"];
+const city = ref("北京");
+</script>
+
+<template>
+  <Select v-model:value="city" label="出发城市">
+    <Option v-for="name in cities" :key="name" :label="name" :value="name" />
+  </Select>
+</template>
 ```
 
 ## 弹层定位
