@@ -68,6 +68,8 @@ export default defineConfig({
       { text: "组件", link: "/components/button" },
     ],
 
+    socialLinks: [{ icon: "github", link: "https://github.com/SharpDotNUT/dotsharp" }],
+
     sidebar: [
       {
         text: "指南",
