@@ -185,11 +185,9 @@ function place(): void {
   const panel = panelRef.value;
   if (!trigger || !panel) return;
 
-  // 先解除 max-height 再量，否则第二次测量只能拿到被裁剪后的高度。
-  const previous = panel.style.maxHeight;
-  panel.style.maxHeight = "none";
-  const natural = panel.offsetHeight;
-  panel.style.maxHeight = previous;
+  // `scrollHeight` 就是不受 max-height 约束的内容高度。不要为了测量清掉 max-height：
+  // 那会让面板短暂失去溢出，浏览器会把 `scrollTop` 钳回 0，表现为面板内部一滚动就被拉回顶部。
+  const natural = panel.scrollHeight;
 
   const rect = trigger.getBoundingClientRect();
   const below = window.innerHeight - rect.bottom - GAP - EDGE;
@@ -226,16 +224,23 @@ function reveal(el: HTMLElement | null): void {
   }
 }
 
+/** 页面或祖先容器滚动时重新定位；弹层自己的滚动不该触发重新定位。 */
+function onScroll(event: Event): void {
+  const target = event.target as Node | null;
+  if (target && panelRef.value?.contains(target)) return;
+  place();
+}
+
 function listen(on: boolean): void {
   if (typeof document === "undefined") return;
   if (on) {
     document.addEventListener("pointerdown", onPointerDown, true);
     window.addEventListener("resize", place);
-    window.addEventListener("scroll", place, true);
+    window.addEventListener("scroll", onScroll, true);
   } else {
     document.removeEventListener("pointerdown", onPointerDown, true);
     window.removeEventListener("resize", place);
-    window.removeEventListener("scroll", place, true);
+    window.removeEventListener("scroll", onScroll, true);
   }
 }
 
