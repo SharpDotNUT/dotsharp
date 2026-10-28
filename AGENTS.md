@@ -135,6 +135,11 @@ inventing a second convention.
 - **Read the slot inside a render-evaluated `computed`.** Never call `slots.default()` in `setup()` or a module-scope
   helper: it warns and drops slot dependency tracking. A `computed` that only the template reads is evaluated during
   render, which is correct.
+- **Slot vnodes are consumed once, per mount.** Static slot content gives that `computed` no reactive dependency, so it
+  would cache the same vnodes forever. If they land in a subtree that is conditionally mounted (a `v-if` panel such as
+  `Select`'s listbox, `Menu`'s panel, `FabMenu`'s actions), remounting those already-unmounted vnodes renders an empty
+  shell — and only after SSR hydration, so it hides from `vitest` mounts. Make the open flag a dependency of that
+  `computed` (`void open.value;`) so every mount builds fresh vnodes.
 - **Document the paradigm briefly in the component README** (`label`-only, slot override, index fallback, plus the
   variant boolean if there is one) and link to `/guide/patterns`; the canonical explanation lives in
   `docs/guide/patterns.md`. Keep the `TabsValue`-style value type exported from `src/index.ts`.

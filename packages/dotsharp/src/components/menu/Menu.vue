@@ -382,8 +382,11 @@ function flatten(nodes: VNode[]): VNode[] {
 /**
  * 子项索引只能在 Menu 里确定：展开 Fragment 后按声明顺序给每个 MenuItem 注入 index。
  * computed 在模板里才被求值，因此 `slots.default()` 仍处于渲染上下文中，依赖得以追踪。
+ * vnode 只属于当次挂载，弹层每次重新打开都必须重新生成，因此 `open` 也是依赖：
+ * 复用卸载过的 vnode 会让弹层渲染出一个没有菜单项的空壳。
  */
 const items = computed<VNode[]>(() => {
+  void open.value;
   let index = 0;
   return flatten(slots.default?.() ?? []).map((node) =>
     node.type === MenuItem ? cloneVNode(node, { index: index++ }) : node,

@@ -54,17 +54,20 @@ function flatten(nodes: VNode[]): VNode[] {
 /**
  * 菜单项就是扩展 FAB：给每个 Fab 补上 `menuitem` 语义，并在选中后收起菜单。
  * `cloneVNode` 会合并 props 里的 `onClick`，使用方自己的处理器照常触发。
+ * vnode 只属于当次挂载，面板每次重新打开都必须重新生成，因此 `open` 也是依赖：
+ * 复用卸载过的 vnode 会让面板渲染出一个没有菜单项的空壳。
  */
-const items = computed<VNode[]>(() =>
-  flatten(slots.default?.() ?? []).map((node) => {
+const items = computed<VNode[]>(() => {
+  void open.value;
+  return flatten(slots.default?.() ?? []).map((node) => {
     if (node.type !== Fab) return node;
     return cloneVNode(node, {
       role: "menuitem",
       tabindex: -1,
       onClick: () => close(),
     });
-  }),
-);
+  });
+});
 
 const ItemNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, props.nodes);
 
