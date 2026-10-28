@@ -379,7 +379,7 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
   >
     <div class="group relative w-full" :class="disabled ? 'opacity-60' : ''">
       <fieldset
-        class="pointer-events-none absolute right-0 bottom-0 left-0 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
+        class="pointer-events-none absolute right-0 bottom-0 left-0 z-10 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
         :class="[label ? '-top-1.5' : 'top-0', outlineClasses]"
         aria-hidden="true"
       >
@@ -405,7 +405,7 @@ const OptionNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, p
         :aria-activedescendant="open ? activeEl?.id : undefined"
         :aria-invalid="isInvalid || undefined"
         :aria-describedby="validationMessage ? messageId : undefined"
-        class="ds-select__trigger box-border flex min-h-14 w-full min-w-40 cursor-pointer items-center justify-between gap-2 rounded-ds-sm bg-ds-surface px-4 text-base leading-6 text-ds-fg transition-colors disabled:cursor-not-allowed"
+        class="ds-select__trigger box-border flex min-h-14 w-full min-w-40 cursor-pointer items-center justify-between gap-2 rounded-ds-sm border-0 bg-ds-surface px-4 text-base leading-6 text-ds-fg transition-colors disabled:cursor-not-allowed"
         v-bind="{ ...triggerAttrs, ...itemLabelAttrs }"
         @click="toggle"
         @keydown="onKeydown"

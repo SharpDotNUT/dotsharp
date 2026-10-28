@@ -487,7 +487,7 @@ const actionClasses =
     <div ref="boxRef" :class="boxClasses" :data-filled="hasValue ? 'true' : undefined">
       <fieldset
         v-if="variant === 'outlined' && !pill"
-        class="pointer-events-none absolute right-0 bottom-0 left-0 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
+        class="pointer-events-none absolute right-0 bottom-0 left-0 z-10 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
         :class="[label ? '-top-1.5' : 'top-0', outlineClasses]"
         aria-hidden="true"
       >
