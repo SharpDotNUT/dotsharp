@@ -119,8 +119,8 @@ const prices = ref<Array<string | number>>(["$$"]);
 
 ## 形状
 
-`shape="standard"`（默认）保持子项之间的空隙，每个子项都是完整胶囊；`shape="connected"` 用 2px 间隙把子项连成一条，
-只有两端保留大圆角，中间子项收成 4px 圆角。
+`shape="standard"`（默认）保持子项之间的空隙，未选中的子项是完整胶囊；`shape="connected"` 用 2px 间隙把子项连成一条，
+未选中时只有两端保留大圆角，中间子项收成 4px 圆角。
 
 <div class="demo-row">
   <ButtonGroup v-model:value="connected" selection="single" shape="connected">
@@ -147,6 +147,17 @@ const connected = ref("list");
   </ButtonGroup>
 </template>
 ```
+
+选中态在两种形状下都改用同一个圆角令牌（`--ds-radius`，8px），比完整胶囊更小：
+
+| 形状                | 未选中               | 选中                |
+| ------------------- | -------------------- | ------------------- |
+| `standard`          | 完整胶囊             | 四角收成 8px 圆角   |
+| `connected`（首项） | 左端大圆角、右端 4px | 四角统一为 8px 圆角 |
+| `connected`（中间） | 四角 4px             | 四角统一为 8px 圆角 |
+| `connected`（末项） | 左端 4px、右端大圆角 | 四角统一为 8px 圆角 |
+
+`connected` 的选中项不再跟随所在端点保留大圆角，因此不会出现「一端全圆、一端小圆」的不对称。
 
 ## 层级与尺寸
 

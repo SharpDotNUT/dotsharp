@@ -52,8 +52,16 @@ const selectable = computed(() => Boolean(group?.selection));
 const variant = computed<ButtonVariant>(() => props.variant ?? group?.variant ?? "filled");
 const size = computed<ButtonSize>(() => props.size ?? group?.size ?? "md");
 
-/** connected 形状只保留两端的大圆角，中间子项收成 4px。 */
+/**
+ * 选中态的圆角，两种形状共用同一个令牌（`--ds-radius`，8px）：
+ * standard 下选中的子项从完整胶囊收成更小的圆角；connected 下不论位于哪一端，
+ * 四个角都统一成这个圆角，不会出现「一端全圆、一端小圆」的不对称。
+ */
+const selectedRadiusClasses = "rounded-ds";
+
+/** 未选中时：standard 都是完整胶囊；connected 只保留两端的大圆角，中间收成 4px。 */
 const radiusClass = computed(() => {
+  if (selected.value) return selectedRadiusClasses;
   if (!group || group.shape === "standard") return "rounded-full";
   if (props.index === 0) return props.last ? "rounded-full" : "rounded-l-full rounded-r-ds-sm";
   return props.last ? "rounded-l-ds-sm rounded-r-full" : "rounded-ds-sm";

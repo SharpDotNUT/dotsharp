@@ -8,8 +8,10 @@ export type ButtonGroupValue = string | number;
 export type ButtonGroupSelection = "single" | "multiple";
 
 /**
- * `standard`：按钮之间留空隙，每个按钮都是完整胶囊；
- * `connected`：按钮用 2px 间隙连成一条，只有两端是完整圆角。
+ * `standard`：按钮之间留空隙，未选中的按钮是完整胶囊；
+ * `connected`：按钮用 2px 间隙连成一条，未选中时只有两端是完整圆角。
+ * 两种形状的选中态共用同一个圆角令牌（`--ds-radius`）：standard 收成更小的圆角，
+ * connected 四角统一，避免端点处出现「一端全圆、一端小圆」。
  */
 export type ButtonGroupShape = "standard" | "connected";
 
