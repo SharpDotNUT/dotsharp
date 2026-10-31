@@ -4,6 +4,21 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-10-31
+
+### 新增
+
+- `Input`：`label` 与 `placeholder` 可以同时使用，两者不再重叠。未聚焦的空状态下只显示居中的标签；标签上浮后（聚焦、`floatLabel`、`filled`、多行或已有内容）才显示 `placeholder`，用户输入后随原生行为隐藏；`shape="pill"` 没有可见标签，`placeholder` 始终显示。
+
+### 变更
+
+- `ButtonGroup`：选中态改用统一的圆角令牌 `--ds-radius`（8px）。`shape="standard"` 下选中的子项不再是完整胶囊；`shape="connected"` 下选中项不论位于哪一端，四个角都一致，不再出现「一端全圆、一端小圆」的不对称。
+
+### 文档
+
+- `Input`：新增「标签与 placeholder」示例，并补充各形状与变体下 `placeholder` 的出现时机。
+- `ButtonGroup`：形状一节补充未选中 / 选中的圆角对照表。
+
 ## [1.1.1] - 2026-10-29
 
 ### 修复
@@ -25,6 +40,7 @@
 
 - 补充根 README，加入仓库链接并调整站点描述。
 
-[Unreleased]: https://github.com/SharpDotNUT/dotsharp/compare/v1.1.1...HEAD
+[Unreleased]: https://github.com/SharpDotNUT/dotsharp/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/SharpDotNUT/dotsharp/compare/v1.1.1...v1.2.0
 [1.1.1]: https://github.com/SharpDotNUT/dotsharp/compare/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/SharpDotNUT/dotsharp/compare/v1.0.0...v1.1.0
