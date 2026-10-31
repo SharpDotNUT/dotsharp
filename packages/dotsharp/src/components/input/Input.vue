@@ -31,7 +31,7 @@ interface InputProps {
   variant?: InputVariant;
   /** 容器形状：`pill` 为胶囊形搜索栏（无描边、浅色填充、高 40px），多行时忽略。 */
   shape?: InputShape;
-  /** 浮动标签，位于描边的缺口处；建议同时不要再传 placeholder。 */
+  /** 浮动标签，位于描边的缺口处；与 `placeholder` 同用时不重叠：后者只在标签上浮后出现。 */
   label?: string;
   /** 标签始终位于描边缺口处；默认只在聚焦或有内容时上浮。 */
   floatLabel?: boolean;
@@ -101,7 +101,7 @@ const uid = useId();
 
 /** `class` / `style` 落在根元素上，其余属性与事件全部透传给原生控件。 */
 const controlAttrs = computed(() => {
-  const { class: _class, style: _style, ...rest } = attrs;
+  const { class: _class, style: _style, placeholder: _placeholder, ...rest } = attrs;
   return rest;
 });
 
@@ -116,8 +116,27 @@ const messageId = computed(() => `${inputId.value}-message`);
 const hasValue = computed(() => String(model.value ?? "").length > 0);
 const count = computed(() => Array.from(String(model.value ?? "")).length);
 const hasLeading = computed(() => Boolean(slots.leading) || Boolean(props.leadingIcon));
+/** 焦点是否落在输入框内部（含清除 / 明文按钮），与标签上浮用的 `focus-within` 保持一致。 */
+const focused = ref(false);
 /** 胶囊形只对单行有意义：多行文本回到 `variant` 的样式。 */
 const pill = computed(() => props.shape === "pill" && !props.textarea);
+
+/**
+ * 标签是否已经上浮：上浮后它离开输入区，`placeholder` 才有位置显示。
+ * 胶囊形不渲染可见标签，`filled` / 多行 / `floatLabel` 的标签始终在顶部。
+ */
+const labelFloated = computed(() => {
+  if (!props.label || pill.value) return true;
+  if (props.variant === "filled" || props.textarea || props.floatLabel) return true;
+  return focused.value || hasValue.value;
+});
+
+/** 有 `label` 时，`placeholder` 只在标签上浮后出现，未聚焦的空状态下只显示标签，两者不重叠。 */
+const placeholder = computed(() => {
+  if (!labelFloated.value) return undefined;
+  const value = attrs.placeholder;
+  return typeof value === "string" ? value : undefined;
+});
 
 const formItem = inject(formItemContextKey, null);
 
@@ -290,6 +309,13 @@ function onBlur(event: Event): void {
 
 function onFocus(): void {
   if (suggestions.value.length) void openPanel();
+}
+
+/** 焦点仍在容器内（例如点到清除按钮）时不收起标签，与 CSS 的 `focus-within` 一致。 */
+function onFocusOut(event: FocusEvent): void {
+  const next = event.relatedTarget as Node | null;
+  if (next && boxRef.value?.contains(next)) return;
+  focused.value = false;
 }
 
 function choose(value: string): void {
@@ -484,7 +510,13 @@ const actionClasses =
 
 <template>
   <div class="ds-input flex w-full flex-col gap-1 font-ds" v-bind="rootAttrs">
-    <div ref="boxRef" :class="boxClasses" :data-filled="hasValue ? 'true' : undefined">
+    <div
+      ref="boxRef"
+      :class="boxClasses"
+      :data-filled="hasValue ? 'true' : undefined"
+      @focusin="focused = true"
+      @focusout="onFocusOut"
+    >
       <fieldset
         v-if="variant === 'outlined' && !pill"
         class="pointer-events-none absolute right-0 bottom-0 left-0 z-10 m-0 box-border min-w-0 rounded-ds-sm border p-0 transition-colors"
@@ -510,6 +542,7 @@ const actionClasses =
           v-bind="{ ...controlAttrs, ...itemLabelAttrs }"
           :id="inputId"
           :rows="rows"
+          :placeholder="placeholder"
           :maxlength="maxlength"
           :disabled="disabled"
           :readonly="readonly"
@@ -528,6 +561,7 @@ const actionClasses =
           v-bind="{ ...controlAttrs, ...itemLabelAttrs }"
           :id="inputId"
           :type="resolvedType"
+          :placeholder="placeholder"
           :maxlength="maxlength"
           :disabled="disabled"
           :readonly="readonly"

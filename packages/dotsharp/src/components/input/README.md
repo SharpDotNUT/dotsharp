@@ -6,6 +6,7 @@ import mic from "@iconify-icons/material-symbols/mic";
 import search from "@iconify-icons/material-symbols/search";
 
 const name = ref("");
+const nickname = ref("");
 const amount = ref("55");
 const searchText = ref("");
 const email = ref("user@gmail.com");
@@ -64,7 +65,40 @@ const name = ref("");
 </template>
 ```
 
-`label` 会同时作为原生 `<label for>` 的名称；已经用 `label` 时不要再传 `placeholder`，否则两者会在未聚焦的空状态下重叠。
+`label` 会同时作为原生 `<label for>` 的名称。
+
+## 标签与 placeholder
+
+`label` 和 `placeholder` 可以同时使用，两者不会重叠：未聚焦的空状态下只显示居中的标签；标签上浮后才显示 `placeholder`，用户开始输入后它又随原生行为消失。
+
+<div class="demo-row">
+  <Input v-model="nickname" label="昵称" placeholder="例如 aurora" class="max-w-md" />
+</div>
+
+当前值：{{ nickname || '（空）' }}
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { Input } from "@sharpdotnut/dotsharp";
+
+const nickname = ref("");
+</script>
+
+<template>
+  <Input v-model="nickname" label="昵称" placeholder="例如 aurora" />
+</template>
+```
+
+标签的上浮时机决定了 `placeholder` 何时出现：
+
+| 情况                                         | 标签位置           | `placeholder`          |
+| -------------------------------------------- | ------------------ | ---------------------- |
+| outlined，默认                               | 聚焦或有内容时上浮 | 上浮后出现             |
+| `floatLabel`、`textarea`、`variant="filled"` | 始终在顶部         | 空值时始终显示         |
+| `shape="pill"`                               | 不渲染可见标签     | 始终显示（即搜索提示） |
+
+标签未上浮时 DOM 上没有 `placeholder` 属性，可访问名称始终来自 `label`，不受影响。
 
 ## 字数统计
 
@@ -324,6 +358,7 @@ const usernameValidator = (value: string | number) =>
 | variant      | `"outlined" \| "filled"`                     | `"outlined"`        | 容器样式                                          |
 | shape        | `"default" \| "pill"`                        | `"default"`         | 容器形状；`pill` 为 40px 胶囊形搜索栏（多行忽略） |
 | label        | `string`                                     | —                   | 浮动标签，同时作为控件的可访问名称                |
+| placeholder  | `string`                                     | —                   | 原生属性；与 `label` 同用时只在标签上浮后显示     |
 | floatLabel   | `boolean`                                    | `false`             | 标签始终上浮；默认仅在聚焦或有内容时上浮          |
 | type         | `string`                                     | `"text"`            | 原生 `input` 类型                                 |
 | disabled     | `boolean`                                    | `false`             | 禁用                                              |
