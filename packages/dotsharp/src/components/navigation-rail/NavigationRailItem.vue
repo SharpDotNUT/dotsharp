@@ -34,10 +34,13 @@ const props = withDefaults(defineProps<NavigationRailItemProps>(), {
 
 const rail = inject(navigationRailContextKey, null);
 
-/** 只有可展开 rail 展开时才切成横向布局；折叠态始终是图标在上、文字在下。 */
+/** 只有可展开 rail 展开时才切成横向布局；折叠态默认是图标在上、文字在下。 */
 const expandedLayout = computed(
   () => (rail?.expandable.value ?? false) && (rail?.expanded.value ?? false),
 );
+
+/** 折叠态是否在图标下方显示文字；关闭时折叠态只剩图标。 */
+const showsCollapsedLabel = computed(() => rail?.collapsedLabel.value ?? true);
 
 const resolvedValue = computed<NavigationRailValue>(() => props.value ?? props.index);
 const selected = computed(() => rail?.model.value === resolvedValue.value);
@@ -64,37 +67,52 @@ function select(): void {
     :tabindex="isLink && disabled ? -1 : undefined"
     :aria-current="selected ? 'page' : undefined"
     :class="[
-      'ds-navigation-rail-item group flex w-full cursor-pointer items-center border-0 font-ds no-underline transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus',
-      expandedLayout ? 'h-16 w-full px-5' : 'min-h-16 flex-col justify-center gap-1 px-1 py-2',
+      'ds-navigation-rail-item group relative col-span-full border-0 font-ds no-underline transition-colors focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ds-focus',
+      showsCollapsedLabel ? 'flex h-16 items-center' : 'grid h-12 grid-cols-subgrid items-center',
       selected ? 'text-ds-secondary' : 'text-ds-muted',
     ]"
     @click="select"
     v-bind="$attrs"
   >
-    <template v-if="expandedLayout">
+    <!-- 模式一：折叠态不显示文字，行高按内容取 48px。胶囊与行同高、上下不留边距，折叠时是个圆角胶囊；
+         展开时左边界贴到 rail 边缘、左角改直角，左右边界一起拉到整行 -->
+    <template v-if="!showsCollapsedLabel">
       <span
         v-ripple
         :class="[
-          'flex h-14 w-full items-center gap-2 rounded-full px-4 transition-colors',
+          'absolute inset-y-0 transition-[left,right,border-radius,background-color] duration-200 ease-out',
+          expandedLayout ? 'inset-x-0 rounded-r-full' : 'inset-x-5 rounded-full',
           selected ? 'bg-ds-tonal' : 'group-hover:bg-ds-surface-hover',
         ]"
-      >
+      />
+      <span class="relative col-start-1 flex items-center justify-center">
         <Icon
           v-if="resolvedIcon"
           :icon="resolvedIcon"
           size="24"
           :class="selected ? 'text-ds-on-tonal' : undefined"
         />
-        <span class="min-w-0 truncate text-sm">
-          <slot>{{ label }}</slot>
-        </span>
       </span>
+      <span
+        v-if="expandedLayout"
+        class="relative col-start-2 flex min-w-0 items-center pr-4 text-sm"
+      >
+        <span class="truncate"
+          ><slot>{{ label }}</slot></span
+        >
+      </span>
+      <span v-else class="sr-only"
+        ><slot>{{ label }}</slot></span
+      >
     </template>
+
+    <!-- 模式二：折叠态在图标下方显示文字。胶囊包住图标（展开时连文字），宽度随内容、展开时撑满整行高度 -->
     <template v-else>
       <span
         v-ripple
         :class="[
-          'inline-flex h-8 w-14 items-center justify-center rounded-full transition-colors',
+          'absolute left-5 flex items-center rounded-full pl-4 pr-4 transition-[top,height,background-color] duration-200 ease-out',
+          expandedLayout ? 'top-1 h-14' : 'top-1.5 h-8',
           selected ? 'bg-ds-tonal' : 'group-hover:bg-ds-surface-hover',
         ]"
       >
@@ -104,8 +122,14 @@ function select(): void {
           size="24"
           :class="selected ? 'text-ds-on-tonal' : undefined"
         />
+        <span v-if="expandedLayout" class="min-w-0 truncate pl-3 text-sm">
+          <slot>{{ label }}</slot>
+        </span>
       </span>
-      <span class="max-w-full truncate text-xs">
+      <span
+        v-if="!expandedLayout"
+        class="absolute inset-x-0 top-[38px] truncate px-1 text-center text-xs"
+      >
         <slot>{{ label }}</slot>
       </span>
     </template>

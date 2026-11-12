@@ -13,6 +13,8 @@ export interface NavigationRailContext {
   expanded: Ref<boolean>;
   /** NavigationRail 的 `expandable`，供子项决定排版。 */
   expandable: Ref<boolean>;
+  /** 折叠态是否在图标下方显示文字；`false` 时折叠态只有图标。 */
+  collapsedLabel: Ref<boolean>;
 }
 
 export const navigationRailContextKey: InjectionKey<NavigationRailContext> = Symbol(

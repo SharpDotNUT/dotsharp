@@ -16,6 +16,8 @@ const modalValue = ref("timer");
 const modalOpen = ref(false);
 const widthValue = ref("timer");
 const widthExpanded = ref(true);
+const compactValue = ref("timer");
+const compactExpanded = ref(false);
 const indexValue = ref(0);
 </script>
 
@@ -29,8 +31,12 @@ const indexValue = ref(0);
 | 形态                        | 宽度        | 排版                                      |
 | --------------------------- | ----------- | ----------------------------------------- |
 | 折叠（默认，`96px`）        | 固定 `96px` | 图标在上、文字在下                        |
-| 展开（`expandable`）        | `220–360px` | 图标与文字左右排列，整行胶囊指示          |
+| 展开（`expandable`）        | `220–360px` | 左侧 96px 图标列不动，文字放进右侧展开块  |
 | 不可展开（无 `expandable`） | 固定 `96px` | 始终折叠排版，`v-model:expanded` 不起作用 |
+
+展开时左侧 96px 槽位（菜单按钮与每个图标）位置保持不变：整条 rail 的列表是一张两列网格，
+左列固定 96px、右列是展开部分，每一项都用 `subgrid` 继承这两列——宽度只加在右列上，
+所以菜单按钮和图标无论折叠还是展开都居中于同一条竖线。
 
 ## 子项约定
 
@@ -86,8 +92,9 @@ const current = ref("timer");
 
 ## 可展开导航栏
 
-加 `expandable` 后由菜单按钮切换折叠 / 展开：折叠 96px 只留图标与下方文字，展开到 `expandedWidth`
-（默认 256px，夹在 220–360px 之间）时文字移到图标右侧，选中指示变成整行胶囊。
+加 `expandable` 后由菜单按钮切换折叠 / 展开：折叠 96px，展开到 `expandedWidth`
+（默认 256px，夹在 220–360px 之间）时文字移到图标右侧。折叠态有两种排法：默认在图标下方显示文字，
+传 `:collapsed-label="false"` 则折叠态只有图标。
 
 `presentation` 决定展开时如何占用空间：
 
@@ -244,6 +251,41 @@ const expanded = ref(false);
 </NavigationRail>
 ```
 
+### 折叠态不显示文字
+
+传 `:collapsed-label="false"` 换成图标模式：折叠态只剩图标（图标恒在行中心），展开时文字从右侧出现，
+高亮胶囊左右边界一起拉伸到整行。`collapsed-label` 默认 `true`，即折叠时在图标下方显示文字。
+
+<div class="demo-row">
+  <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail v-model:value="compactValue" v-model:expanded="compactExpanded" expandable :collapsed-label="false" :menu-icon="menu" :menu-expanded-icon="menuOpen" menu-label="展开或收起导航" label="时钟">
+      <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+      <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+    </NavigationRail>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容</div>
+  </div>
+</div>
+
+```vue
+<NavigationRail
+  v-model:value="current"
+  v-model:expanded="expanded"
+  expandable
+  :collapsed-label="false"
+  :menu-icon="menu"
+  :menu-expanded-icon="menuOpen"
+  menu-label="展开或收起导航"
+  label="时钟"
+>
+  <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+  <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+  <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+  <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+</NavigationRail>
+```
+
 ## 内置菜单按钮
 
 | 行为            | 不可展开（默认）           | `expandable`                      |
@@ -361,7 +403,8 @@ const index = ref(0);
 
 ## 单项内容
 
-- `label`：纯文本，**始终显示**——折叠时在图标下方，展开时在图标右侧；它同时是该项的无障碍名称。
+- `label`：纯文本，折叠时在图标下方（`collapsed-label="false"` 时折叠态不显示，只作为无障碍名称）、
+  展开时在图标右侧。
 - `icon`：与 `Icon` 的 `icon` 同源，尺寸固定 24px。
 - 默认插槽：**优先于 `label`**，适合自定义排版；过长文字会截断为省略号。
 
@@ -381,6 +424,7 @@ const index = ref(0);
 | v-model:value      | `string \| number`      | `0`                   | 当前选中值，对应子项的 `value` 或索引                  |
 | v-model:expanded   | `boolean`               | `false`               | 仅 `expandable`：是否展开为 `expandedWidth`            |
 | expandable         | `boolean`               | `false`               | 允许菜单按钮展开 / 收起                                |
+| collapsed-label    | `boolean`               | `true`                | 折叠态是否在图标下方显示文字；`false` 时折叠态只有图标 |
 | presentation       | `"standard" \| "modal"` | `"standard"`          | 展开时挤开内容，或在定位容器内覆盖内容                 |
 | expandedWidth      | `number`                | `256`                 | 展开宽度，夹在 220–360px 之间                          |
 | menu               | `boolean`               | `true`                | 是否渲染内置菜单按钮                                   |
@@ -415,7 +459,13 @@ const index = ref(0);
 
 - 根元素是 `button`（`href` 存在时是 `a`），选中项带 `aria-current="page"`。
 - 默认插槽优先于 `label`；与 `icon` 同时使用时插槽内容排在图标之后。
-- 选中指示器：折叠态只包住图标（8×14 胶囊），展开态是整行 56px 胶囊。
+- 选中指示器：
+  - `collapsed-label`（默认）：折叠态胶囊 32px 高、包住图标，文字在胶囊下方；展开后胶囊 56px 高、
+    上下各留 4px，图标与文字纵向居中，下方文字的占位直接去掉，item 总高度始终是 64px。胶囊左边界固定
+    在 20px，图标横向位置因此两种状态一致。
+  - `:collapsed-label="false"`：折叠态不显示文字，行高按内容取 48px（默认模式 64px）；胶囊与行同高、
+    上下不留边距，折叠态左右各内缩 20px、四角都是圆角；展开时贴到整行两端，左边界落到 rail 边缘、
+    左角改成直角（`rounded-r-full`）。
 
 ## 可访问性
 

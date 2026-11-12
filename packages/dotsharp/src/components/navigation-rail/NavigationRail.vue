@@ -30,6 +30,8 @@ const MAX_EXPANDED_WIDTH = 360;
 interface NavigationRailProps {
   /** 允许由菜单按钮展开：折叠 96px，展开 220–360px。 */
   expandable?: boolean;
+  /** 折叠态是否在图标下方显示文字；`false` 时折叠态只有图标（展开态文字仍在图标右侧）。 */
+  collapsedLabel?: boolean;
   /** `standard`：展开时挤开内容；`modal`：展开时覆盖最近定位容器内的内容并带遮罩。 */
   presentation?: NavigationRailPresentation;
   /** 展开态宽度，夹在 220–360px 之间。 */
@@ -48,6 +50,7 @@ interface NavigationRailProps {
 
 const props = withDefaults(defineProps<NavigationRailProps>(), {
   expandable: false,
+  collapsedLabel: true,
   presentation: "standard",
   expandedWidth: 256,
   menu: true,
@@ -68,6 +71,7 @@ provide(navigationRailContextKey, {
   model,
   expanded,
   expandable: toRef(props, "expandable"),
+  collapsedLabel: toRef(props, "collapsedLabel"),
 });
 
 const listId = useId();
@@ -177,7 +181,10 @@ const RailNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, pro
       </button>
     </div>
 
-    <div :id="listId" class="flex min-h-0 w-full flex-1 flex-col gap-1 overflow-y-auto px-2 py-1">
+    <div
+      :id="listId"
+      class="grid min-h-0 w-full flex-1 grid-cols-[96px_minmax(0,1fr)] content-start gap-y-1 overflow-y-auto py-1"
+    >
       <RailNodes :nodes="items" />
     </div>
   </nav>
