@@ -102,11 +102,11 @@ provide(navigationRailContextKey, {
 
 const railClasses = computed(() => {
   if (isModal.value) {
-    return "absolute inset-y-0 left-0 z-20 overflow-y-auto rounded-r-ds-lg shadow-ds-3";
+    return "absolute inset-y-0 left-0 z-20 overflow-x-hidden overflow-y-auto rounded-r-ds-lg shadow-ds-3";
   }
   if (isHoverMode.value) {
     return [
-      "absolute inset-y-0 left-0 z-20 overflow-y-auto transition-[width] duration-200 ease-out",
+      "absolute inset-y-0 left-0 z-20 overflow-x-hidden overflow-y-auto transition-[width] duration-200 ease-out",
       isExpanded.value ? "rounded-r-ds-lg shadow-ds-3" : undefined,
     ];
   }
@@ -222,7 +222,7 @@ const RailNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, pro
 
       <div
         :id="listId"
-        class="grid min-h-0 w-full flex-1 grid-cols-[96px_minmax(0,1fr)] content-start gap-y-1 overflow-y-auto py-1"
+        class="grid min-h-0 w-full flex-1 grid-cols-[96px_minmax(0,1fr)] content-start gap-y-1 overflow-x-hidden overflow-y-auto py-1"
       >
         <RailNodes :nodes="items" />
       </div>
