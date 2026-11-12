@@ -26,23 +26,33 @@ Per package: `pnpm --filter @sharpdotnut/dotsharp <script>`, `pnpm --filter @dot
 
 ```
 packages/dotsharp/
-  src/index.ts                 # the single public entry: components + useTheme
+  src/index.ts                 # the single public entry: components, composables, directives, i18n
   src/styles/index.css         # Tailwind entry: generated default tokens + @theme mapping
   src/theme/palette.ts         # source colour -> M3 tonal palettes -> --ds-* tokens
   src/theme/palette.test.ts    # generator + stylesheet drift guard
   src/components/<name>/
     <Name>.vue                 # component implementation
     README.md                  # the component's whole docs page (docs + live demo + snippets)
+    context.ts                 # typed InjectionKey + provider state, for item components
   src/composables/useTheme.ts  # theme composable (module-level singleton)
-  src/composables/useTheme.test.ts
+  src/composables/useOverlayPanel.ts  # scrim, focus trap and Escape for modal overlays
+  src/directives/ripple.ts     # v-ripple
+  src/i18n/index.ts            # locale messages + setLocale / registerLocale / matchLocale / useI18n
+  src/i18n/index.test.ts
 docs/
+  index.md                     # site home page: hero + feature cards
   .vitepress/config.ts         # site config: appearance off, pre-paint theme script, dotsharp aliases, sidebar
-  .vitepress/theme/            # default theme extension: .dark sync, theme switcher, demo-row styling
+  .vitepress/theme/            # default theme extension: .dark sync, theme switcher, setLocale("zh-Hans"), demo-row styling
   components/<name>.md         # only @includes the README.md from the component directory
   guide/intro.md               # overview and conventions
   guide/getting-started.md     # install, stylesheet, first component, theme
   guide/patterns.md            # the item-component paradigm (canonical explanation)
   guide/theme.md               # useTheme API and pre-paint theme setup
+  guide/i18n.md                # locale singleton, built-in locales, registering a locale
+  guide/icons.md               # Icon component and icon data packages
+  guide/form.md                # form validation contract
+  guide/elevation.md           # shadow scale
+  guide/ripple.md              # v-ripple
 types/assets.d.ts              # module declarations for *.css and *.vue
 references/material-web/       # git submodule: Material Web source, reference only (not built or shipped)
 ```
@@ -111,6 +121,19 @@ library's own components.
   `docs/.vitepress/theme/style.css`.
 - The published `dist/style.css` is compiled by the Tailwind CLI (`pnpm build:css`), so consumers need no Tailwind
   install and no `@source` configuration.
+
+### Internationalisation
+
+- The locale is a **module-level singleton** in `src/i18n/index.ts`, like `useTheme()`: `setLocale()` re-renders
+  every component at once, and neither the browser language nor a persisted choice is read automatically — the
+  application decides before mounting (`matchLocale()` helps).
+- Components never hard-code user-facing strings. They call `useI18n()` and `t("key")`; the key type comes from
+  `LocaleMessages`, so adding a key there is what extends every locale.
+- Add keys in English first (`en`), then fill `zh-Hans`, `zh-Hant` and `ja`. `registerLocale()` only overrides the
+  fields it is given, so custom locales fall back to English.
+- Month, weekday and number formatting go through `Intl`; do not ship month-name tables.
+- Locale state is per-runtime (server and browser each have one). Keep the initial locale identical on both sides,
+  and run `navigator` / `localStorage` detection inside `onMounted`.
 
 ### Item components (the Tabs / Tab paradigm)
 
