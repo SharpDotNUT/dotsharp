@@ -12,12 +12,14 @@ import timer from "@iconify-icons/material-symbols/timer";
 const standardValue = ref("timer");
 const pushValue = ref("timer");
 const pushExpanded = ref(false);
+const pushIconValue = ref("timer");
+const pushIconExpanded = ref(false);
 const modalValue = ref("timer");
 const modalOpen = ref(false);
-const widthValue = ref("timer");
-const widthExpanded = ref(true);
-const compactValue = ref("timer");
-const compactExpanded = ref(false);
+const modalIconValue = ref("timer");
+const modalIconExpanded = ref(false);
+const hoverValue = ref("timer");
+const hoverIconValue = ref("timer");
 const indexValue = ref(0);
 </script>
 
@@ -26,13 +28,13 @@ const indexValue = ref(0);
 竖向导航。`NavigationRail` 持有选中值（`v-model:value`），`NavigationRailItem` 描述每一项。
 同一应用里导航栏应当是唯一的导航元素，不要再叠加 `NavigationBar` / `NavigationDrawer`。
 
-折叠态固定 96px，展开态 220–360px，两种形态都始终显示文字。
+折叠态固定 96px，两种形态都始终显示文字。
 
-| 形态                        | 宽度        | 排版                                      |
-| --------------------------- | ----------- | ----------------------------------------- |
-| 折叠（默认，`96px`）        | 固定 `96px` | 图标在上、文字在下                        |
-| 展开（`expandable`）        | `220–360px` | 左侧 96px 图标列不动，文字放进右侧展开块  |
-| 不可展开（无 `expandable`） | 固定 `96px` | 始终折叠排版，`v-model:expanded` 不起作用 |
+| 形态                        | 排版                                      |
+| --------------------------- | ----------------------------------------- |
+| 折叠（默认，`96px`）        | 图标在上、文字在下                        |
+| 展开（`expandable`）        | 左侧 96px 图标列不动，文字放进右侧展开块  |
+| 不可展开（无 `expandable`） | 始终折叠排版，`v-model:expanded` 不起作用 |
 
 展开时左侧 96px 槽位（菜单按钮与每个图标）位置保持不变：整条 rail 的列表是一张两列网格，
 左列固定 96px、右列是展开部分，每一项都用 `subgrid` 继承这两列——宽度只加在右列上，
@@ -92,9 +94,9 @@ const current = ref("timer");
 
 ## 可展开导航栏
 
-加 `expandable` 后由菜单按钮切换折叠 / 展开：折叠 96px，展开到 `expandedWidth`
-（默认 256px，夹在 220–360px 之间）时文字移到图标右侧。折叠态有两种排法：默认在图标下方显示文字，
-传 `:collapsed-label="false"` 则折叠态只有图标。
+加 `expandable` 后由菜单按钮切换折叠 / 展开：折叠态固定 96px，展开时文字移到图标右侧。
+折叠态有两种排法：默认在图标下方显示文字，传 `:collapsed-label="false"` 则折叠态只有图标，
+展开后文字照常出现在图标右侧。下面三种展开方式——标准、模态、悬浮——都给出这两种排法的演示。
 
 `presentation` 决定展开时如何占用空间：
 
@@ -105,7 +107,9 @@ const current = ref("timer");
 
 `modal` 依赖父元素是定位容器（Tailwind 的 `relative` 类），遮罩只覆盖这个容器，不是视口级浮层。
 
-### 挤开内容（standard）
+### 标准（挤开内容）
+
+**显示文字**（默认）：
 
 <div class="demo-row">
   <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
@@ -120,6 +124,20 @@ const current = ref("timer");
 </div>
 
 当前选中值：{{ pushValue }}，展开：{{ pushExpanded }}
+
+**仅显示图标**（`:collapsed-label="false"`）：
+
+<div class="demo-row">
+  <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail v-model:value="pushIconValue" v-model:expanded="pushIconExpanded" expandable :collapsed-label="false" :menu-icon="menu" :menu-expanded-icon="menuOpen" menu-label="展开或收起导航" label="时钟">
+      <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+      <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+    </NavigationRail>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容</div>
+  </div>
+</div>
 
 ```vue
 <script setup lang="ts">
@@ -138,6 +156,7 @@ const expanded = ref(false);
 
 <template>
   <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <!-- 仅显示图标：给 NavigationRail 再加 :collapsed-label="false" -->
     <NavigationRail
       v-model:value="current"
       v-model:expanded="expanded"
@@ -157,10 +176,12 @@ const expanded = ref(false);
 </template>
 ```
 
-### 覆盖内容（modal）
+### 模态（覆盖内容）
 
 `presentation="modal"` 时展开态覆盖在容器内容之上：带遮罩，点击遮罩、按 Escape 或点击菜单按钮都会收起；
 导航本身带 `role="dialog"` 与 `aria-modal="true"`，焦点在内部循环，收起后归还给原元素。
+
+**显示文字**（默认）：
 
 <div class="demo-row">
   <div class="relative flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
@@ -174,6 +195,20 @@ const expanded = ref(false);
       <Button @click="modalOpen = true">展开导航</Button>
       <span class="text-sm text-ds-muted">应用内容（展开时被 rail 覆盖）</span>
     </div>
+  </div>
+</div>
+
+**仅显示图标**（`:collapsed-label="false"`）：
+
+<div class="demo-row">
+  <div class="relative flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail v-model:value="modalIconValue" v-model:expanded="modalIconExpanded" expandable :collapsed-label="false" presentation="modal" :menu-icon="menu" :menu-expanded-icon="menuOpen" menu-label="收起导航" label="时钟">
+      <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+      <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+    </NavigationRail>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容（展开时被 rail 覆盖）</div>
   </div>
 </div>
 
@@ -196,6 +231,7 @@ const expanded = ref(false);
   <div
     class="relative flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg"
   >
+    <!-- 仅显示图标：给 NavigationRail 再加 :collapsed-label="false" -->
     <NavigationRail
       v-model:value="current"
       v-model:expanded="expanded"
@@ -220,45 +256,49 @@ const expanded = ref(false);
 </template>
 ```
 
-### 展开宽度
+### 悬浮（覆盖内容）
 
-`expandedWidth` 接受数字（按 px 处理），超出 220–360 会被夹到区间端点：
+传 `expand-on-hover` 后不需要 `expandable`，也不需要菜单按钮：指针进入 rail 就以覆盖布局展开（不挤开
+右侧内容、没有遮罩、不进入 `dialog` 语义），移出立即收起。展开是内部临时状态，不会写入
+`v-model:expanded`，`presentation` 对它也不起作用。
+
+**显示文字**（默认）：
 
 <div class="demo-row">
-  <div class="flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
-    <NavigationRail v-model:value="widthValue" v-model:expanded="widthExpanded" expandable :expanded-width="300" :menu-icon="menu" :menu-expanded-icon="menuOpen" label="时钟">
+  <div class="relative flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail v-model:value="hoverValue" expand-on-hover :menu="false" label="时钟">
       <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
       <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
       <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
     </NavigationRail>
-    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容</div>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">
+      应用内容（指针移到左侧导轨上时被覆盖）
+    </div>
+  </div>
+</div>
+
+**仅显示图标**（`:collapsed-label="false"`）：
+
+<div class="demo-row">
+  <div class="relative flex h-[24rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
+    <NavigationRail v-model:value="hoverIconValue" expand-on-hover :collapsed-label="false" :menu="false" label="时钟">
+      <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
+      <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
+      <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
+      <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
+    </NavigationRail>
+    <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">
+      应用内容（指针移到左侧导轨上时被覆盖）
+    </div>
   </div>
 </div>
 
 ```vue
-<NavigationRail
-  v-model:value="current"
-  v-model:expanded="expanded"
-  expandable
-  :expanded-width="300"
-  :menu-icon="menu"
-  :menu-expanded-icon="menuOpen"
-  label="时钟"
->
-  <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
-  <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
-  <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
-</NavigationRail>
-```
-
-### 折叠态不显示文字
-
-传 `:collapsed-label="false"` 换成图标模式：折叠态只剩图标（图标恒在行中心），展开时文字从右侧出现，
-高亮胶囊左右边界一起拉伸到整行。`collapsed-label` 默认 `true`，即折叠时在图标下方显示文字。
-
-<div class="demo-row">
-  <div class="flex h-[26rem] w-full overflow-hidden rounded-ds border border-ds-line bg-ds-bg">
-    <NavigationRail v-model:value="compactValue" v-model:expanded="compactExpanded" expandable :collapsed-label="false" :menu-icon="menu" :menu-expanded-icon="menuOpen" menu-label="展开或收起导航" label="时钟">
+<template>
+  <div class="relative flex h-[24rem] w-full overflow-hidden bg-ds-bg">
+    <!-- 仅显示图标：再加 :collapsed-label="false" -->
+    <NavigationRail v-model:value="current" expand-on-hover :menu="false" label="时钟">
       <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
       <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
       <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
@@ -266,24 +306,7 @@ const expanded = ref(false);
     </NavigationRail>
     <div class="flex flex-1 items-start p-6 text-sm text-ds-muted">应用内容</div>
   </div>
-</div>
-
-```vue
-<NavigationRail
-  v-model:value="current"
-  v-model:expanded="expanded"
-  expandable
-  :collapsed-label="false"
-  :menu-icon="menu"
-  :menu-expanded-icon="menuOpen"
-  menu-label="展开或收起导航"
-  label="时钟"
->
-  <NavigationRailItem label="计时器" value="timer" :icon="hourglass" />
-  <NavigationRailItem label="闹钟" value="alarm" :icon="alarm" />
-  <NavigationRailItem label="时钟" value="clock" :icon="schedule" />
-  <NavigationRailItem label="秒表" value="stopwatch" :icon="timer" />
-</NavigationRail>
+</template>
 ```
 
 ## 内置菜单按钮
@@ -422,11 +445,11 @@ const index = ref(0);
 | 属性               | 类型                    | 默认值                | 说明                                                   |
 | ------------------ | ----------------------- | --------------------- | ------------------------------------------------------ |
 | v-model:value      | `string \| number`      | `0`                   | 当前选中值，对应子项的 `value` 或索引                  |
-| v-model:expanded   | `boolean`               | `false`               | 仅 `expandable`：是否展开为 `expandedWidth`            |
+| v-model:expanded   | `boolean`               | `false`               | 仅 `expandable`：是否展开                              |
 | expandable         | `boolean`               | `false`               | 允许菜单按钮展开 / 收起                                |
 | collapsed-label    | `boolean`               | `true`                | 折叠态是否在图标下方显示文字；`false` 时折叠态只有图标 |
+| expand-on-hover    | `boolean`               | `false`               | 悬浮即以覆盖布局展开（隐含 `expandable`）、移出收起    |
 | presentation       | `"standard" \| "modal"` | `"standard"`          | 展开时挤开内容，或在定位容器内覆盖内容                 |
-| expandedWidth      | `number`                | `256`                 | 展开宽度，夹在 220–360px 之间                          |
 | menu               | `boolean`               | `true`                | 是否渲染内置菜单按钮                                   |
 | menu-label         | `string`                | `"Toggle navigation"` | 菜单按钮的 `aria-label`                                |
 | menu-icon          | `IconifyIcon \| string` | —                     | 折叠态菜单图标；没有图标且没有 `menu` 插槽时按钮不渲染 |

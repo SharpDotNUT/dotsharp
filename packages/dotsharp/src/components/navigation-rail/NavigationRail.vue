@@ -32,6 +32,11 @@ interface NavigationRailProps {
   expandable?: boolean;
   /** 折叠态是否在图标下方显示文字；`false` 时折叠态只有图标（展开态文字仍在图标右侧）。 */
   collapsedLabel?: boolean;
+  /**
+   * 鼠标悬浮时自动展开、移出后收起。展开时 rail 以覆盖布局（不挤开内容、无遮罩）呈现，
+   * 不写回 `v-model:expanded`；`presentation` 对该行为不生效。
+   */
+  expandOnHover?: boolean;
   /** `standard`：展开时挤开内容；`modal`：展开时覆盖最近定位容器内的内容并带遮罩。 */
   presentation?: NavigationRailPresentation;
   /** 展开态宽度，夹在 220–360px 之间。 */
@@ -51,6 +56,7 @@ interface NavigationRailProps {
 const props = withDefaults(defineProps<NavigationRailProps>(), {
   expandable: false,
   collapsedLabel: true,
+  expandOnHover: false,
   presentation: "standard",
   expandedWidth: 256,
   menu: true,
@@ -65,14 +71,13 @@ const emit = defineEmits<{ menu: [] }>();
 const model = defineModel<NavigationRailValue>("value", { default: 0 });
 const expanded = defineModel<boolean>("expanded", { default: false });
 
-const slots = useSlots();
+/** 悬浮触发的临时展开：只在内部生效，不写回 `v-model:expanded`。 */
+const hoverOpen = ref(false);
 
-provide(navigationRailContextKey, {
-  model,
-  expanded,
-  expandable: toRef(props, "expandable"),
-  collapsedLabel: toRef(props, "collapsedLabel"),
-});
+/** `expandable` 或 `expand-on-hover` 任一存在都允许展开。 */
+const canExpand = computed(() => props.expandable || props.expandOnHover);
+
+const slots = useSlots();
 
 const listId = useId();
 const railRef = ref<HTMLElement | null>(null);
@@ -81,10 +86,32 @@ const railWidth = computed(() =>
   Math.min(Math.max(props.expandedWidth ?? 256, MIN_EXPANDED_WIDTH), MAX_EXPANDED_WIDTH),
 );
 
-const isExpanded = computed(() => props.expandable && expanded.value);
-const isModal = computed(
-  () => props.expandable && props.presentation === "modal" && expanded.value,
-);
+const isExpanded = computed(() => canExpand.value && (expanded.value || hoverOpen.value));
+const isModal = computed(() => canExpand.value && props.presentation === "modal" && expanded.value);
+
+/** 悬浮展开模式：rail 始终绝对定位，父级由占位块保留 96px 宽度，展开时只向右覆盖内容。 */
+const isHoverMode = computed(() => canExpand.value && props.expandOnHover);
+
+provide(navigationRailContextKey, {
+  model,
+  /** 有效展开状态：悬浮展开同样算展开，子项据此换成「文字在右」的排版。 */
+  expanded: isExpanded,
+  expandable: canExpand,
+  collapsedLabel: toRef(props, "collapsedLabel"),
+});
+
+const railClasses = computed(() => {
+  if (isModal.value) {
+    return "absolute inset-y-0 left-0 z-20 overflow-y-auto rounded-r-ds-lg shadow-ds-3";
+  }
+  if (isHoverMode.value) {
+    return [
+      "absolute inset-y-0 left-0 z-20 overflow-y-auto transition-[width] duration-200 ease-out",
+      isExpanded.value ? "rounded-r-ds-lg shadow-ds-3" : undefined,
+    ];
+  }
+  return "relative shrink-0 transition-[width] duration-200 ease-out";
+});
 
 const railStyle = computed(() =>
   isExpanded.value ? { width: `${railWidth.value}px` } : undefined,
@@ -105,6 +132,16 @@ useOverlayPanel({
 function onMenuClick(): void {
   if (props.expandable) expanded.value = !expanded.value;
   else emit("menu");
+}
+
+/** 触摸/笔尖不触发悬浮展开，避免展开后无处移出。 */
+function onPointerEnter(event: PointerEvent): void {
+  if (!isHoverMode.value || event.pointerType === "touch") return;
+  hoverOpen.value = true;
+}
+
+function onPointerLeave(): void {
+  hoverOpen.value = false;
 }
 
 function flatten(nodes: VNode[]): VNode[] {
@@ -146,46 +183,49 @@ const RailNodes = (props: { nodes: VNode[] }) => createVNode(Fragment, null, pro
     />
   </Transition>
 
-  <nav
-    ref="railRef"
-    v-bind="$attrs"
-    :aria-label="label"
-    :role="isModal ? 'dialog' : undefined"
-    :aria-modal="isModal ? 'true' : undefined"
-    :tabindex="isModal ? -1 : undefined"
-    :style="railStyle"
-    :class="[
-      'ds-navigation-rail flex h-full flex-col bg-ds-surface font-ds',
-      isModal
-        ? 'absolute inset-y-0 left-0 z-20 overflow-y-auto rounded-r-ds-lg shadow-ds-3'
-        : 'relative shrink-0 transition-[width] duration-200 ease-out',
-      isExpanded ? undefined : 'w-24',
-    ]"
-  >
-    <div v-if="menu && (menuIcon || $slots.menu)" class="flex w-24 shrink-0 justify-center pt-3">
-      <button
-        type="button"
-        :aria-label="menuLabel"
-        :aria-expanded="expandable ? expanded : undefined"
-        :aria-controls="expandable ? listId : undefined"
-        class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ds-muted transition-colors hover:bg-ds-surface-hover hover:text-ds-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ds-focus"
-        @click="onMenuClick"
-      >
-        <slot name="menu" :expanded="expanded">
-          <Icon
-            v-if="menuIcon"
-            :icon="isExpanded && menuExpandedIcon ? menuExpandedIcon : menuIcon"
-            size="24"
-          />
-        </slot>
-      </button>
-    </div>
-
-    <div
-      :id="listId"
-      class="grid min-h-0 w-full flex-1 grid-cols-[96px_minmax(0,1fr)] content-start gap-y-1 overflow-y-auto py-1"
+  <!-- 悬浮展开时父级需要一个保留 96px 的占位块；其余模式用 contents 让 nav 直接参与外层布局 -->
+  <div :class="isHoverMode ? 'relative h-full w-24 shrink-0' : 'contents'">
+    <nav
+      ref="railRef"
+      v-bind="$attrs"
+      :aria-label="label"
+      :role="isModal ? 'dialog' : undefined"
+      :aria-modal="isModal ? 'true' : undefined"
+      :tabindex="isModal ? -1 : undefined"
+      :style="railStyle"
+      :class="[
+        'ds-navigation-rail flex h-full flex-col bg-ds-surface font-ds',
+        railClasses,
+        isExpanded ? undefined : 'w-24',
+      ]"
+      @pointerenter="onPointerEnter"
+      @pointerleave="onPointerLeave"
     >
-      <RailNodes :nodes="items" />
-    </div>
-  </nav>
+      <div v-if="menu && (menuIcon || $slots.menu)" class="flex w-24 shrink-0 justify-center pt-3">
+        <button
+          type="button"
+          :aria-label="menuLabel"
+          :aria-expanded="expandable ? isExpanded : undefined"
+          :aria-controls="expandable ? listId : undefined"
+          class="inline-flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border-0 bg-transparent text-ds-muted transition-colors hover:bg-ds-surface-hover hover:text-ds-fg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ds-focus"
+          @click="onMenuClick"
+        >
+          <slot name="menu" :expanded="expanded">
+            <Icon
+              v-if="menuIcon"
+              :icon="isExpanded && menuExpandedIcon ? menuExpandedIcon : menuIcon"
+              size="24"
+            />
+          </slot>
+        </button>
+      </div>
+
+      <div
+        :id="listId"
+        class="grid min-h-0 w-full flex-1 grid-cols-[96px_minmax(0,1fr)] content-start gap-y-1 overflow-y-auto py-1"
+      >
+        <RailNodes :nodes="items" />
+      </div>
+    </nav>
+  </div>
 </template>
